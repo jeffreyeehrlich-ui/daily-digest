@@ -155,7 +155,7 @@ sources:
       url: https://www.globest.com/rss/
       lookback_hours: 24
 
-  # ── The Economist (weekends only) ─────────────────────────────────────────
+  # ── The Economist (daily rotation via economist_history.json) ────────────
   economist:
     - name: The Economist
       url: https://www.economist.com/rss/the_economist_full_rss.xml

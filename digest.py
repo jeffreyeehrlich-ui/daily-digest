@@ -88,9 +88,9 @@ Links (a):
 Bold callout (number to watch / one thing to learn):
   <p style="margin:12px 0;font-size:14px;"><strong>...</strong></p>
 
-Worth Reading Later list:
-  <ul style="padding-left:20px;margin:8px 0;list-style:disc;">
-  <li style="margin:6px 0;font-size:14px;">
+Worth Your Time item card (div):
+  style="margin:0 0 20px;padding:14px 16px;border:1px solid #e8e8e8;\
+border-radius:4px;background:#fafafa;"
 
 Do NOT wrap the output in markdown code fences. Output raw HTML only."""
 
