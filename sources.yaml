@@ -1,0 +1,161 @@
+sources:
+
+  # ── Markets ────────────────────────────────────────────────────────────────
+  markets:
+    - name: Bloomberg Markets
+      url: https://feeds.bloomberg.com/markets/news.rss
+    - name: Wall Street Journal Markets
+      url: https://feeds.a.dj.com/rss/RSSMarketsMain.xml
+    - name: Financial Times
+      url: https://www.ft.com/rss/home
+
+  # ── Macro & Geopolitics ────────────────────────────────────────────────────
+  macro_geopolitics:
+    - name: Reuters Top News
+      url: https://feeds.reuters.com/reuters/topNews
+    - name: Financial Times
+      url: https://www.ft.com/rss/home
+    - name: Bloomberg Markets
+      url: https://feeds.bloomberg.com/markets/news.rss
+    - name: GZero Media
+      url: https://www.gzeromedia.com/feed
+    - name: The Economist
+      url: https://www.economist.com/rss/the_economist_full_rss.xml
+
+  # ── US News ────────────────────────────────────────────────────────────────
+  # Note: AP does not publish a public RSS feed; add your own source URL here if
+  # you have access to one (e.g., a paid wire or third-party aggregator).
+  us_news:
+    - name: Reuters Top News
+      url: https://feeds.reuters.com/reuters/topNews
+    - name: The Hill
+      url: https://thehill.com/feed/
+
+  # ── Real Estate & Affordable Housing ──────────────────────────────────────
+  real_estate:
+    - name: The Real Deal
+      url: https://therealdeal.com/feed/
+      lookback_hours: 72
+    - name: Affordable Housing Finance
+      url: https://www.housingfinance.com/rss.xml
+      lookback_hours: 72
+    - name: The Promote
+      url: https://www.thepromotenewsletter.com/feed
+      lookback_hours: 72
+    - name: Jay Parsons
+      url: https://www.jayparsons.com/feed
+      lookback_hours: 72
+
+  # ── AI & Technology ────────────────────────────────────────────────────────
+  ai_tech:
+    - name: Ben's Bites
+      url: https://www.bensbites.com/feed
+      lookback_hours: 72
+    - name: Anthropic Blog
+      url: https://www.anthropic.com/rss.xml
+      lookback_hours: 72
+    - name: The Rundown AI
+      url: https://www.therundown.ai/rss
+    - name: MIT Technology Review
+      url: https://feeds.feedburner.com/mittechnologyreview
+    - name: Ars Technica
+      url: https://feeds.arstechnica.com/arstechnica/index
+
+  # ── Science & Health ───────────────────────────────────────────────────────
+  science_health:
+    - name: New Scientist
+      url: https://www.newscientist.com/feed/home/
+    - name: Stat News
+      url: https://www.statnews.com/feed/
+    - name: Nature News
+      url: https://www.nature.com/nature.rss
+
+  # ── Podcasts & Newsletters (72-hour lookback) ──────────────────────────────
+  podcasts_newsletters:
+    - name: Invest Like the Best
+      url: https://feeds.simplecast.com/SFm2B67j
+      lookback_hours: 72
+    - name: Bloomberg Odd Lots
+      url: https://feeds.bloomberg.com/podcast/odd-lots.xml
+      lookback_hours: 72
+    - name: Huberman Lab
+      url: https://feeds.libsyn.com/233774/rss
+      lookback_hours: 72
+    - name: Noahpinion
+      url: https://www.noahpinion.blog/feed
+      lookback_hours: 72
+
+  # ── Research & Market Intelligence ────────────────────────────────────────
+  # Scraped sources (type: scrape) pull the public insights/research listing
+  # pages directly.  RSS sources aggregate institutional research from wire
+  # services.  All scraped sources use a 7-day lookback (168 h).
+  research_intel:
+
+    # Investment-bank and asset-manager insights pages (scraped)
+    - name: Goldman Sachs Insights
+      url: https://www.goldmansachs.com/insights/
+      type: scrape
+      lookback_hours: 168
+
+    - name: Morgan Stanley Ideas
+      url: https://www.morganstanley.com/ideas
+      type: scrape
+      lookback_hours: 168
+
+    - name: JPMorgan Insights
+      url: https://www.jpmorgan.com/insights
+      type: scrape
+      lookback_hours: 168
+
+    - name: BlackRock Investment Institute
+      url: https://www.blackrock.com/us/individual/insights
+      type: scrape
+      lookback_hours: 168
+
+    # CRE broker research pages (scraped)
+    - name: CBRE Research
+      url: https://www.cbre.com/insights/articles
+      type: scrape
+      lookback_hours: 168
+
+    - name: JLL Research
+      url: https://www.us.jll.com/en/trends-and-insights/research
+      type: scrape
+      lookback_hours: 168
+
+    - name: Newmark Research
+      url: https://www.nmrk.com/insights
+      type: scrape
+      lookback_hours: 168
+
+    - name: Berkadia Research
+      url: https://www.berkadia.com/insights/
+      type: scrape
+      lookback_hours: 168
+
+    - name: Marcus & Millichap Research
+      url: https://www.marcusmillichap.com/research
+      type: scrape
+      lookback_hours: 168
+
+    # RSS aggregators for institutional research coverage
+    - name: Bloomberg Economics
+      url: https://feeds.bloomberg.com/economics/news.rss
+      lookback_hours: 24
+
+    - name: Reuters Finance
+      url: https://feeds.reuters.com/reuters/financialsNews
+      lookback_hours: 24
+
+    - name: CoStar News
+      url: https://www.costar.com/rss/news
+      lookback_hours: 24
+
+    - name: GlobeSt
+      url: https://www.globest.com/rss/
+      lookback_hours: 24
+
+  # ── The Economist (weekends only) ─────────────────────────────────────────
+  economist:
+    - name: The Economist
+      url: https://www.economist.com/rss/the_economist_full_rss.xml

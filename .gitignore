@@ -1,0 +1,16 @@
+# Secrets — never commit
+.env
+
+# Runtime logs (history JSON files are persisted via GitHub Actions cache)
+logs/*.txt
+logs/*.json
+
+# Claude Code local config
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/

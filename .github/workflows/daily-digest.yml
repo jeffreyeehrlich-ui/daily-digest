@@ -1,0 +1,46 @@
+name: Daily Digest
+
+on:
+  schedule:
+    # Runs at 06:00 UTC every day
+    - cron: "0 6 * * *"
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+jobs:
+  send-digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # ── Restore persisted logs (story_history.json, economist_history.json) ──
+      - name: Restore logs cache
+        uses: actions/cache@v4
+        with:
+          path: logs/
+          key: digest-logs
+          restore-keys: |
+            digest-logs
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install anthropic feedparser sendgrid python-dotenv pyyaml requests beautifulsoup4 lxml
+
+      - name: Generate and send digest
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
+          TO_EMAIL: ${{ secrets.TO_EMAIL }}
+        run: python digest.py --send
+
+      # ── Persist updated logs back to cache ────────────────────────────────
+      # actions/cache saves automatically on post-step if the cache was restored
+      # or if the key is new, so no explicit save step is needed.
