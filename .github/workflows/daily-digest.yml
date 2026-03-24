@@ -24,9 +24,11 @@ jobs:
         uses: actions/cache@v4
         with:
           path: logs/
-          key: digest-logs
+          # New key every run so the cache is always updated after each digest.
+          # restore-keys finds the most recent prior entry when the exact key misses.
+          key: digest-logs-${{ github.run_number }}
           restore-keys: |
-            digest-logs
+            digest-logs-
 
       - name: Install dependencies
         run: |
