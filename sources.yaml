@@ -1,0 +1,66 @@
+sources:
+
+  # ── Markets ────────────────────────────────────────────────────────────────
+  markets:
+    - name: Bloomberg Markets
+      url: https://feeds.bloomberg.com/markets/news.rss
+    - name: Wall Street Journal Markets
+      url: https://feeds.a.dj.com/rss/RSSMarketsMain.xml
+    - name: Financial Times
+      url: https://www.ft.com/rss/home
+
+  # ── Macro & Geopolitics ────────────────────────────────────────────────────
+  macro_geopolitics:
+    - name: Reuters Top News
+      url: https://feeds.reuters.com/reuters/topNews
+    - name: Financial Times
+      url: https://www.ft.com/rss/home
+    - name: Bloomberg Markets
+      url: https://feeds.bloomberg.com/markets/news.rss
+    - name: GZero Media
+      url: https://www.gzeromedia.com/feed
+    - name: The Economist
+      url: https://www.economist.com/rss/the_economist_full_rss.xml
+
+  # ── US News ────────────────────────────────────────────────────────────────
+  # Note: AP does not publish a public RSS feed; add your own source URL here if
+  # you have access to one (e.g., a paid wire or third-party aggregator).
+  us_news:
+    - name: Reuters Top News
+      url: https://feeds.reuters.com/reuters/topNews
+    - name: The Hill
+      url: https://thehill.com/feed/
+
+  # ── Real Estate & Affordable Housing ──────────────────────────────────────
+  real_estate:
+    - name: The Real Deal
+      url: https://therealdeal.com/feed/
+    - name: Affordable Housing Finance
+      url: https://www.housingfinance.com/rss.xml
+    - name: The Promote
+      url: https://www.thepromotenewsletter.com/feed
+    - name: Jay Parsons
+      url: https://www.jayparsons.com/feed
+
+  # ── AI & Technology ────────────────────────────────────────────────────────
+  ai_tech:
+    - name: Ben's Bites
+      url: https://www.bensbites.com/feed
+    - name: Anthropic Blog
+      url: https://www.anthropic.com/rss.xml
+
+  # ── Podcasts & Newsletters (48-hour lookback) ──────────────────────────────
+  podcasts_newsletters:
+    - name: Invest Like the Best
+      url: https://feeds.simplecast.com/SFm2B67j
+    - name: Bloomberg Odd Lots
+      url: https://feeds.bloomberg.com/podcast/odd-lots.xml
+    - name: Huberman Lab
+      url: https://feeds.libsyn.com/233774/rss
+    - name: Noahpinion
+      url: https://www.noahpinion.blog/feed
+
+  # ── The Economist (weekends only) ─────────────────────────────────────────
+  economist:
+    - name: The Economist
+      url: https://www.economist.com/rss/the_economist_full_rss.xml
