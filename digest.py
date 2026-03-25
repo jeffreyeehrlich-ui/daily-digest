@@ -1,6 +1,6 @@
 
   #!/usr/bin/env python3
-  """
+"""
   Daily Digest — generates and emails a structured morning briefing.
 
   Usage:
