@@ -3,9 +3,9 @@
 Daily Digest — generates and emails a structured morning briefing.
 
 Usage:
-    python digest_new.py           # generate and print to terminal (same as --test)
-    python digest_new.py --test    # generate and print to terminal, no email sent
-    python digest_new.py --send    # generate and send email via SendGrid
+    python digest.py           # generate and print to terminal (same as --test)
+    python digest.py --test    # generate and print to terminal, no email sent
+    python digest.py --send    # generate and send email via SendGrid
 """
 
 import argparse
