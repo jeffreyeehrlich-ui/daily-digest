@@ -69,6 +69,12 @@ sources:
       url: https://www.statnews.com/feed/
     - name: Nature News
       url: https://www.nature.com/nature.rss
+    - name: NY Times Science
+      url: https://rss.nytimes.com/services/xml/rss/nyt/Science.xml
+    - name: Popular Mechanics
+      url: https://www.popularmechanics.com/rss/all.xml/
+    - name: Popular Science
+      url: https://www.popsci.com/rss.xml
 
   # ── Podcasts & Newsletters (72-hour lookback) ──────────────────────────────
   podcasts_newsletters:

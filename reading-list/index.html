@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worth Your Time — Reading List</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: #1a3a6e;
+    color: #fff;
+    padding: 32px 24px 24px;
+    position: relative;
+  }
+  .site-header h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .site-header p {
+    margin: 0;
+    font-size: 14px;
+    color: rgba(255,255,255,0.75);
+  }
+  .settings-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.8);
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.15s;
+  }
+  .settings-btn:hover { background: rgba(255,255,255,0.15); }
+
+  /* ── Filters ── */
+  .filters-bar {
+    background: #f8f8f6;
+    border-bottom: 1px solid #e0e0e0;
+    padding: 14px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+  }
+  .tab-group {
+    display: flex;
+    gap: 0;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .tab-btn {
+    background: #fff;
+    border: none;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #444;
+    transition: background 0.15s, color 0.15s;
+    border-right: 1px solid #d0d0d0;
+  }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn.active {
+    background: #1a3a6e;
+    color: #fff;
+    font-weight: 600;
+  }
+  .tab-btn:hover:not(.active) { background: #f0f0f0; }
+
+  select.filter-select {
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    background: #fff;
+    color: #444;
+    cursor: pointer;
+    outline: none;
+  }
+  select.filter-select:focus { border-color: #1a3a6e; }
+
+  .search-input {
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    width: 220px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-input:focus { border-color: #1a3a6e; }
+
+  /* ── Main content ── */
+  .main-content {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 24px 20px 100px;
+  }
+
+  .loading-state, .error-state, .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #888;
+    font-size: 15px;
+  }
+  .error-state { color: #c0392b; }
+
+  /* ── Date group ── */
+  .date-group-heading {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #888;
+    border-bottom: 1px solid #e8e8e8;
+    padding-bottom: 6px;
+    margin: 28px 0 14px;
+  }
+  .date-group-heading:first-child { margin-top: 0; }
+
+  /* ── Item card ── */
+  .item-card {
+    border: 1px solid #e4e4e4;
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    background: #fff;
+    position: relative;
+    transition: opacity 0.2s, border-color 0.15s;
+  }
+  .item-card:hover { border-color: #c0c0c0; }
+  .item-card.is-read { opacity: 0.5; }
+
+  .item-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+  .item-title {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .item-title a {
+    color: #1a3a6e;
+    text-decoration: none;
+  }
+  .item-title a:hover { text-decoration: underline; }
+  .item-title span { color: #1a1a1a; }
+
+  .item-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .delete-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #ccc;
+    padding: 2px 4px;
+    border-radius: 4px;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+    line-height: 1;
+  }
+  .item-card:hover .delete-btn { opacity: 1; }
+  .delete-btn:hover { color: #e74c3c; }
+
+  .item-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .badge-read    { background: #e8f0fe; color: #1a3a6e; }
+  .badge-listen  { background: #e6f4ea; color: #1e7e34; }
+  .badge-watch   { background: #fce8e6; color: #b71c1c; }
+  .badge-topic   { background: #f0f0f0; color: #555; }
+
+  .item-source { color: #666; }
+  .item-duration { color: #888; }
+  .item-date { color: #aaa; font-size: 12px; }
+  .subscription-note { color: #aaa; font-style: italic; font-size: 12px; }
+
+  .item-description {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #333;
+    margin: 0;
+  }
+
+  .read-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #888;
+    cursor: pointer;
+    margin-top: 10px;
+    user-select: none;
+  }
+  .read-checkbox-label input { cursor: pointer; accent-color: #1a3a6e; }
+
+  /* ── Floating add button ── */
+  .fab {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: #1a3a6e;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(26,58,110,0.35);
+    transition: background 0.15s, transform 0.1s;
+    z-index: 200;
+  }
+  .fab:hover { background: #152f5a; transform: translateY(-1px); }
+  .fab:active { transform: translateY(0); }
+
+  /* ── Modal overlay ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 10px;
+    padding: 28px;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  }
+  .modal h2 {
+    margin: 0 0 20px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
+
+  .form-group { margin-bottom: 14px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 4px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: #1a3a6e; }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  .modal-notice {
+    background: #e8f0fe;
+    border: 1px solid #b8d0f8;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #1a3a6e;
+    margin-bottom: 16px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+  .btn-primary {
+    background: #1a3a6e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: #152f5a; }
+  .btn-secondary {
+    background: none;
+    color: #666;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-secondary:hover { background: #f0f0f0; }
+
+  /* ── Responsive ── */
+  @media (max-width: 600px) {
+    .site-header { padding: 24px 16px 18px; }
+    .site-header h1 { font-size: 22px; }
+    .filters-bar { padding: 12px 16px; }
+    .search-input { width: 100%; }
+    .main-content { padding: 16px 14px 90px; }
+    .fab { bottom: 18px; right: 18px; padding: 12px 18px; font-size: 14px; }
+    .modal { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Worth your time</h1>
+  <p>Curated reads, listens, and watches with staying power</p>
+  <button class="settings-btn" id="settingsBtn" title="Settings">&#9881;</button>
+</header>
+
+<div class="filters-bar">
+  <!-- Read status -->
+  <div class="tab-group" id="readStatusTabs">
+    <button class="tab-btn active" data-filter="all">All</button>
+    <button class="tab-btn" data-filter="unread">Unread</button>
+    <button class="tab-btn" data-filter="read">Read</button>
+  </div>
+
+  <!-- Content type -->
+  <div class="tab-group" id="typeTabs">
+    <button class="tab-btn active" data-filter="all">All types</button>
+    <button class="tab-btn" data-filter="read">Read</button>
+    <button class="tab-btn" data-filter="listen">Listen</button>
+    <button class="tab-btn" data-filter="watch">Watch</button>
+  </div>
+
+  <!-- Topic -->
+  <select class="filter-select" id="topicFilter">
+    <option value="">All topics</option>
+    <option value="markets">Markets</option>
+    <option value="real-estate">Real estate</option>
+    <option value="macro">Macro</option>
+    <option value="ai-tech">AI &amp; tech</option>
+    <option value="science">Science</option>
+    <option value="health">Health</option>
+    <option value="philosophy">Philosophy</option>
+    <option value="policy">Policy</option>
+    <option value="other">Other</option>
+  </select>
+
+  <!-- Search -->
+  <input class="search-input" id="searchInput" type="text" placeholder="Search..." autocomplete="off">
+</div>
+
+<div class="main-content" id="mainContent">
+  <div class="loading-state" id="loadingState">Loading your reading list...</div>
+  <div id="itemsList" style="display:none;"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">No items match your filters.</div>
+  <div class="error-state" id="errorState" style="display:none;"></div>
+</div>
+
+<button class="fab" id="addBtn">+ Add item</button>
+
+<!-- Add Item Modal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h2 id="addModalTitle">Add to reading list</h2>
+    <div class="modal-notice" id="addModalNotice" style="display:none;"></div>
+    <div class="form-group">
+      <label for="f-title">Title *</label>
+      <input type="text" id="f-title" placeholder="Article or episode title">
+    </div>
+    <div class="form-group">
+      <label for="f-url">URL</label>
+      <input type="url" id="f-url" placeholder="https://...">
+    </div>
+    <div class="form-group">
+      <label for="f-source">Source *</label>
+      <input type="text" id="f-source" placeholder="e.g. Quanta Magazine">
+    </div>
+    <div class="form-group">
+      <label for="f-type">Type</label>
+      <select id="f-type">
+        <option value="read">Read</option>
+        <option value="listen">Listen</option>
+        <option value="watch">Watch</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="f-category">Topic</label>
+      <select id="f-category">
+        <option value="markets">Markets</option>
+        <option value="real-estate">Real estate</option>
+        <option value="macro">Macro</option>
+        <option value="ai-tech">AI &amp; tech</option>
+        <option value="science">Science</option>
+        <option value="health">Health</option>
+        <option value="philosophy">Philosophy</option>
+        <option value="policy">Policy</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="f-duration">Duration</label>
+      <input type="text" id="f-duration" placeholder="e.g. 22 min read">
+    </div>
+    <div class="form-group">
+      <label for="f-description">Description</label>
+      <textarea id="f-description" placeholder="2-3 sentences about why this is worth your time..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelAddBtn">Cancel</button>
+      <button class="btn-primary" id="saveAddBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>Settings</h2>
+    <div class="modal-notice" id="settingsNotice" style="display:none;"></div>
+    <div class="form-group">
+      <label for="s-token">GitHub Token</label>
+      <input type="password" id="s-token" placeholder="ghp_...">
+    </div>
+    <div class="form-group">
+      <label for="s-username">GitHub Username</label>
+      <input type="text" id="s-username" placeholder="your-username">
+    </div>
+    <div class="form-group">
+      <label for="s-repo">Repository Name</label>
+      <input type="text" id="s-repo" placeholder="daily-digest" value="daily-digest">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelSettingsBtn">Cancel</button>
+      <button class="btn-primary" id="saveSettingsBtn">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Utilities ──────────────────────────────────────────────────────────────
+
+function generateId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  } catch {
+    return dateStr;
+  }
+}
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function typeBadgeClass(type) {
+  if (type === 'listen') return 'badge-listen';
+  if (type === 'watch') return 'badge-watch';
+  return 'badge-read';
+}
+
+function typeLabel(type) {
+  if (type === 'listen') return 'LISTEN';
+  if (type === 'watch') return 'WATCH';
+  return 'READ';
+}
+
+function categoryLabel(cat) {
+  const map = {
+    'markets': 'Markets', 'real-estate': 'Real estate', 'macro': 'Macro',
+    'ai-tech': 'AI & tech', 'science': 'Science', 'health': 'Health',
+    'philosophy': 'Philosophy', 'policy': 'Policy', 'other': 'Other'
+  };
+  return map[cat] || cat || 'Other';
+}
+
+function isPaywalled(url) {
+  if (!url) return false;
+  return url.includes('nytimes.com');
+}
+
+// ── GitHub API ─────────────────────────────────────────────────────────────
+
+function getSettings() {
+  return {
+    token:    localStorage.getItem('gh_token') || '',
+    username: localStorage.getItem('gh_username') || '',
+    repo:     localStorage.getItem('gh_repo') || 'daily-digest',
+  };
+}
+
+function apiUrl(settings) {
+  return `https://api.github.com/repos/${settings.username}/${settings.repo}/contents/reading-list/reading-list.json`;
+}
+
+async function fetchList() {
+  const s = getSettings();
+  if (!s.token || !s.username) throw new Error('No GitHub credentials. Open Settings to configure.');
+
+  const res = await fetch(apiUrl(s), {
+    headers: { Authorization: `token ${s.token}`, Accept: 'application/vnd.github.v3+json' }
+  });
+  if (!res.ok) throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+
+  const data = await res.json();
+  const content = JSON.parse(atob(data.content.replace(/\n/g, '')));
+  return { items: content.items || [], sha: data.sha };
+}
+
+async function saveList(items, sha) {
+  const s = getSettings();
+  if (!s.token || !s.username) throw new Error('No GitHub credentials. Open Settings to configure.');
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify({ items }, null, 2))));
+  const res = await fetch(apiUrl(s), {
+    method: 'PUT',
+    headers: {
+      Authorization: `token ${s.token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      message: 'Update reading list',
+      content,
+      sha,
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`GitHub save error: ${res.status} ${err.message || res.statusText}`);
+  }
+  const data = await res.json();
+  return data.content.sha;
+}
+
+// ── State ──────────────────────────────────────────────────────────────────
+
+let STATE = {
+  items: [],
+  sha: null,
+  readFilter: 'all',     // all | unread | read
+  typeFilter: 'all',     // all | read | listen | watch
+  topicFilter: '',
+  searchQuery: '',
+};
+
+// ── Rendering ──────────────────────────────────────────────────────────────
+
+function renderItems() {
+  const { items, readFilter, typeFilter, topicFilter, searchQuery } = STATE;
+  const q = searchQuery.toLowerCase().trim();
+
+  let filtered = items.filter(item => {
+    if (readFilter === 'unread' && item.read) return false;
+    if (readFilter === 'read' && !item.read) return false;
+    if (typeFilter !== 'all' && item.type !== typeFilter) return false;
+    if (topicFilter && item.category !== topicFilter) return false;
+    if (q) {
+      const haystack = `${item.title} ${item.source} ${item.description}`.toLowerCase();
+      if (!haystack.includes(q)) return false;
+    }
+    return true;
+  });
+
+  // Sort newest first
+  filtered.sort((a, b) => (b.dateAdded || '').localeCompare(a.dateAdded || ''));
+
+  const container = document.getElementById('itemsList');
+  const emptyState = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    container.innerHTML = '';
+    emptyState.style.display = '';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  // Group by date
+  const groups = {};
+  for (const item of filtered) {
+    const d = item.dateAdded || 'Unknown date';
+    if (!groups[d]) groups[d] = [];
+    groups[d].push(item);
+  }
+
+  const dates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+  let html = '';
+  for (const date of dates) {
+    html += `<div class="date-group-heading">${formatDate(date)}</div>`;
+    for (const item of groups[date]) {
+      html += renderCard(item);
+    }
+  }
+  container.innerHTML = html;
+
+  // Attach events
+  container.querySelectorAll('.read-toggle').forEach(cb => {
+    cb.addEventListener('change', () => toggleRead(cb.dataset.id, cb.checked));
+  });
+  container.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteItem(btn.dataset.id));
+  });
+}
+
+function renderCard(item) {
+  const paywalled = isPaywalled(item.url);
+  const titleHtml = (item.url && !paywalled)
+    ? `<a href="${escHtml(item.url)}" target="_blank" rel="noopener">${escHtml(item.title)}</a>`
+    : `<span>${escHtml(item.title)}</span>`;
+
+  const subscriptionNote = paywalled
+    ? ` <span class="subscription-note">(subscription required)</span>`
+    : '';
+
+  const badgeClass = typeBadgeClass(item.type);
+  const label = typeLabel(item.type);
+  const catLabel = categoryLabel(item.category);
+  const dateLabel = formatDate(item.dateAdded);
+  const readClass = item.read ? ' is-read' : '';
+
+  return `
+    <div class="item-card${readClass}" data-id="${escHtml(item.id)}">
+      <div class="item-header">
+        <div class="item-title">${titleHtml}</div>
+        <div class="item-actions">
+          <button class="delete-btn" data-id="${escHtml(item.id)}" title="Delete">&#x1F5D1;</button>
+        </div>
+      </div>
+      <div class="item-meta">
+        <span class="badge ${badgeClass}">${label}</span>
+        <span class="item-source">${escHtml(item.source || '')}${item.duration ? ' &middot; ' + escHtml(item.duration) : ''}</span>
+        ${subscriptionNote}
+        ${item.category ? `<span class="badge badge-topic">${escHtml(catLabel)}</span>` : ''}
+        ${dateLabel ? `<span class="item-date">${dateLabel}</span>` : ''}
+      </div>
+      ${item.description ? `<p class="item-description">${escHtml(item.description)}</p>` : ''}
+      <label class="read-checkbox-label">
+        <input type="checkbox" class="read-toggle" data-id="${escHtml(item.id)}" ${item.read ? 'checked' : ''}>
+        Mark as read
+      </label>
+    </div>
+  `;
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Actions ────────────────────────────────────────────────────────────────
+
+async function toggleRead(id, isRead) {
+  const item = STATE.items.find(i => i.id === id);
+  if (!item) return;
+  item.read = isRead;
+  renderItems();
+  try {
+    STATE.sha = await saveList(STATE.items, STATE.sha);
+  } catch (e) {
+    console.error('Save failed:', e);
+  }
+}
+
+async function deleteItem(id) {
+  if (!confirm('Remove this item from your reading list?')) return;
+  STATE.items = STATE.items.filter(i => i.id !== id);
+  renderItems();
+  try {
+    STATE.sha = await saveList(STATE.items, STATE.sha);
+  } catch (e) {
+    alert('Failed to save: ' + e.message);
+    // Reload to restore state
+    loadData();
+  }
+}
+
+async function addItem(data) {
+  const item = {
+    id:          generateId(),
+    title:       data.title,
+    url:         data.url || null,
+    source:      data.source,
+    type:        data.type || 'read',
+    category:    data.category || 'other',
+    duration:    data.duration || '',
+    description: data.description || '',
+    dateAdded:   getTodayStr(),
+    read:        false,
+  };
+  STATE.items.unshift(item);
+  try {
+    STATE.sha = await saveList(STATE.items, STATE.sha);
+    renderItems();
+  } catch (e) {
+    STATE.items.shift();
+    throw e;
+  }
+}
+
+// ── Data loading ───────────────────────────────────────────────────────────
+
+async function loadData() {
+  const loadEl = document.getElementById('loadingState');
+  const listEl = document.getElementById('itemsList');
+  const errEl  = document.getElementById('errorState');
+
+  loadEl.style.display = '';
+  listEl.style.display = 'none';
+  errEl.style.display = 'none';
+
+  try {
+    const { items, sha } = await fetchList();
+    STATE.items = items;
+    STATE.sha = sha;
+    loadEl.style.display = 'none';
+    listEl.style.display = '';
+    renderItems();
+  } catch (e) {
+    loadEl.style.display = 'none';
+    errEl.style.display = '';
+    errEl.textContent = e.message;
+  }
+}
+
+// ── Filter controls ────────────────────────────────────────────────────────
+
+document.getElementById('readStatusTabs').addEventListener('click', e => {
+  if (!e.target.classList.contains('tab-btn')) return;
+  document.querySelectorAll('#readStatusTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  STATE.readFilter = e.target.dataset.filter;
+  renderItems();
+});
+
+document.getElementById('typeTabs').addEventListener('click', e => {
+  if (!e.target.classList.contains('tab-btn')) return;
+  document.querySelectorAll('#typeTabs .tab-btn').forEach(b => b.classList.remove('active'));
+  e.target.classList.add('active');
+  STATE.typeFilter = e.target.dataset.filter;
+  renderItems();
+});
+
+document.getElementById('topicFilter').addEventListener('change', e => {
+  STATE.topicFilter = e.target.value;
+  renderItems();
+});
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  STATE.searchQuery = e.target.value;
+  renderItems();
+});
+
+// ── Add Item Modal ─────────────────────────────────────────────────────────
+
+function openAddModal(prefill) {
+  const modal = document.getElementById('addModal');
+  const notice = document.getElementById('addModalNotice');
+
+  // Reset form
+  document.getElementById('f-title').value = prefill?.title || '';
+  document.getElementById('f-url').value = prefill?.url || '';
+  document.getElementById('f-source').value = prefill?.source || '';
+  document.getElementById('f-type').value = prefill?.type || 'read';
+  document.getElementById('f-category').value = prefill?.category || 'other';
+  document.getElementById('f-duration').value = prefill?.duration || '';
+  document.getElementById('f-description').value = prefill?.description || '';
+
+  if (prefill) {
+    notice.textContent = 'Item pre-filled from digest link. Review and save.';
+    notice.style.display = '';
+  } else {
+    notice.style.display = 'none';
+  }
+
+  modal.classList.add('open');
+  document.getElementById('f-title').focus();
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('open');
+}
+
+document.getElementById('addBtn').addEventListener('click', () => openAddModal(null));
+document.getElementById('cancelAddBtn').addEventListener('click', closeAddModal);
+
+document.getElementById('addModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeAddModal();
+});
+
+document.getElementById('saveAddBtn').addEventListener('click', async () => {
+  const title = document.getElementById('f-title').value.trim();
+  const source = document.getElementById('f-source').value.trim();
+  if (!title) { alert('Please enter a title.'); return; }
+  if (!source) { alert('Please enter a source.'); return; }
+
+  const btn = document.getElementById('saveAddBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    await addItem({
+      title,
+      url:         document.getElementById('f-url').value.trim(),
+      source,
+      type:        document.getElementById('f-type').value,
+      category:    document.getElementById('f-category').value,
+      duration:    document.getElementById('f-duration').value.trim(),
+      description: document.getElementById('f-description').value.trim(),
+    });
+    closeAddModal();
+  } catch (e) {
+    alert('Failed to save: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Save';
+  }
+});
+
+// ── Settings Modal ─────────────────────────────────────────────────────────
+
+function openSettingsModal(withNotice) {
+  const s = getSettings();
+  document.getElementById('s-token').value = s.token;
+  document.getElementById('s-username').value = s.username;
+  document.getElementById('s-repo').value = s.repo;
+
+  const notice = document.getElementById('settingsNotice');
+  if (withNotice) {
+    notice.textContent = 'Enter your GitHub details to save your reading list.';
+    notice.style.display = '';
+  } else {
+    notice.style.display = 'none';
+  }
+
+  document.getElementById('settingsModal').classList.add('open');
+}
+
+function closeSettingsModal() {
+  document.getElementById('settingsModal').classList.remove('open');
+}
+
+document.getElementById('settingsBtn').addEventListener('click', () => openSettingsModal(false));
+document.getElementById('cancelSettingsBtn').addEventListener('click', closeSettingsModal);
+document.getElementById('settingsModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeSettingsModal();
+});
+
+document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+  const token    = document.getElementById('s-token').value.trim();
+  const username = document.getElementById('s-username').value.trim();
+  const repo     = document.getElementById('s-repo').value.trim() || 'daily-digest';
+
+  localStorage.setItem('gh_token', token);
+  localStorage.setItem('gh_username', username);
+  localStorage.setItem('gh_repo', repo);
+
+  closeSettingsModal();
+  loadData();
+});
+
+// ── ?add= URL parameter handling ───────────────────────────────────────────
+
+function checkAddParam() {
+  const params = new URLSearchParams(window.location.search);
+  const addParam = params.get('add');
+  if (!addParam) return null;
+
+  try {
+    return JSON.parse(decodeURIComponent(addParam));
+  } catch {
+    try {
+      return JSON.parse(addParam);
+    } catch {
+      console.warn('Could not parse ?add= parameter');
+      return null;
+    }
+  }
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+
+(function init() {
+  const s = getSettings();
+  const addData = checkAddParam();
+
+  if (!s.token || !s.username) {
+    // No credentials — show settings first
+    openSettingsModal(true);
+    // If there's an add param, we'll open add modal after settings are saved
+    if (addData) {
+      // Store for later
+      window._pendingAdd = addData;
+    }
+    // Show empty error in list area
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('errorState').style.display = '';
+    document.getElementById('errorState').textContent = 'Configure GitHub settings to load your reading list.';
+  } else {
+    loadData().then(() => {
+      if (addData) {
+        openAddModal(addData);
+      }
+    });
+  }
+
+  // After settings save, if pending add
+  document.getElementById('saveSettingsBtn').addEventListener('click', () => {
+    if (window._pendingAdd) {
+      setTimeout(() => {
+        openAddModal(window._pendingAdd);
+        window._pendingAdd = null;
+      }, 500);
+    }
+  });
+})();
+</script>
+</body>
+</html>

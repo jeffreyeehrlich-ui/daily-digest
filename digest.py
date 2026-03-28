@@ -101,7 +101,15 @@ Worth Your Time item card:
   style="margin:0 0 20px;padding:14px 16px;border:1px solid #e8e8e8;\
 border-radius:4px;background:#fafafa;"
 
-Do NOT wrap the output in markdown code fences. Output raw HTML only.\
+Do NOT wrap the output in markdown code fences. Output raw HTML only.
+
+Cross-section deduplication: Before writing each section, check whether any story or development has already been covered in a previous section. If a story appeared in Markets, do not cover it again in Macro or any other section even from a different angle. Each event or development should appear exactly once in the digest in the section where it is most relevant. If a geopolitical event is driving markets, cover it fully in Markets and only reference it briefly in Macro as 'as noted in Markets above' rather than re-explaining it.
+
+Science section quality: In the Science & Health section, each story must be written as a single clean paragraph with no repeated language, no repeated phrases, and no restating of the same point. Read each science item back before including it and remove any sentence that repeats information already stated in the same item.
+
+LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
+
+Worth Your Time sourcing: The Worth Your Time section should actively seek content from high quality sources beyond the configured RSS feeds. Draw from the full landscape of excellent long-form thinking including philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Marcus Aurelius excerpts, Amor Fati and Stoic frameworks, Tim Ferriss on philosophy/decision-making), ideas and mental models (Naval Ravikant at nav.al, Tim Urban / Wait But Why at waitbutwhy.com, Shane Parrish / Farnam Street at fs.blog), science and big ideas (Quanta Magazine at quantamagazine.org, Aeon at aeon.co, Nautilus at nautil.us, Edge.org, Popular Mechanics, Popular Science), health and longevity (Peter Attia at peterattiamd.com, Huberman Lab full episodes only — not Essentials clips), economics and society (Project Syndicate at project-syndicate.org, VoxEU at voxeu.org, Noahpinion long-form pieces). Prioritize in this order: (1) pieces that offer a framework for thinking, living, or deciding — not just information; (2) ideas that compound over time — Stoic philosophy, mental models, scientific principles; (3) content that would be just as valuable to read or listen to in 5 years as today; (4) pieces that would surprise or genuinely expand perspective. Rotate across content types and sources — aim for roughly one philosophical or Stoic piece per week, one science piece, one economics or finance piece. Do not feature the same source two days in a row. Stoicism and Naval-adjacent content should appear roughly once per week when strong material is available. Always include podcasts and videos as candidates alongside articles.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -702,7 +710,7 @@ DIGEST SECTIONS TO PRODUCE (in this order):
 
    PAYWALL RULES:
    DO NOT hyperlink these domains — render as plain text with (subscription required):
-     wsj.com  ft.com  economist.com  bloomberg.com  theinformation.com
+     wsj.com  ft.com  economist.com  bloomberg.com  theinformation.com  nytimes.com
    Always link freely:
      reuters.com  thehill.com  npr.org  noahpinion.blog  bensbites.com
      anthropic.com  housingfinance.com  congress.gov  *.gov  *.edu
@@ -710,7 +718,7 @@ DIGEST SECTIONS TO PRODUCE (in this order):
      colossus.com  hubermanlab.com  arstechnica.com  therundown.ai  nature.com
      goldmansachs.com  morganstanley.com  jpmorgan.com  blackrock.com
      cbre.com  us.jll.com  nmrk.com  berkadia.com  marcusmillichap.com
-     globest.com  costar.com
+     globest.com  costar.com  popularmechanics.com  popsci.com
    When in doubt: do not hyperlink.
 
    SECTION HEADER — render exactly as:
@@ -735,22 +743,15 @@ font-family:Arial,Helvetica,sans-serif;">
    Duration labels:  "[N] min read" / "[N] min watch" / "[N] min listen"
 
    ADD TO LIST BUTTON — construct a static percent-encoded href:
-   Base:  https://claude.ai/new?q=
-   Append the URL-encoded version of this message:
-     Please add this to my reading list:
-     Title: [TITLE]
-     URL: [ITEM_URL]
-     Source: [SOURCE]
-     Type: [article|podcast|video]
-     Category: [category]
-     Duration: [duration]
-     Description: [2-3 sentence description]
+   Base:  https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=
+   Append the URL-encoded version of a JSON object with these fields:
+     {{"title": "[TITLE]", "url": "[ITEM_URL]", "source": "[SOURCE]", "type": "[article|podcast|video]", "category": "[category]", "duration": "[duration]", "description": "[2-3 sentence description]"}}
 
-   Encoding rules (apply to every dynamic value including the URL itself):
-     space→%20  newline→%0A  :→%3A  /→%2F  ?→%3F  =→%3D  &→%26  #→%23  +→%2B
+   Encoding rules (apply to the entire JSON string):
+     space->%20  newline->%0A  :->%3A  /->%2F  ?->%3F  =->%3D  &->%26  #->%23  +->%2B  quote->%22  open-brace->%7B  close-brace->%7D  open-bracket->%5B  close-bracket->%5D  comma->%2C
 
    Worked example (title "Why Rates Matter", url "https://noahpinion.blog/p/x"):
-   https://claude.ai/new?q=Please%20add%20this%20to%20my%20reading%20list%3A%0ATitle%3A%20Why%20Rates%20Matter%0AURL%3A%20https%3A%2F%2Fnoahpinion.blog%2Fp%2Fx%0ASource%3A%20Noahpinion%0AType%3A%20article%0ACategory%3A%20economics%0ADuration%3A%2012%20min%20read%0ADescription%3A%20A%20clear%20look%20at%20rate%20dynamics.
+   https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=%7B%22title%22%3A%22Why%20Rates%20Matter%22%2C%22url%22%3A%22https%3A%2F%2Fnoahpinion.blog%2Fp%2Fx%22%2C%22source%22%3A%22Noahpinion%22%2C%22type%22%3A%22article%22%2C%22category%22%3A%22economics%22%2C%22duration%22%3A%2212%20min%20read%22%2C%22description%22%3A%22A%20clear%20look%20at%20rate%20dynamics.%22%7D
 
    FREELY-LINKED ITEM TEMPLATE:
    <div style="margin:0 0 20px;padding:14px 16px;border:1px solid #e8e8e8;\
