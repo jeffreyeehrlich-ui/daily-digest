@@ -29,6 +29,27 @@ from sendgrid.helpers.mail import Mail
 
 from gmail_reader import fetch_newsletter_emails
 
+# ── Worth Your Time paywall domain blacklist ──────────────────────────────────
+# Items whose URLs match any of these domains are excluded from the
+# Worth Your Time candidate pool before the prompt is sent to Claude.
+# economist.com is intentionally absent — Economist access is via cookie auth.
+_WYT_BLOCKED_DOMAINS: frozenset[str] = frozenset({
+    "wsj.com", "ft.com", "bloomberg.com", "bloomberg.net",
+    "theinformation.com", "nytimes.com", "newyorker.com",
+    "theatlantic.com", "foreignaffairs.com", "hbr.org",
+    "wired.com", "businessinsider.com", "washingtonpost.com",
+    "thetimes.co.uk", "telegraph.co.uk",
+})
+
+
+def _is_free_for_wyt(url: str) -> bool:
+    """Return True only if the URL is freely accessible (not paywalled)."""
+    if not url:
+        return False
+    url_lower = url.lower()
+    return not any(domain in url_lower for domain in _WYT_BLOCKED_DOMAINS)
+
+
 # ── Setup ───────────────────────────────────────────────────────────────────
 
 load_dotenv()
@@ -113,7 +134,11 @@ LIHTC connections: Only connect macro developments to LIHTC equity pricing or af
 
 Worth Your Time sourcing: The Worth Your Time section should actively seek content from high quality sources beyond the configured RSS feeds. Draw from the full landscape of excellent long-form thinking including philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Marcus Aurelius excerpts, Amor Fati and Stoic frameworks, Tim Ferriss on philosophy/decision-making), ideas and mental models (Naval Ravikant at nav.al, Tim Urban / Wait But Why at waitbutwhy.com, Shane Parrish / Farnam Street at fs.blog), science and big ideas (Quanta Magazine at quantamagazine.org, Aeon at aeon.co, Nautilus at nautil.us, Edge.org, Popular Mechanics, Popular Science), health and longevity (Peter Attia at peterattiamd.com, Huberman Lab full episodes only — not Essentials clips), economics and society (Project Syndicate at project-syndicate.org, VoxEU at voxeu.org, Noahpinion long-form pieces). Prioritize in this order: (1) pieces that offer a framework for thinking, living, or deciding — not just information; (2) ideas that compound over time — Stoic philosophy, mental models, scientific principles; (3) content that would be just as valuable to read or listen to in 5 years as today; (4) pieces that would surprise or genuinely expand perspective. Rotate across content types and sources — aim for roughly one philosophical or Stoic piece per week, one science piece, one economics or finance piece. Do not feature the same source two days in a row. Stoicism and Naval-adjacent content should appear roughly once per week when strong material is available. Always include podcasts and videos as candidates alongside articles.
 
-Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.\
+Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
+
+Worth Your Time free-content rule: Every single item in Worth Your Time must be completely free to read, watch, or listen to without any subscription, login, or paywall. Use ONLY items from the WORTH YOUR TIME CANDIDATE POOL block in the user prompt — those have already been filtered to free sources. If you are not 100% certain an item from that pool is freely accessible, do not include it. When in doubt, leave it out. Do not include WSJ, FT, Bloomberg, NYT, The Atlantic, Foreign Affairs, HBR, The New Yorker, or any other subscription publication in Worth Your Time. Strong free sources include: Noahpinion free posts, Aeon, Nautilus, Quanta Magazine, Huberman Lab, Invest Like the Best episode pages, Farnam Street free articles, Wait But Why, The Marginalian, Ryan Holiday / Daily Stoic, Project Syndicate free articles, VoxEU, Popular Science, Popular Mechanics, Stat News, New Scientist free articles, Ars Technica, and any .gov, .edu, or open-access research source.
+
+The Economist has full article access via authenticated feed. Include Economist long-form pieces, cover stories, and analytical essays in Worth Your Time when they are exceptional quality and have staying power — The Economist is one of the highest-quality sources available. Economist items appear in the WORTH YOUR TIME CANDIDATE POOL and are always eligible.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -276,18 +301,71 @@ def save_economist_history(used_urls: set[str]) -> None:
     log.info("Saved %d URL(s) to economist_history.json", len(used_urls))
 
 
-def fetch_economist_all(source: dict) -> list[dict]:
-    """Fetch every entry from The Economist feed regardless of publish date."""
-    items = []
+def _fetch_economist_article_text(url: str, headers: dict) -> str:
+    """
+    Attempt to fetch full article body from The Economist using cookie auth.
+
+    To get your Economist session cookie:
+      1. Log in to economist.com in Chrome
+      2. Press F12 → Application tab → Cookies → https://www.economist.com
+      3. Find the cookie named 'session_id' (or 'economist_session' / 'session')
+      4. Copy the Value and paste into .env as ECONOMIST_SESSION_COOKIE=<value>
+    """
     try:
-        feed = feedparser.parse(source["url"])
+        resp = requests.get(url, headers=headers, timeout=15)
+        if resp.status_code != 200:
+            return ""
+        soup = BeautifulSoup(resp.text, "lxml")
+        for sel in [
+            "article",
+            "[class*='article__body']",
+            "[class*='article-body']",
+            "div.layout-article-body",
+            "div.article__content",
+            "[data-component='article-body']",
+        ]:
+            el = soup.select_one(sel)
+            if el:
+                text = el.get_text(separator=" ", strip=True)
+                if len(text) > 200:
+                    return text[:2000]
+    except Exception:
+        pass
+    return ""
+
+
+def fetch_economist_all(source: dict) -> list[dict]:
+    """Fetch every entry from The Economist feed regardless of publish date.
+    Uses ECONOMIST_SESSION_COOKIE from .env for authenticated access when set.
+    """
+    items = []
+    econ_cookie = os.getenv("ECONOMIST_SESSION_COOKIE", "").strip()
+    headers: dict[str, str] = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+    }
+    if econ_cookie:
+        headers["Cookie"] = f"session_id={econ_cookie}"
+
+    try:
+        feed = feedparser.parse(source["url"], request_headers=headers)
         for entry in feed.entries:
             pub = _parse_entry_date(entry)
+            summary = (getattr(entry, "summary", "") or "")[:600]
+            link = getattr(entry, "link", "")
+            # Attempt full article fetch when cookie is available
+            if econ_cookie and link:
+                full_text = _fetch_economist_article_text(link, headers)
+                if full_text:
+                    summary = full_text[:600]
             items.append({
                 "source":    source["name"],
                 "title":     getattr(entry, "title", ""),
-                "link":      getattr(entry, "link", ""),
-                "summary":   (getattr(entry, "summary", "") or "")[:600],
+                "link":      link,
+                "summary":   summary,
                 "published": pub.isoformat() if pub else "",
             })
         log.info("The Economist feed: %d total item(s)", len(items))
@@ -650,6 +728,43 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     if email_block:
         raw_blocks.insert(0, email_block)
 
+    # Build free-only Worth Your Time candidate pool (hard pre-filter).
+    # Only items whose URLs pass _is_free_for_wyt() are eligible.
+    # Economist items (economist.com) pass because they are not in _WYT_BLOCKED_DOMAINS.
+    wyt_seen: set[str] = set()
+    wyt_candidates: list[dict] = []
+    for section_key, section_items in content.items():
+        if not isinstance(section_items, list):
+            continue
+        for item in section_items:
+            if not isinstance(item, dict):
+                continue
+            url = item.get("link") or item.get("url") or ""
+            if url and url not in wyt_seen and _is_free_for_wyt(url):
+                wyt_seen.add(url)
+                wyt_candidates.append(item)
+
+    if wyt_candidates:
+        wyt_lines = []
+        for item in wyt_candidates[:60]:
+            wyt_lines.append(
+                f"SOURCE: {item.get('source', '')}\n"
+                f"TITLE: {item.get('title', '')}\n"
+                f"URL: {item.get('link') or item.get('url', '')}\n"
+                f"SUMMARY: {item.get('summary', '')}\n"
+            )
+        wyt_block = (
+            "=== WORTH YOUR TIME CANDIDATE POOL (free sources only — "
+            "use ONLY these for Worth Your Time selection) ===\n"
+            + "\n".join(wyt_lines)
+        )
+    else:
+        wyt_block = (
+            "=== WORTH YOUR TIME CANDIDATE POOL ===\n"
+            "(no free candidates available today — omit Worth Your Time section)"
+        )
+    raw_blocks.append(wyt_block)
+
     raw_content = "\n\n".join(raw_blocks)
 
     return f"""\
@@ -736,7 +851,10 @@ DIGEST SECTIONS TO PRODUCE (in this order):
 
    PAYWALL RULES:
    DO NOT hyperlink these domains — render as plain text with (subscription required):
-     wsj.com  ft.com  economist.com  bloomberg.com  theinformation.com  nytimes.com
+     wsj.com  ft.com  bloomberg.com  theinformation.com  nytimes.com
+     newyorker.com  theatlantic.com  foreignaffairs.com  hbr.org
+     wired.com  businessinsider.com  washingtonpost.com
+   economist.com — always link freely (authenticated access enabled).
    Always link freely:
      reuters.com  thehill.com  npr.org  noahpinion.blog  bensbites.com
      anthropic.com  housingfinance.com  congress.gov  *.gov  *.edu
