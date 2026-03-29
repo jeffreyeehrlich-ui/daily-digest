@@ -27,6 +27,8 @@ from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
+from gmail_reader import fetch_newsletter_emails
+
 # ── Setup ───────────────────────────────────────────────────────────────────
 
 load_dotenv()
@@ -109,7 +111,9 @@ Science section quality: In the Science & Health section, each story must be wri
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time sourcing: The Worth Your Time section should actively seek content from high quality sources beyond the configured RSS feeds. Draw from the full landscape of excellent long-form thinking including philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Marcus Aurelius excerpts, Amor Fati and Stoic frameworks, Tim Ferriss on philosophy/decision-making), ideas and mental models (Naval Ravikant at nav.al, Tim Urban / Wait But Why at waitbutwhy.com, Shane Parrish / Farnam Street at fs.blog), science and big ideas (Quanta Magazine at quantamagazine.org, Aeon at aeon.co, Nautilus at nautil.us, Edge.org, Popular Mechanics, Popular Science), health and longevity (Peter Attia at peterattiamd.com, Huberman Lab full episodes only — not Essentials clips), economics and society (Project Syndicate at project-syndicate.org, VoxEU at voxeu.org, Noahpinion long-form pieces). Prioritize in this order: (1) pieces that offer a framework for thinking, living, or deciding — not just information; (2) ideas that compound over time — Stoic philosophy, mental models, scientific principles; (3) content that would be just as valuable to read or listen to in 5 years as today; (4) pieces that would surprise or genuinely expand perspective. Rotate across content types and sources — aim for roughly one philosophical or Stoic piece per week, one science piece, one economics or finance piece. Do not feature the same source two days in a row. Stoicism and Naval-adjacent content should appear roughly once per week when strong material is available. Always include podcasts and videos as candidates alongside articles.\
+Worth Your Time sourcing: The Worth Your Time section should actively seek content from high quality sources beyond the configured RSS feeds. Draw from the full landscape of excellent long-form thinking including philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Marcus Aurelius excerpts, Amor Fati and Stoic frameworks, Tim Ferriss on philosophy/decision-making), ideas and mental models (Naval Ravikant at nav.al, Tim Urban / Wait But Why at waitbutwhy.com, Shane Parrish / Farnam Street at fs.blog), science and big ideas (Quanta Magazine at quantamagazine.org, Aeon at aeon.co, Nautilus at nautil.us, Edge.org, Popular Mechanics, Popular Science), health and longevity (Peter Attia at peterattiamd.com, Huberman Lab full episodes only — not Essentials clips), economics and society (Project Syndicate at project-syndicate.org, VoxEU at voxeu.org, Noahpinion long-form pieces). Prioritize in this order: (1) pieces that offer a framework for thinking, living, or deciding — not just information; (2) ideas that compound over time — Stoic philosophy, mental models, scientific principles; (3) content that would be just as valuable to read or listen to in 5 years as today; (4) pieces that would surprise or genuinely expand perspective. Rotate across content types and sources — aim for roughly one philosophical or Stoic piece per week, one science piece, one economics or finance piece. Do not feature the same source two days in a row. Stoicism and Naval-adjacent content should appear roughly once per week when strong material is available. Always include podcasts and videos as candidates alongside articles.
+
+Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -579,6 +583,19 @@ def _format_items(items: list[dict], limit: int) -> str:
     return "\n".join(lines) if lines else "(no items)"
 
 
+def _format_email_items(items: list[dict]) -> str:
+    """Format Gmail newsletter items for the Claude prompt."""
+    lines = []
+    for item in items:
+        lines.append(
+            f"EMAIL SOURCE: {item['source']}\n"
+            f"SUBJECT: {item['title']}\n"
+            f"DATE: {item['date']}\n"
+            f"CONTENT:\n{item['content']}\n"
+        )
+    return "\n".join(lines) if lines else "(no items)"
+
+
 def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     def section(title: str, key: str) -> str:
         items = content.get(key, [])
@@ -602,6 +619,13 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             "(no suitable article selected today — omit the section)"
         )
 
+    # Email newsletter block (GZero, The Promote, etc.)
+    email_items = content.get("email_newsletters", [])
+    if email_items:
+        email_block = f"=== EMAIL NEWSLETTER SOURCES (GZero, The Promote, etc.) ===\n{_format_email_items(email_items)}"
+    else:
+        email_block = None
+
     raw_blocks = [
         section("MARKETS (Bloomberg, WSJ, FT)", "markets"),
         section("MACRO & GEOPOLITICS (Reuters, FT, Bloomberg, GZero)", "macro_geopolitics"),
@@ -623,6 +647,8 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         section("RECENT RELEASES — PODCASTS & NEWSLETTERS (72-hour window)", "podcasts_newsletters"),
         econ_block,
     ]
+    if email_block:
+        raw_blocks.insert(0, email_block)
 
     raw_content = "\n\n".join(raw_blocks)
 
@@ -927,6 +953,15 @@ def main() -> None:
     # 5. Remove stories already seen in the last 7 days
     content = filter_seen_content(content, history)
     log.info("Total items after dedup: %d", sum(len(v) for v in content.values()))
+
+    # 5b. Fetch Gmail newsletter emails (GZero, The Promote, etc.)
+    log.info("Fetching Gmail newsletter emails …")
+    gmail_items = fetch_newsletter_emails()
+    if gmail_items:
+        log.info("Adding %d Gmail newsletter item(s) to digest", len(gmail_items))
+        content["email_newsletters"] = gmail_items
+    else:
+        content["email_newsletters"] = []
 
     # 6. Create shared Claude client (reused for Economist selection + main digest)
     api_key = os.environ.get("ANTHROPIC_API_KEY")
