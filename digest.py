@@ -17,6 +17,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urljoin
+import urllib.parse
 
 import anthropic
 import feedparser
@@ -990,6 +991,41 @@ def wrap_email(body_html: str, today: datetime) -> str:
 
 # ── SendGrid delivery ─────────────────────────────────────────────────────────
 
+_WYT_BASE_URL = "https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add="
+_WYT_HREF_RE  = re.compile(
+    r'href="(https://jeffreyeehrlich-ui\.github\.io/daily-digest/reading-list/\?add=[^"]*)"',
+    re.IGNORECASE,
+)
+
+
+def _fix_wyt_add_links(html: str) -> str:
+    """
+    Post-process generated email HTML to ensure every ?add= link is correctly
+    percent-encoded. Claude sometimes produces partial or inconsistent encoding
+    of special characters (apostrophes, quotes, commas) in the JSON payload.
+    This function decodes whatever Claude produced and re-encodes it cleanly
+    using urllib.parse.quote, making the links identical on all devices.
+    """
+    import json as _json
+
+    def _fix(match: re.Match) -> str:
+        href = match.group(1)
+        prefix = _WYT_BASE_URL
+        encoded_part = href[len(prefix):]
+        try:
+            decoded = urllib.parse.unquote(encoded_part)
+            obj = _json.loads(decoded)          # validate JSON
+            clean_encoded = urllib.parse.quote(
+                _json.dumps(obj, ensure_ascii=False, separators=(",", ":")),
+                safe="",
+            )
+            return f'href="{prefix}{clean_encoded}"'
+        except Exception:
+            return match.group(0)               # leave unchanged if unparseable
+
+    return _WYT_HREF_RE.sub(_fix, html)
+
+
 def send_email(html: str, today: datetime) -> None:
     api_key    = os.environ.get("SENDGRID_API_KEY")
     from_email = os.environ.get("FROM_EMAIL")
@@ -1103,6 +1139,9 @@ def main() -> None:
     digest_html = generate_digest(
         content, today, test_mode=not send_mode, client=claude_client
     )
+
+    # 9b. Fix any malformed ?add= URLs produced by Claude
+    digest_html = _fix_wyt_add_links(digest_html)
 
     # 10. Record featured stories and persist dedup history
     new_entries = extract_featured_stories(digest_html, content)
