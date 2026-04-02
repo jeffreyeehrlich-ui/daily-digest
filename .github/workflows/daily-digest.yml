@@ -36,28 +36,20 @@ jobs:
           pip install anthropic feedparser sendgrid python-dotenv pyyaml requests beautifulsoup4 lxml \
             google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
-      # ── Generate reading list config with GitHub token ────────────────────
+      # ── Inject GitHub token into reading list page ────────────────────────
       # READING_LIST_TOKEN must be a GitHub Personal Access Token with repo scope.
-      # This is separate from any other tokens used in this workflow.
       # To create it: github.com/settings/tokens → Generate new token (classic)
       #   → check 'repo' scope → copy value → add as GitHub secret READING_LIST_TOKEN
-      - name: Generate reading list config
-        run: |
-          echo "const GITHUB_CONFIG = {" > reading-list/config.js
-          echo "  token: '${{ secrets.READING_LIST_TOKEN }}'," >> reading-list/config.js
-          echo "  username: 'jeffreyeehrlich-ui'," >> reading-list/config.js
-          echo "  repo: 'daily-digest'" >> reading-list/config.js
-          echo "};" >> reading-list/config.js
-
-      # ── Commit config.js so GitHub Pages serves it with the real token ──────
+      # The HTML page has data-token="" on the body tag; sed replaces it with the real token.
       # [skip ci] prevents this commit from re-triggering the workflow.
-      - name: Deploy reading list config to GitHub Pages
+      - name: Inject token into reading list page
         run: |
+          sed -i 's/data-token="[^"]*"/data-token="${{ secrets.READING_LIST_TOKEN }}"/g' reading-list/index.html
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add reading-list/config.js
-          git diff --staged --quiet || git commit -m "Deploy reading list config [skip ci]"
-          git push origin main
+          git add reading-list/index.html
+          git diff --staged --quiet || git commit -m "Inject token [skip ci]"
+          git push
 
       - name: Generate and send digest
         env:

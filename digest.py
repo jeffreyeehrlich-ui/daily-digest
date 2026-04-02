@@ -897,13 +897,16 @@ font-family:Arial,Helvetica,sans-serif;">
    ADD TO LIST BUTTON — construct a static percent-encoded href:
    Base:  https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=
    Append the URL-encoded version of a JSON object with these fields:
-     {{"title": "[TITLE]", "url": "[ITEM_URL]", "source": "[SOURCE]", "type": "[article|podcast|video]", "category": "[category]", "duration": "[duration]", "description": "[2-3 sentence description]"}}
+     {{"title": "[TITLE]", "url": "[ITEM_URL]", "source": "[SOURCE]", "type": "[article|podcast|video]", "category": "[one of: markets|real-estate|macro|ai|science|health|philosophy|policy|other]", "duration": "[duration]", "description": "[2-3 sentence description]"}}
+
+   Valid category values (use EXACTLY one of these strings):
+     markets, real-estate, macro, ai, science, health, philosophy, policy, other
 
    Encoding rules (apply to the entire JSON string):
      space->%20  newline->%0A  :->%3A  /->%2F  ?->%3F  =->%3D  &->%26  #->%23  +->%2B  quote->%22  open-brace->%7B  close-brace->%7D  open-bracket->%5B  close-bracket->%5D  comma->%2C
 
    Worked example (title "Why Rates Matter", url "https://noahpinion.blog/p/x"):
-   https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=%7B%22title%22%3A%22Why%20Rates%20Matter%22%2C%22url%22%3A%22https%3A%2F%2Fnoahpinion.blog%2Fp%2Fx%22%2C%22source%22%3A%22Noahpinion%22%2C%22type%22%3A%22article%22%2C%22category%22%3A%22economics%22%2C%22duration%22%3A%2212%20min%20read%22%2C%22description%22%3A%22A%20clear%20look%20at%20rate%20dynamics.%22%7D
+   https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=%7B%22title%22%3A%22Why%20Rates%20Matter%22%2C%22url%22%3A%22https%3A%2F%2Fnoahpinion.blog%2Fp%2Fx%22%2C%22source%22%3A%22Noahpinion%22%2C%22type%22%3A%22article%22%2C%22category%22%3A%22macro%22%2C%22duration%22%3A%2212%20min%20read%22%2C%22description%22%3A%22A%20clear%20look%20at%20rate%20dynamics.%22%7D
 
    FREELY-LINKED ITEM TEMPLATE:
    <div style="margin:0 0 20px;padding:14px 16px;border:1px solid #e8e8e8;\
