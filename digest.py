@@ -36,10 +36,10 @@ from gmail_reader import fetch_newsletter_emails
 # economist.com is intentionally absent — Economist access is via cookie auth.
 _WYT_BLOCKED_DOMAINS: frozenset[str] = frozenset({
     "wsj.com", "ft.com", "bloomberg.com", "bloomberg.net",
-    "theinformation.com", "nytimes.com", "newyorker.com",
-    "theatlantic.com", "foreignaffairs.com", "hbr.org",
-    "wired.com", "businessinsider.com", "washingtonpost.com",
-    "thetimes.co.uk", "telegraph.co.uk",
+    "nytimes.com", "newyorker.com", "theatlantic.com",
+    "foreignaffairs.com", "hbr.org", "businessinsider.com",
+    "washingtonpost.com", "thetimes.co.uk", "telegraph.co.uk",
+    "theinformation.com",
 })
 
 
@@ -127,7 +127,7 @@ border-radius:4px;background:#fafafa;"
 
 Do NOT wrap the output in markdown code fences. Output raw HTML only.
 
-Cross-section deduplication: Before writing each section, check whether any story or development has already been covered in a previous section. If a story appeared in Markets, do not cover it again in Macro or any other section even from a different angle. Each event or development should appear exactly once in the digest in the section where it is most relevant. If a geopolitical event is driving markets, cover it fully in Markets and only reference it briefly in Macro as 'as noted in Markets above' rather than re-explaining it.
+Cross-section deduplication — strict: Apply strict cross-section deduplication. Before writing any section check every story, bill, legislation, or development that has already appeared in a previous section. If a topic was covered in any previous section do not cover it again in any subsequent section — not even from a different angle, not even with different framing. Each piece of news appears exactly once in the entire digest in the single most relevant section. Specifically: if a housing bill or legislation appeared in US News do not mention it again in Real Estate; if a geopolitical event appeared in Markets do not cover it again in Macro; if an economic data point appeared in Markets do not reference it again in any other section; if you need to connect a later section to something covered earlier write only 'As noted in [Section Name] above' with no additional detail. This rule has no exceptions.
 
 Science section quality: In the Science & Health section, each story must be written as a single clean paragraph with no repeated language, no repeated phrases, and no restating of the same point. Read each science item back before including it and remove any sentence that repeats information already stated in the same item.
 
@@ -137,9 +137,17 @@ Worth Your Time sourcing: The Worth Your Time section should actively seek conte
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
-Worth Your Time free-content rule: Every single item in Worth Your Time must be completely free to read, watch, or listen to without any subscription, login, or paywall. Use ONLY items from the WORTH YOUR TIME CANDIDATE POOL block in the user prompt — those have already been filtered to free sources. If you are not 100% certain an item from that pool is freely accessible, do not include it. When in doubt, leave it out. Do not include WSJ, FT, Bloomberg, NYT, The Atlantic, Foreign Affairs, HBR, The New Yorker, or any other subscription publication in Worth Your Time. Strong free sources include: Noahpinion free posts, Aeon, Nautilus, Quanta Magazine, Huberman Lab, Invest Like the Best episode pages, Farnam Street free articles, Wait But Why, The Marginalian, Ryan Holiday / Daily Stoic, Project Syndicate free articles, VoxEU, Popular Science, Popular Mechanics, Stat News, New Scientist free articles, Ars Technica, and any .gov, .edu, or open-access research source.
+Worth Your Time free-content rule: Every item in Worth Your Time must be completely free to access without any subscription, login, or paywall. You must be 100% certain an item is freely accessible before including it. When in doubt leave it out entirely. Do not include any item from WSJ, FT, Bloomberg, NYT, The Atlantic, New Yorker, Foreign Affairs, HBR, Washington Post, or any other publication that requires a subscription. Strong free sources include: Noahpinion free posts, Aeon, Nautilus, Quanta Magazine, Huberman Lab, Invest Like the Best episode pages, Farnam Street free articles, Wait But Why, The Marginalian, Daily Stoic, Project Syndicate free articles, VoxEU, Popular Science, Popular Mechanics, Stat News, New Scientist free articles, Ars Technica, and any open access research.
 
-The Economist has full article access via authenticated feed. Include Economist long-form pieces, cover stories, and analytical essays in Worth Your Time when they are exceptional quality and have staying power — The Economist is one of the highest-quality sources available. Economist items appear in the WORTH YOUR TIME CANDIDATE POOL and are always eligible.\
+The Economist has full article access via authenticated feed. Include Economist long-form pieces, cover stories, and analytical essays in Worth Your Time when they are exceptional quality and have staying power — The Economist is one of the highest-quality sources available. Economist items appear in the WORTH YOUR TIME CANDIDATE POOL and are always eligible.
+
+Markets section length: Write the Markets section at 80 percent of your normal length. Be more concise. Cut any sentence that restates something already said. Every sentence must add new information. The section should read like a tight FT briefing not a full analysis piece.
+
+Links policy: Whenever you recommend that the reader check something, visit a source, or look something up — always provide a direct hyperlink to that specific resource. Never say 'it would be worth checking X' or 'see Y directly' without including the URL as a clickable link. If you do not have the specific URL for a resource, do not recommend it. Only recommend things you can link to directly.
+
+References section: After the Worth Your Time section and before any footer, output a final section titled '📎 Sources & References'. This section lists every article, report, or source that was cited or linked anywhere in today's digest as a numbered list of clickable hyperlinks in this format: [N]. [Headline or title] — [Source name] with the title as a hyperlink to the URL. Include every source that was linked inline in the digest body. Use this exact header HTML:
+<h2 style="font-size:16px;font-weight:bold;margin:32px 0 6px;border-left:4px solid #1a1a2e;padding-left:10px;color:#1a1a1a;">📎 Sources &amp; References</h2>
+Then a numbered list using <ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:2;color:#333;"> with each <li> containing the linked title and source name.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -779,8 +787,7 @@ Use only URLs that appear verbatim in this data — never fabricate links.
 ─────────────────────────────────────────────────────────────────────────────
 DIGEST SECTIONS TO PRODUCE (in this order):
 
-1. 📈 Markets — Full FT-style narrative covering equities, rates, oil, credit, FX.
-   Identify the dominant market theme. End with one bolded "Number to watch."
+1. 📈 Markets — FT-style narrative covering equities, rates, oil, credit, FX. Write at 80% of normal length — tight and concise. Every sentence must add new information; cut any sentence that restates something already said. Identify the dominant market theme. End with one bolded "Number to watch."
 
 2. 🌍 Macro & Geopolitics — Up to 3 stories. Bold sub-header per story.
    2–3 sentences each.
