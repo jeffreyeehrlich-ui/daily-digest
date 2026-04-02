@@ -58,7 +58,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -f reading-list/config.js
           git diff --staged --quiet || git commit -m "Deploy reading list config [skip ci]"
-          git push origin master
+          git push origin main
 
       - name: Generate and send digest
         env:
