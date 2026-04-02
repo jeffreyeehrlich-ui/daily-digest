@@ -17,6 +17,7 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urljoin
+import urllib.parse
 
 import anthropic
 import feedparser
@@ -26,6 +27,29 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+
+from gmail_reader import fetch_newsletter_emails
+
+# ── Worth Your Time paywall domain blacklist ──────────────────────────────────
+# Items whose URLs match any of these domains are excluded from the
+# Worth Your Time candidate pool before the prompt is sent to Claude.
+# economist.com is intentionally absent — Economist access is via cookie auth.
+_WYT_BLOCKED_DOMAINS: frozenset[str] = frozenset({
+    "wsj.com", "ft.com", "bloomberg.com", "bloomberg.net",
+    "nytimes.com", "newyorker.com", "theatlantic.com",
+    "foreignaffairs.com", "hbr.org", "businessinsider.com",
+    "washingtonpost.com", "thetimes.co.uk", "telegraph.co.uk",
+    "theinformation.com",
+})
+
+
+def _is_free_for_wyt(url: str) -> bool:
+    """Return True only if the URL is freely accessible (not paywalled)."""
+    if not url:
+        return False
+    url_lower = url.lower()
+    return not any(domain in url_lower for domain in _WYT_BLOCKED_DOMAINS)
+
 
 # ── Setup ───────────────────────────────────────────────────────────────────
 
@@ -101,7 +125,29 @@ Worth Your Time item card:
   style="margin:0 0 20px;padding:14px 16px;border:1px solid #e8e8e8;\
 border-radius:4px;background:#fafafa;"
 
-Do NOT wrap the output in markdown code fences. Output raw HTML only.\
+Do NOT wrap the output in markdown code fences. Output raw HTML only.
+
+Cross-section deduplication — strict: Apply strict cross-section deduplication. Before writing any section check every story, bill, legislation, or development that has already appeared in a previous section. If a topic was covered in any previous section do not cover it again in any subsequent section — not even from a different angle, not even with different framing. Each piece of news appears exactly once in the entire digest in the single most relevant section. Specifically: if a housing bill or legislation appeared in US News do not mention it again in Real Estate; if a geopolitical event appeared in Markets do not cover it again in Macro; if an economic data point appeared in Markets do not reference it again in any other section; if you need to connect a later section to something covered earlier write only 'As noted in [Section Name] above' with no additional detail. This rule has no exceptions.
+
+Science section quality: In the Science & Health section, each story must be written as a single clean paragraph with no repeated language, no repeated phrases, and no restating of the same point. Read each science item back before including it and remove any sentence that repeats information already stated in the same item.
+
+LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
+
+Worth Your Time sourcing: The Worth Your Time section should actively seek content from high quality sources beyond the configured RSS feeds. Draw from the full landscape of excellent long-form thinking including philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Marcus Aurelius excerpts, Amor Fati and Stoic frameworks, Tim Ferriss on philosophy/decision-making), ideas and mental models (Naval Ravikant at nav.al, Tim Urban / Wait But Why at waitbutwhy.com, Shane Parrish / Farnam Street at fs.blog), science and big ideas (Quanta Magazine at quantamagazine.org, Aeon at aeon.co, Nautilus at nautil.us, Edge.org, Popular Mechanics, Popular Science), health and longevity (Peter Attia at peterattiamd.com, Huberman Lab full episodes only — not Essentials clips), economics and society (Project Syndicate at project-syndicate.org, VoxEU at voxeu.org, Noahpinion long-form pieces). Prioritize in this order: (1) pieces that offer a framework for thinking, living, or deciding — not just information; (2) ideas that compound over time — Stoic philosophy, mental models, scientific principles; (3) content that would be just as valuable to read or listen to in 5 years as today; (4) pieces that would surprise or genuinely expand perspective. Rotate across content types and sources — aim for roughly one philosophical or Stoic piece per week, one science piece, one economics or finance piece. Do not feature the same source two days in a row. Stoicism and Naval-adjacent content should appear roughly once per week when strong material is available. Always include podcasts and videos as candidates alongside articles.
+
+Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
+
+Worth Your Time free-content rule: Every item in Worth Your Time must be completely free to access without any subscription, login, or paywall. You must be 100% certain an item is freely accessible before including it. When in doubt leave it out entirely. Do not include any item from WSJ, FT, Bloomberg, NYT, The Atlantic, New Yorker, Foreign Affairs, HBR, Washington Post, or any other publication that requires a subscription. Strong free sources include: Noahpinion free posts, Aeon, Nautilus, Quanta Magazine, Huberman Lab, Invest Like the Best episode pages, Farnam Street free articles, Wait But Why, The Marginalian, Daily Stoic, Project Syndicate free articles, VoxEU, Popular Science, Popular Mechanics, Stat News, New Scientist free articles, Ars Technica, and any open access research.
+
+The Economist has full article access via authenticated feed. Include Economist long-form pieces, cover stories, and analytical essays in Worth Your Time when they are exceptional quality and have staying power — The Economist is one of the highest-quality sources available. Economist items appear in the WORTH YOUR TIME CANDIDATE POOL and are always eligible.
+
+Markets section length: Write the Markets section at 80 percent of your normal length. Be more concise. Cut any sentence that restates something already said. Every sentence must add new information. The section should read like a tight FT briefing not a full analysis piece.
+
+Links policy: Whenever you recommend that the reader check something, visit a source, or look something up — always provide a direct hyperlink to that specific resource. Never say 'it would be worth checking X' or 'see Y directly' without including the URL as a clickable link. If you do not have the specific URL for a resource, do not recommend it. Only recommend things you can link to directly.
+
+References section: After the Worth Your Time section and before any footer, output a final section titled '📎 Sources & References'. This section lists every article, report, or source that was cited or linked anywhere in today's digest as a numbered list of clickable hyperlinks in this format: [N]. [Headline or title] — [Source name] with the title as a hyperlink to the URL. Include every source that was linked inline in the digest body. Use this exact header HTML:
+<h2 style="font-size:16px;font-weight:bold;margin:32px 0 6px;border-left:4px solid #1a1a2e;padding-left:10px;color:#1a1a1a;">📎 Sources &amp; References</h2>
+Then a numbered list using <ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:2;color:#333;"> with each <li> containing the linked title and source name.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -264,18 +310,71 @@ def save_economist_history(used_urls: set[str]) -> None:
     log.info("Saved %d URL(s) to economist_history.json", len(used_urls))
 
 
-def fetch_economist_all(source: dict) -> list[dict]:
-    """Fetch every entry from The Economist feed regardless of publish date."""
-    items = []
+def _fetch_economist_article_text(url: str, headers: dict) -> str:
+    """
+    Attempt to fetch full article body from The Economist using cookie auth.
+
+    To get your Economist session cookie:
+      1. Log in to economist.com in Chrome
+      2. Press F12 → Application tab → Cookies → https://www.economist.com
+      3. Find the cookie named 'session_id' (or 'economist_session' / 'session')
+      4. Copy the Value and paste into .env as ECONOMIST_SESSION_COOKIE=<value>
+    """
     try:
-        feed = feedparser.parse(source["url"])
+        resp = requests.get(url, headers=headers, timeout=15)
+        if resp.status_code != 200:
+            return ""
+        soup = BeautifulSoup(resp.text, "lxml")
+        for sel in [
+            "article",
+            "[class*='article__body']",
+            "[class*='article-body']",
+            "div.layout-article-body",
+            "div.article__content",
+            "[data-component='article-body']",
+        ]:
+            el = soup.select_one(sel)
+            if el:
+                text = el.get_text(separator=" ", strip=True)
+                if len(text) > 200:
+                    return text[:2000]
+    except Exception:
+        pass
+    return ""
+
+
+def fetch_economist_all(source: dict) -> list[dict]:
+    """Fetch every entry from The Economist feed regardless of publish date.
+    Uses ECONOMIST_SESSION_COOKIE from .env for authenticated access when set.
+    """
+    items = []
+    econ_cookie = os.getenv("ECONOMIST_SESSION_COOKIE", "").strip()
+    headers: dict[str, str] = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/124.0.0.0 Safari/537.36"
+        ),
+    }
+    if econ_cookie:
+        headers["Cookie"] = f"session_id={econ_cookie}"
+
+    try:
+        feed = feedparser.parse(source["url"], request_headers=headers)
         for entry in feed.entries:
             pub = _parse_entry_date(entry)
+            summary = (getattr(entry, "summary", "") or "")[:600]
+            link = getattr(entry, "link", "")
+            # Attempt full article fetch when cookie is available
+            if econ_cookie and link:
+                full_text = _fetch_economist_article_text(link, headers)
+                if full_text:
+                    summary = full_text[:600]
             items.append({
                 "source":    source["name"],
                 "title":     getattr(entry, "title", ""),
-                "link":      getattr(entry, "link", ""),
-                "summary":   (getattr(entry, "summary", "") or "")[:600],
+                "link":      link,
+                "summary":   summary,
                 "published": pub.isoformat() if pub else "",
             })
         log.info("The Economist feed: %d total item(s)", len(items))
@@ -571,6 +670,19 @@ def _format_items(items: list[dict], limit: int) -> str:
     return "\n".join(lines) if lines else "(no items)"
 
 
+def _format_email_items(items: list[dict]) -> str:
+    """Format Gmail newsletter items for the Claude prompt."""
+    lines = []
+    for item in items:
+        lines.append(
+            f"EMAIL SOURCE: {item['source']}\n"
+            f"SUBJECT: {item['title']}\n"
+            f"DATE: {item['date']}\n"
+            f"CONTENT:\n{item['content']}\n"
+        )
+    return "\n".join(lines) if lines else "(no items)"
+
+
 def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     def section(title: str, key: str) -> str:
         items = content.get(key, [])
@@ -594,6 +706,13 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             "(no suitable article selected today — omit the section)"
         )
 
+    # Email newsletter block (GZero, The Promote, etc.)
+    email_items = content.get("email_newsletters", [])
+    if email_items:
+        email_block = f"=== EMAIL NEWSLETTER SOURCES (GZero, The Promote, etc.) ===\n{_format_email_items(email_items)}"
+    else:
+        email_block = None
+
     raw_blocks = [
         section("MARKETS (Bloomberg, WSJ, FT)", "markets"),
         section("MACRO & GEOPOLITICS (Reuters, FT, Bloomberg, GZero)", "macro_geopolitics"),
@@ -615,6 +734,45 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         section("RECENT RELEASES — PODCASTS & NEWSLETTERS (72-hour window)", "podcasts_newsletters"),
         econ_block,
     ]
+    if email_block:
+        raw_blocks.insert(0, email_block)
+
+    # Build free-only Worth Your Time candidate pool (hard pre-filter).
+    # Only items whose URLs pass _is_free_for_wyt() are eligible.
+    # Economist items (economist.com) pass because they are not in _WYT_BLOCKED_DOMAINS.
+    wyt_seen: set[str] = set()
+    wyt_candidates: list[dict] = []
+    for section_key, section_items in content.items():
+        if not isinstance(section_items, list):
+            continue
+        for item in section_items:
+            if not isinstance(item, dict):
+                continue
+            url = item.get("link") or item.get("url") or ""
+            if url and url not in wyt_seen and _is_free_for_wyt(url):
+                wyt_seen.add(url)
+                wyt_candidates.append(item)
+
+    if wyt_candidates:
+        wyt_lines = []
+        for item in wyt_candidates[:60]:
+            wyt_lines.append(
+                f"SOURCE: {item.get('source', '')}\n"
+                f"TITLE: {item.get('title', '')}\n"
+                f"URL: {item.get('link') or item.get('url', '')}\n"
+                f"SUMMARY: {item.get('summary', '')}\n"
+            )
+        wyt_block = (
+            "=== WORTH YOUR TIME CANDIDATE POOL (free sources only — "
+            "use ONLY these for Worth Your Time selection) ===\n"
+            + "\n".join(wyt_lines)
+        )
+    else:
+        wyt_block = (
+            "=== WORTH YOUR TIME CANDIDATE POOL ===\n"
+            "(no free candidates available today — omit Worth Your Time section)"
+        )
+    raw_blocks.append(wyt_block)
 
     raw_content = "\n\n".join(raw_blocks)
 
@@ -629,8 +787,7 @@ Use only URLs that appear verbatim in this data — never fabricate links.
 ─────────────────────────────────────────────────────────────────────────────
 DIGEST SECTIONS TO PRODUCE (in this order):
 
-1. 📈 Markets — Full FT-style narrative covering equities, rates, oil, credit, FX.
-   Identify the dominant market theme. End with one bolded "Number to watch."
+1. 📈 Markets — FT-style narrative covering equities, rates, oil, credit, FX. Write at 80% of normal length — tight and concise. Every sentence must add new information; cut any sentence that restates something already said. Identify the dominant market theme. End with one bolded "Number to watch."
 
 2. 🌍 Macro & Geopolitics — Up to 3 stories. Bold sub-header per story.
    2–3 sentences each.
@@ -702,7 +859,10 @@ DIGEST SECTIONS TO PRODUCE (in this order):
 
    PAYWALL RULES:
    DO NOT hyperlink these domains — render as plain text with (subscription required):
-     wsj.com  ft.com  economist.com  bloomberg.com  theinformation.com
+     wsj.com  ft.com  bloomberg.com  theinformation.com  nytimes.com
+     newyorker.com  theatlantic.com  foreignaffairs.com  hbr.org
+     wired.com  businessinsider.com  washingtonpost.com
+   economist.com — always link freely (authenticated access enabled).
    Always link freely:
      reuters.com  thehill.com  npr.org  noahpinion.blog  bensbites.com
      anthropic.com  housingfinance.com  congress.gov  *.gov  *.edu
@@ -710,7 +870,7 @@ DIGEST SECTIONS TO PRODUCE (in this order):
      colossus.com  hubermanlab.com  arstechnica.com  therundown.ai  nature.com
      goldmansachs.com  morganstanley.com  jpmorgan.com  blackrock.com
      cbre.com  us.jll.com  nmrk.com  berkadia.com  marcusmillichap.com
-     globest.com  costar.com
+     globest.com  costar.com  popularmechanics.com  popsci.com
    When in doubt: do not hyperlink.
 
    SECTION HEADER — render exactly as:
@@ -838,6 +998,41 @@ def wrap_email(body_html: str, today: datetime) -> str:
 
 # ── SendGrid delivery ─────────────────────────────────────────────────────────
 
+_WYT_BASE_URL = "https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add="
+_WYT_HREF_RE  = re.compile(
+    r'href="(https://jeffreyeehrlich-ui\.github\.io/daily-digest/reading-list/\?add=[^"]*)"',
+    re.IGNORECASE,
+)
+
+
+def _fix_wyt_add_links(html: str) -> str:
+    """
+    Post-process generated email HTML to ensure every ?add= link is correctly
+    percent-encoded. Claude sometimes produces partial or inconsistent encoding
+    of special characters (apostrophes, quotes, commas) in the JSON payload.
+    This function decodes whatever Claude produced and re-encodes it cleanly
+    using urllib.parse.quote, making the links identical on all devices.
+    """
+    import json as _json
+
+    def _fix(match: re.Match) -> str:
+        href = match.group(1)
+        prefix = _WYT_BASE_URL
+        encoded_part = href[len(prefix):]
+        try:
+            decoded = urllib.parse.unquote(encoded_part)
+            obj = _json.loads(decoded)          # validate JSON
+            clean_encoded = urllib.parse.quote(
+                _json.dumps(obj, ensure_ascii=False, separators=(",", ":")),
+                safe="",
+            )
+            return f'href="{prefix}{clean_encoded}"'
+        except Exception:
+            return match.group(0)               # leave unchanged if unparseable
+
+    return _WYT_HREF_RE.sub(_fix, html)
+
+
 def send_email(html: str, today: datetime) -> None:
     api_key    = os.environ.get("SENDGRID_API_KEY")
     from_email = os.environ.get("FROM_EMAIL")
@@ -920,6 +1115,15 @@ def main() -> None:
     content = filter_seen_content(content, history)
     log.info("Total items after dedup: %d", sum(len(v) for v in content.values()))
 
+    # 5b. Fetch Gmail newsletter emails (GZero, The Promote, etc.)
+    log.info("Fetching Gmail newsletter emails …")
+    gmail_items = fetch_newsletter_emails()
+    if gmail_items:
+        log.info("Adding %d Gmail newsletter item(s) to digest", len(gmail_items))
+        content["email_newsletters"] = gmail_items
+    else:
+        content["email_newsletters"] = []
+
     # 6. Create shared Claude client (reused for Economist selection + main digest)
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -942,6 +1146,9 @@ def main() -> None:
     digest_html = generate_digest(
         content, today, test_mode=not send_mode, client=claude_client
     )
+
+    # 9b. Fix any malformed ?add= URLs produced by Claude
+    digest_html = _fix_wyt_add_links(digest_html)
 
     # 10. Record featured stories and persist dedup history
     new_entries = extract_featured_stories(digest_html, content)
