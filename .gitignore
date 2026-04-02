@@ -1,6 +1,5 @@
 # Secrets — never commit
 .env
-reading-list/config.js
 
 # Runtime logs (history JSON files are persisted via GitHub Actions cache)
 logs/*.txt
