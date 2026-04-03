@@ -1,0 +1,52 @@
+name: Save Reading List Item
+
+on:
+  workflow_dispatch:
+    inputs:
+      item_json:
+        description: 'JSON string of the reading list item to save'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  save-item:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Save item to reading list
+        run: |
+          python3 - <<'EOF'
+          import json, os, time
+          from datetime import date
+
+          item = json.loads(os.environ['ITEM_JSON'])
+
+          with open('reading-list/reading-list.json', 'r') as f:
+              data = json.load(f)
+
+          item['id']     = str(int(time.time() * 1000))
+          item['dateAdded'] = date.today().isoformat()
+          item['read']   = False
+
+          data.setdefault('items', []).insert(0, item)
+
+          with open('reading-list/reading-list.json', 'w') as f:
+              json.dump(data, f, indent=2)
+
+          print(f"Saved item: {item.get('title', '(no title)')}")
+          EOF
+        env:
+          ITEM_JSON: ${{ inputs.item_json }}
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reading-list/reading-list.json
+          git commit -m "Add reading list item [skip ci]"
+          git push origin main

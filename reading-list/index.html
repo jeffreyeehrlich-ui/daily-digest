@@ -588,9 +588,9 @@ function showToast(msg, type) {
 
 // ── GitHub API ─────────────────────────────────────────────────────────────
 
-function apiUrl() {
-  return `https://api.github.com/repos/jeffreyeehrlich-ui/daily-digest/contents/${GH_FILE}`;
-}
+const GH_RAW_URL      = `https://raw.githubusercontent.com/jeffreyeehrlich-ui/daily-digest/main/${GH_FILE}`;
+const GH_API_URL      = `https://api.github.com/repos/jeffreyeehrlich-ui/daily-digest/contents/${GH_FILE}`;
+const GH_DISPATCH_URL = 'https://api.github.com/repos/jeffreyeehrlich-ui/daily-digest/actions/workflows/save-reading-list-item.yml/dispatches';
 
 function authHeaders() {
   return {
@@ -599,53 +599,66 @@ function authHeaders() {
   };
 }
 
-async function validateToken() {
-  const res = await fetch(
-    `https://api.github.com/repos/jeffreyeehrlich-ui/daily-digest`,
-    { headers: authHeaders() }
-  );
-  return res.status;
-}
-
+// Load items from raw GitHub URL — no authentication required
 async function fetchList() {
-  const res = await fetch(apiUrl(), { headers: authHeaders() });
-  if (res.status === 401) {
-    throw new Error('Token expired or invalid. Please run the GitHub Actions workflow to refresh your credentials.');
-  }
-  if (!res.ok) throw new Error(`GitHub API error: ${res.status} ${res.statusText}`);
+  const res = await fetch(`${GH_RAW_URL}?t=${Date.now()}`);
+  if (!res.ok) throw new Error(`Failed to load reading list: ${res.status}`);
   const data = await res.json();
-  const content = JSON.parse(atob(data.content.replace(/\n/g, '')));
-  return { items: content.items || [], sha: data.sha };
+  return { items: data.items || [], sha: null };
 }
 
-async function saveList(items, sha) {
-  const encoded = btoa(unescape(encodeURIComponent(
-    JSON.stringify({ items }, null, 2)
-  )));
-  const res = await fetch(apiUrl(), {
+// Fetch current SHA — required for direct writes (toggle-read, delete)
+async function fetchCurrentSha() {
+  const res = await fetch(GH_API_URL, { headers: authHeaders() });
+  if (res.status === 401) throw new Error('Token expired or invalid. Please run the GitHub Actions workflow to refresh your credentials.');
+  if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+  const data = await res.json();
+  return data.sha;
+}
+
+// Direct list write — used by toggle-read and delete (fetches fresh SHA each time)
+async function saveList(items) {
+  const sha     = await fetchCurrentSha();
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify({ items }, null, 2))));
+  const res = await fetch(GH_API_URL, {
     method: 'PUT',
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
     body: JSON.stringify({ message: 'Update reading list', content: encoded, sha })
   });
-  if (res.status === 401) {
-    throw new Error('Token expired or invalid. Please run the GitHub Actions workflow to refresh your credentials.');
-  }
+  if (res.status === 401) throw new Error('Token expired or invalid. Please run the GitHub Actions workflow to refresh your credentials.');
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(`Save error: ${res.status} ${err.message || res.statusText}`);
   }
-  const data = await res.json();
-  return data.content.sha;
 }
 
-async function saveWithRetry(items, sha) {
+async function saveWithRetry(items) {
   try {
-    return await saveList(items, sha);
+    return await saveList(items);
   } catch (e) {
     if (e.message.includes('401') || e.message.includes('Token expired')) throw e;
-    // retry once on transient errors
-    return await saveList(items, sha);
+    return await saveList(items); // retry once on transient errors
   }
+}
+
+// Add new item via GitHub Actions workflow dispatch — token only needs workflow scope
+async function saveItem(itemData) {
+  if (!token) {
+    alert('Token not configured. Please run the GitHub Actions workflow.');
+    return false;
+  }
+  const res = await fetch(GH_DISPATCH_URL, {
+    method: 'POST',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ref: 'main', inputs: { item_json: JSON.stringify(itemData) } })
+  });
+  if (res.status === 204) {
+    showToast('Item saved! It will appear in your list within ~30 seconds.', 'success');
+    setTimeout(() => loadData(), 32000);
+    return true;
+  }
+  const err = await res.json().catch(() => ({}));
+  throw new Error(`Failed to save: ${err.message || res.status}`);
 }
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -754,7 +767,7 @@ async function toggleRead(id, isRead) {
   item.read = isRead;
   renderItems();
   try {
-    STATE.sha = await saveWithRetry(STATE.items, STATE.sha);
+    await saveWithRetry(STATE.items);
   } catch (e) {
     showToast(e.message, 'error');
     console.error('Save failed:', e);
@@ -767,7 +780,7 @@ async function deleteItem(id) {
   STATE.items = STATE.items.filter(i => i.id !== id);
   renderItems();
   try {
-    STATE.sha = await saveWithRetry(STATE.items, STATE.sha);
+    await saveWithRetry(STATE.items);
   } catch (e) {
     STATE.items = prev;
     renderItems();
@@ -789,15 +802,7 @@ async function addItem(data) {
     dateAdded:   getTodayStr(),
     read:        false,
   };
-  STATE.items.unshift(item);
-  try {
-    STATE.sha = await saveWithRetry(STATE.items, STATE.sha);
-    renderItems();
-    showToast('Item saved to reading list!', 'success');
-  } catch (e) {
-    STATE.items.shift();
-    throw e;
-  }
+  await saveItem(item); // dispatches workflow, item appears after ~30s
 }
 
 // ── Data loading ───────────────────────────────────────────────────────────
@@ -821,9 +826,7 @@ async function loadData() {
   } catch (e) {
     loadEl.style.display = 'none';
     errEl.style.display  = '';
-    errEl.textContent    = e.message.includes('Token expired') || e.message.includes('401')
-      ? 'Token expired or invalid. Please run the GitHub Actions workflow to refresh your credentials.'
-      : 'Could not load reading list: ' + e.message;
+    errEl.textContent = 'Could not load reading list: ' + e.message;
   }
 }
 
