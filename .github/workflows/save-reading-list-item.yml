@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_FULL_ACCESS }}
 
       - name: Save item to reading list
         run: |
@@ -29,9 +31,9 @@ jobs:
           with open('reading-list/reading-list.json', 'r') as f:
               data = json.load(f)
 
-          item['id']     = str(int(time.time() * 1000))
+          item['id']        = str(int(time.time() * 1000))
           item['dateAdded'] = date.today().isoformat()
-          item['read']   = False
+          item['read']      = False
 
           data.setdefault('items', []).insert(0, item)
 

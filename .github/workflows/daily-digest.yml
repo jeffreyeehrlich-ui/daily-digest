@@ -36,17 +36,16 @@ jobs:
           pip install anthropic feedparser python-dotenv pyyaml requests beautifulsoup4 lxml \
             google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
-      # ── Inject GitHub token into reading list page ────────────────────────
-      # READING_LIST_TOKEN must be a GitHub Personal Access Token with:
+      # ── Inject PAT into reading list page ────────────────────────────────
+      # PAT_FULL_ACCESS must be a GitHub Personal Access Token with:
       #   - repo scope (for toggle-read/delete via direct API)
       #   - workflow scope (for add-item via workflow dispatch)
       # To create: github.com/settings/tokens → Generate new token (classic)
-      #   → check 'repo' and 'workflow' scopes → copy value → add as secret READING_LIST_TOKEN
-      # The HTML page has data-token="" on the body tag; sed replaces it with the real token.
+      #   → check 'repo' and 'workflow' scopes → copy value → add as secret PAT_FULL_ACCESS
       # [skip ci] prevents this commit from re-triggering the workflow.
       - name: Inject token into reading list page
         run: |
-          TOKEN="${{ secrets.READING_LIST_TOKEN }}"
+          TOKEN="${{ secrets.PAT_FULL_ACCESS }}"
           sed -i "s/data-token=\"[^\"]*\"/data-token=\"${TOKEN}\"/" reading-list/index.html
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -58,6 +57,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          PAT_FULL_ACCESS: ${{ secrets.PAT_FULL_ACCESS }}
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
           ECONOMIST_SESSION_COOKIE: ${{ secrets.ECONOMIST_SESSION_COOKIE }}

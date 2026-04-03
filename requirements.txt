@@ -1,4 +1,5 @@
 # SendGrid removed — now using Gmail SMTP directly
+PyNaCl>=1.5.0
 anthropic>=0.40.0
 feedparser>=6.0.0
 python-dotenv>=1.0.0
