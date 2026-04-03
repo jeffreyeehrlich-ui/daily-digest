@@ -1,6 +1,6 @@
+# SendGrid removed — now using Gmail SMTP directly
 anthropic>=0.40.0
 feedparser>=6.0.0
-sendgrid>=6.11.0
 python-dotenv>=1.0.0
 PyYAML>=6.0
 requests>=2.31.0

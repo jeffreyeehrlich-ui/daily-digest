@@ -5,7 +5,7 @@ Daily Digest — generates and emails a structured morning briefing.
 Usage:
     python digest.py           # generate and print to terminal (same as --test)
     python digest.py --test    # generate and print to terminal, no email sent
-    python digest.py --send    # generate and send email via SendGrid
+    python digest.py --send    # generate and send email via Gmail SMTP
 """
 
 import argparse
@@ -19,14 +19,16 @@ from pathlib import Path
 from urllib.parse import urljoin
 import urllib.parse
 
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 import anthropic
 import feedparser
 import requests
 import yaml
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
 
 from gmail_reader import fetch_newsletter_emails
 
@@ -1037,30 +1039,35 @@ def _fix_wyt_add_links(html: str) -> str:
 
 
 def send_email(html: str, today: datetime) -> None:
-    api_key    = os.environ.get("SENDGRID_API_KEY")
-    from_email = os.environ.get("FROM_EMAIL")
-    to_email   = os.environ.get("TO_EMAIL")
+    gmail_user     = os.environ.get("FROM_EMAIL")
+    gmail_password = os.environ.get("GMAIL_APP_PASSWORD")
+    to_email       = os.environ.get("TO_EMAIL")
 
     for var, val in [
-        ("SENDGRID_API_KEY", api_key),
-        ("FROM_EMAIL",       from_email),
-        ("TO_EMAIL",         to_email),
+        ("FROM_EMAIL",         gmail_user),
+        ("GMAIL_APP_PASSWORD", gmail_password),
+        ("TO_EMAIL",           to_email),
     ]:
         if not val:
             raise ValueError(f"{var} is not set.")
 
-    subject  = f"Jeff's Daily Digest — {today.strftime('%B %d, %Y')}"
+    subject   = f"Jeff's Daily Digest — {today.strftime('%B %d, %Y')}"
     full_html = wrap_email(html, today)
+    plain     = "Your daily digest is ready. Open in an HTML-capable email client to view."
 
-    message = Mail(
-        from_email=from_email,
-        to_emails=to_email,
-        subject=subject,
-        html_content=full_html,
-    )
-    sg       = SendGridAPIClient(api_key)
-    response = sg.send(message)
-    log.info("Email sent  status=%s  to=%s", response.status_code, to_email)
+    msg = MIMEMultipart('alternative')
+    msg['Subject'] = subject
+    msg['From']    = f'"Jeff\'s Daily Digest" <{gmail_user}>'
+    msg['To']      = to_email
+    msg['List-Unsubscribe'] = f'<mailto:{gmail_user}>'
+
+    msg.attach(MIMEText(plain,     'plain'))
+    msg.attach(MIMEText(full_html, 'html'))
+
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(gmail_user, gmail_password)
+        smtp.sendmail(gmail_user, to_email, msg.as_string())
+    log.info("Email sent via Gmail SMTP to %s", to_email)
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -1073,7 +1080,7 @@ def parse_args() -> argparse.Namespace:
     )
     mode.add_argument(
         "--send", action="store_true",
-        help="Generate and send via SendGrid.",
+        help="Generate and send via Gmail SMTP.",
     )
     parser.add_argument(
         "--sources", default="sources.yaml",

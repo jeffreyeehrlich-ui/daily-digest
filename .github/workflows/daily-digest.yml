@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install anthropic feedparser sendgrid python-dotenv pyyaml requests beautifulsoup4 lxml \
+          pip install anthropic feedparser python-dotenv pyyaml requests beautifulsoup4 lxml \
             google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
       # ── Inject GitHub token into reading list page ────────────────────────
@@ -54,7 +54,7 @@ jobs:
       - name: Generate and send digest
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           FROM_EMAIL: ${{ secrets.FROM_EMAIL }}
           TO_EMAIL: ${{ secrets.TO_EMAIL }}
           ECONOMIST_SESSION_COOKIE: ${{ secrets.ECONOMIST_SESSION_COOKIE }}
