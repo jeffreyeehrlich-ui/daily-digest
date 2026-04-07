@@ -641,7 +641,7 @@ async function fetchList() {
 // Fetch current SHA — required for direct writes (toggle-read, delete)
 async function fetchCurrentSha() {
   const res = await fetch(GH_API_URL, { headers: authHeaders() });
-  if (res.status === 401) throw new Error('Token expired or invalid. Please run the GitHub Actions workflow to refresh your credentials.');
+  if (res.status === 401) throw new Error('Token expired or invalid. Update it via the ⚙ Token button.');
   if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
   const data = await res.json();
   return data.sha;
@@ -656,7 +656,7 @@ async function saveList(items) {
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
     body: JSON.stringify({ message: 'Update reading list', content: encoded, sha })
   });
-  if (res.status === 401) throw new Error('Token expired or invalid. Please run the GitHub Actions workflow to refresh your credentials.');
+  if (res.status === 401) throw new Error('Token expired or invalid. Update it via the ⚙ Token button.');
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(`Save error: ${res.status} ${err.message || res.statusText}`);
@@ -672,24 +672,31 @@ async function saveWithRetry(items) {
   }
 }
 
-// Add new item via GitHub Actions workflow dispatch — token only needs workflow scope
+// Add new item — writes directly to the file via GitHub Contents API
 async function saveItem(itemData) {
   if (!getToken()) {
     openTokenModal(true);
     return false;
   }
-  const res = await fetch(GH_DISPATCH_URL, {
-    method: 'POST',
+  // Fetch current list + SHA
+  const res = await fetch(GH_API_URL, { headers: authHeaders() });
+  if (res.status === 401) throw new Error('Token expired or invalid. Update it via the ⚙ Token button.');
+  if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+  const fileData = await res.json();
+  const current = JSON.parse(atob(fileData.content.replace(/\n/g, '')));
+  const items = [itemData, ...(current.items || [])];
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify({ items }, null, 2))));
+  const putRes = await fetch(GH_API_URL, {
+    method: 'PUT',
     headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ ref: 'main', inputs: { item_json: JSON.stringify(itemData) } })
+    body: JSON.stringify({ message: 'Add reading list item', content: encoded, sha: fileData.sha })
   });
-  if (res.status === 204) {
-    showToast('Item saved! It will appear in your list within ~30 seconds.', 'success');
-    setTimeout(() => loadData(), 32000);
-    return true;
+  if (putRes.status === 401) throw new Error('Token expired or invalid. Update it via the ⚙ Token button.');
+  if (!putRes.ok) {
+    const err = await putRes.json().catch(() => ({}));
+    throw new Error(`Save error: ${putRes.status} ${err.message || putRes.statusText}`);
   }
-  const err = await res.json().catch(() => ({}));
-  throw new Error(`Failed to save: ${err.message || res.status}`);
+  return true;
 }
 
 // ── State ──────────────────────────────────────────────────────────────────
@@ -833,7 +840,10 @@ async function addItem(data) {
     dateAdded:   getTodayStr(),
     read:        false,
   };
-  await saveItem(item); // dispatches workflow, item appears after ~30s
+  await saveItem(item);
+  STATE.items.unshift(item);
+  renderItems();
+  showToast('Item saved!', 'success');
 }
 
 // ── Data loading ───────────────────────────────────────────────────────────
