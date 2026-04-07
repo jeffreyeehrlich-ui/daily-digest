@@ -1,1 +1,16 @@
-{"items": []}
+{
+  "items": [
+    {
+      "id": "7f815c9f-8428-409c-a638-1e7a2dc8c049",
+      "title": "I Told You This Would End Badly",
+      "url": "https://www.noahpinion.blog/p/i-told-you-this-would-end-badly",
+      "source": "Noahpinion",
+      "type": "read",
+      "category": "macro",
+      "duration": "10 min read",
+      "description": "Noah Smith argues that structural warning signs of Trump's decision-making failures were visible long before the Iran war, and that ignoring expert judgment across domains has a predictable endpoint. Worth reading as a framework for recognizing how organizations discount low-probability, high-consequence warnings until they materialize.",
+      "dateAdded": "2026-04-07",
+      "read": false
+    }
+  ]
+}
