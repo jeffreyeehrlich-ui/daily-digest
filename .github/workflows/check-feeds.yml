@@ -1,0 +1,28 @@
+name: Feed Health Check
+
+on:
+  schedule:
+    # Runs every Monday at 07:00 UTC
+    - cron: "0 7 * * 1"
+  workflow_dispatch: # allow manual runs from the Actions tab
+
+jobs:
+  check-feeds:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Run feed health check
+        run: python check_feeds.py --strict
+        # --strict exits 1 if any feeds are broken, which fails this step and
+        # triggers a GitHub Actions failure email to the repo owner.

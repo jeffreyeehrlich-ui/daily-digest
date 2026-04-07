@@ -36,23 +36,6 @@ jobs:
           pip install anthropic feedparser python-dotenv pyyaml requests beautifulsoup4 lxml \
             google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
 
-      # ── Inject PAT into reading list page ────────────────────────────────
-      # PAT_FULL_ACCESS must be a GitHub Personal Access Token with:
-      #   - repo scope (for toggle-read/delete via direct API)
-      #   - workflow scope (for add-item via workflow dispatch)
-      # To create: github.com/settings/tokens → Generate new token (classic)
-      #   → check 'repo' and 'workflow' scopes → copy value → add as secret PAT_FULL_ACCESS
-      # [skip ci] prevents this commit from re-triggering the workflow.
-      - name: Inject token into reading list page
-        run: |
-          TOKEN="${{ secrets.PAT_FULL_ACCESS }}"
-          sed -i "s/data-token=\"[^\"]*\"/data-token=\"${TOKEN}\"/" reading-list/index.html
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add reading-list/index.html
-          git diff --staged --quiet || git commit -m "Inject token [skip ci]"
-          git push origin main || true
-
       - name: Generate and send digest
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
