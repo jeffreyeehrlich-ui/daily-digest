@@ -100,6 +100,21 @@ sources:
       url: https://www.noahpinion.blog/feed
       lookback_hours: 72
 
+  # ── Thinkers & Personal Blogs (7-day lookback — low posting frequency) ───
+  thinkers:
+    - name: Naval Ravikant
+      url: https://nav.al/feed
+      lookback_hours: 168
+    - name: Tim Ferriss
+      url: https://tim.blog/feed/
+      lookback_hours: 168
+    - name: Wait But Why (Tim Urban)
+      url: https://waitbutwhy.com/feed
+      lookback_hours: 168
+    - name: Ray Dalio (Medium)
+      url: https://medium.com/feed/@raydalio
+      lookback_hours: 168
+
   # ── Research & Market Intelligence ────────────────────────────────────────
   # Scraped sources (type: scrape) pull the public insights/research listing
   # pages directly.  RSS sources aggregate institutional research from wire

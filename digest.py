@@ -135,7 +135,7 @@ Science section quality: In the Science & Health section, each story must be wri
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time sourcing: The Worth Your Time section should actively seek content from high quality sources beyond the configured RSS feeds. Draw from the full landscape of excellent long-form thinking including philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Marcus Aurelius excerpts, Amor Fati and Stoic frameworks, Tim Ferriss on philosophy/decision-making), ideas and mental models (Naval Ravikant at nav.al, Tim Urban / Wait But Why at waitbutwhy.com, Shane Parrish / Farnam Street at fs.blog), science and big ideas (Quanta Magazine at quantamagazine.org, Aeon at aeon.co, Nautilus at nautil.us, Edge.org, Popular Mechanics, Popular Science), health and longevity (Peter Attia at peterattiamd.com, Huberman Lab full episodes only — not Essentials clips), economics and society (Project Syndicate at project-syndicate.org, VoxEU at voxeu.org, Noahpinion long-form pieces). Prioritize in this order: (1) pieces that offer a framework for thinking, living, or deciding — not just information; (2) ideas that compound over time — Stoic philosophy, mental models, scientific principles; (3) content that would be just as valuable to read or listen to in 5 years as today; (4) pieces that would surprise or genuinely expand perspective. Rotate across content types and sources — aim for roughly one philosophical or Stoic piece per week, one science piece, one economics or finance piece. Do not feature the same source two days in a row. Stoicism and Naval-adjacent content should appear roughly once per week when strong material is available. Always include podcasts and videos as candidates alongside articles.
+Worth Your Time sourcing: Always check the THINKERS & PERSONAL BLOGS section first — any new post from Naval Ravikant, Tim Ferriss, Tim Urban (Wait But Why), or Ray Dalio is a priority inclusion if it passes the quality tests. Philosophy must appear at least once per week. If no thinker post is available, draw from: philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Tim Ferriss on philosophy/decision-making, Shane Parrish / Farnam Street at fs.blog), ideas and mental models (Aeon at aeon.co, Nautilus at nautil.us), economics (Noahpinion long-form, Invest Like the Best, Bloomberg Odd Lots deep-dives), health/longevity (Huberman Lab full episodes only — not Essentials clips, Peter Attia at peterattiamd.com), science — only when genuinely pressing or paradigm-shifting (Quanta Magazine at quantamagazine.org, New Scientist, Nature, MIT Technology Review). Science may appear at most once per week. Do not feature the same source two days in a row. If nothing clears the bar, output nothing for this section — no header, no placeholder, no explanation.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
@@ -716,24 +716,25 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         email_block = None
 
     raw_blocks = [
-        section("MARKETS (Bloomberg, WSJ, FT)", "markets"),
-        section("MACRO & GEOPOLITICS (Reuters, FT, Bloomberg, GZero)", "macro_geopolitics"),
-        section("US NEWS (Reuters, The Hill)", "us_news"),
-        section("REAL ESTATE & AFFORDABLE HOUSING (The Real Deal, AHF, The Promote, Jay Parsons)", "real_estate"),
+        section("MARKETS (Bloomberg, WSJ, FT, CNBC)", "markets"),
+        section("MACRO & GEOPOLITICS (FT, Bloomberg, NPR, NYT World, Foreign Affairs, The Atlantic)", "macro_geopolitics"),
+        section("US NEWS (NPR, NYT, The Hill, Axios)", "us_news"),
+        section("REAL ESTATE & AFFORDABLE HOUSING (The Real Deal, Multifamily Dive, Bisnow, ConnectCRE, Jay Parsons)", "real_estate"),
         section(
             "RESEARCH & MARKET INTELLIGENCE "
             "(Goldman Sachs, Morgan Stanley, JPMorgan, BlackRock, "
             "CBRE, JLL, Newmark, Berkadia, Marcus & Millichap, "
-            "Bloomberg Economics, Reuters Finance, CoStar, GlobeSt)",
+            "Bloomberg Economics, RealPage, GlobeSt)",
             "research_intel",
         ),
         section(
             "AI & TECHNOLOGY "
-            "(Ben's Bites, Anthropic Blog, The Rundown AI, MIT Technology Review, Ars Technica)",
+            "(Ben's Bites, MIT Technology Review, Ars Technica)",
             "ai_tech",
         ),
-        section("SCIENCE & HEALTH (New Scientist, Stat News, Nature News)", "science_health"),
+        section("SCIENCE & HEALTH (New Scientist, Stat News, Nature, NYT Science, Popular Mechanics, Popular Science)", "science_health"),
         section("RECENT RELEASES — PODCASTS & NEWSLETTERS (72-hour window)", "podcasts_newsletters"),
+        section("THINKERS & PERSONAL BLOGS — PRIORITY WORTH YOUR TIME CANDIDATES (Naval, Tim Ferriss, Tim Urban, Ray Dalio — 7-day window)", "thinkers"),
         econ_block,
     ]
     if email_block:
@@ -772,7 +773,7 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     else:
         wyt_block = (
             "=== WORTH YOUR TIME CANDIDATE POOL ===\n"
-            "(no free candidates available today — omit Worth Your Time section)"
+            "(empty — output nothing for the Worth Your Time section)"
         )
     raw_blocks.append(wyt_block)
 
@@ -830,8 +831,8 @@ DIGEST SECTIONS TO PRODUCE (in this order):
    the digest. Applicable to real estate PE / affordable housing finance or
    general intellectual growth.
 
-11. 📚 Worth Your Time — Select 1–2 items TOTAL. Skip entirely if nothing clears
-   the bar — do not pad with mediocre content.
+11. 📚 Worth Your Time — Select 1–2 items TOTAL. If nothing clears the bar,
+   output nothing for this section — no header, no placeholder text, no apology.
 
    CONTENT TYPES AND MINIMUM LENGTHS:
    📄 Articles/essays  — min ~1 000 words / 5 min read; max ~30 min read.
@@ -846,18 +847,25 @@ DIGEST SECTIONS TO PRODUCE (in this order):
    4. High-quality, credible source?
    5. Freely accessible, or clearly flagged as (subscription required)?
 
-   STRONG CANDIDATES BY TOPIC:
-   Economics/markets:  Noahpinion essays, Invest Like the Best episodes,
-     Bloomberg Odd Lots deep-dives, Goldman/Morgan Stanley structural notes.
-   Science/health:     New Scientist, Stat News, Nature, MIT Technology Review,
-     Huberman Lab full episodes (not short clips).
-   Technology:         MIT Technology Review long-form, Ars Technica deep dives.
-   Real estate:        CBRE/JLL market outlook reports, Berkadia research.
-   Ideas/behaviour:    Huberman Lab, Invest Like the Best framework discussions.
+   TOPIC PRIORITIES — apply in this order:
+   1. Philosophy / ideas / mental models — include at least one per week whenever
+      available. Strong sources: Naval Ravikant, Tim Urban (Wait But Why),
+      Ray Dalio, Tim Ferriss long-form, Invest Like the Best framework discussions.
+      Any post from Naval, Tim Urban, Ray Dalio, or Tim Ferriss qualifies
+      automatically if it passes the quality tests — these are priority inclusions.
+   2. Economics/markets:  Noahpinion essays, Invest Like the Best episodes,
+      Bloomberg Odd Lots deep-dives, Goldman/Morgan Stanley structural notes.
+   3. Science/health:     Include at most once per week. Must be genuinely
+      pressing or paradigm-shifting — routine findings do not qualify.
+      Strong sources: New Scientist, Stat News, Nature, MIT Technology Review,
+      Huberman Lab full episodes (not short clips).
+   4. Technology:         MIT Technology Review long-form, Ars Technica deep dives.
+   5. Real estate:        CBRE/JLL market outlook reports, Berkadia research.
 
    ALWAYS EXCLUDE:
    Breaking news · market recaps · weekly data summaries · press releases ·
    content shorter than minimums · listicles or aggregator posts.
+   Science articles that are incremental, routine, or not genuinely pressing.
 
    PAYWALL RULES:
    DO NOT hyperlink these domains — render as plain text with (subscription required):
@@ -873,6 +881,7 @@ DIGEST SECTIONS TO PRODUCE (in this order):
      goldmansachs.com  morganstanley.com  jpmorgan.com  blackrock.com
      cbre.com  us.jll.com  nmrk.com  berkadia.com  marcusmillichap.com
      globest.com  costar.com  popularmechanics.com  popsci.com
+     nav.al  tim.blog  waitbutwhy.com  medium.com/@raydalio
    When in doubt: do not hyperlink.
 
    SECTION HEADER — render exactly as:
