@@ -22,6 +22,7 @@
     background: #1a3a6e;
     color: #fff;
     padding: 32px 24px 24px;
+    position: relative;
   }
   .site-header h1 {
     margin: 0 0 6px;
@@ -410,11 +411,12 @@
   }
 </style>
 </head>
-<body data-token="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">
+<body>
 
 <header class="site-header">
   <h1>Worth your time</h1>
   <p>Curated reads, listens, and watches with staying power</p>
+  <button id="settingsBtn" style="position:absolute;top:16px;right:20px;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;">⚙ Token</button>
 </header>
 
 <div class="filters-bar">
@@ -515,8 +517,37 @@
   </div>
 </div>
 
+<!-- Token Setup Modal -->
+<div class="modal-overlay" id="tokenModal">
+  <div class="modal">
+    <h2>Connect to GitHub</h2>
+    <p style="font-size:14px;color:#555;margin:0 0 16px;">A GitHub Personal Access Token is required to save and sync your reading list. It's stored only in your browser — never in the repo.</p>
+    <ol style="font-size:13px;color:#444;line-height:1.8;padding-left:18px;margin:0 0 16px;">
+      <li>Go to <strong>GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens</strong></li>
+      <li>Create a token scoped to <code>jeffreyeehrlich-ui/daily-digest</code></li>
+      <li>Grant <strong>Contents: Read &amp; Write</strong> and <strong>Actions: Read &amp; Write</strong></li>
+      <li>Paste it below</li>
+    </ol>
+    <div class="form-group">
+      <label for="tokenInput">Personal Access Token</label>
+      <input type="password" id="tokenInput" placeholder="github_pat_..." autocomplete="off">
+    </div>
+    <div id="tokenError" style="color:#c0392b;font-size:13px;display:none;margin-bottom:8px;"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="cancelTokenBtn" style="display:none;">Cancel</button>
+      <button class="btn-primary" id="saveTokenBtn">Save &amp; Continue</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const token = document.body.dataset.token;
+// ── Token management ───────────────────────────────────────────────────────
+
+const TOKEN_KEY = 'reading_list_gh_token';
+
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY) || '';
+}
 const GH_FILE = 'reading-list/reading-list.json';
 
 // ── Utilities ──────────────────────────────────────────────────────────────
@@ -594,7 +625,7 @@ const GH_DISPATCH_URL = 'https://api.github.com/repos/jeffreyeehrlich-ui/daily-d
 
 function authHeaders() {
   return {
-    Authorization: `token ${token}`,
+    Authorization: `token ${getToken()}`,
     Accept: 'application/vnd.github.v3+json'
   };
 }
@@ -643,8 +674,8 @@ async function saveWithRetry(items) {
 
 // Add new item via GitHub Actions workflow dispatch — token only needs workflow scope
 async function saveItem(itemData) {
-  if (!token) {
-    alert('Token not configured. Please run the GitHub Actions workflow.');
+  if (!getToken()) {
+    openTokenModal(true);
     return false;
   }
   const res = await fetch(GH_DISPATCH_URL, {
@@ -940,13 +971,46 @@ function checkAddParam() {
   }
 }
 
+// ── Token Modal ────────────────────────────────────────────────────────────
+
+function openTokenModal(canCancel) {
+  document.getElementById('cancelTokenBtn').style.display = canCancel ? '' : 'none';
+  document.getElementById('tokenInput').value = getToken();
+  document.getElementById('tokenError').style.display = 'none';
+  document.getElementById('tokenModal').classList.add('open');
+  setTimeout(() => document.getElementById('tokenInput').focus(), 100);
+}
+
+function closeTokenModal() {
+  document.getElementById('tokenModal').classList.remove('open');
+}
+
+document.getElementById('saveTokenBtn').addEventListener('click', () => {
+  const val = document.getElementById('tokenInput').value.trim();
+  if (!val) {
+    document.getElementById('tokenError').textContent = 'Please enter a token.';
+    document.getElementById('tokenError').style.display = '';
+    return;
+  }
+  localStorage.setItem(TOKEN_KEY, val);
+  closeTokenModal();
+  loadData();
+});
+
+document.getElementById('cancelTokenBtn').addEventListener('click', closeTokenModal);
+document.getElementById('settingsBtn').addEventListener('click', () => openTokenModal(true));
+
 // ── Init ───────────────────────────────────────────────────────────────────
 
 (function init() {
   const addData = checkAddParam();
-  loadData().then(() => {
-    if (addData) openAddModal(addData);
-  });
+  if (!getToken()) {
+    openTokenModal(false);
+  } else {
+    loadData().then(() => {
+      if (addData) openAddModal(addData);
+    });
+  }
 })();
 </script>
 </body>
