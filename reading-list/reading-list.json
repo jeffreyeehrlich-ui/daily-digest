@@ -1,6 +1,18 @@
 {
   "items": [
     {
+      "id": "78851c2b-674b-4a82-aebc-811dd810822b",
+      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soon—here's why",
+      "url": "https://technologyreview.com/2026/04/08/1135398/mustafa-suleyman-ai-future/",
+      "source": "MIT Technology Review",
+      "type": "read",
+      "category": "ai-tech",
+      "duration": "10 min read",
+      "description": "Mustafa Suleyman argues human intuitions about linear progress are ill-equipped to model exponential AI growth. His framework for thinking about compounding capability is applicable to anyone pricing long-duration risk. A substantive counterweight to AI fatigue narratives.",
+      "dateAdded": "2026-04-10",
+      "read": false
+    },
+    {
       "id": "7f815c9f-8428-409c-a638-1e7a2dc8c049",
       "title": "I Told You This Would End Badly",
       "url": "https://www.noahpinion.blog/p/i-told-you-this-would-end-badly",
