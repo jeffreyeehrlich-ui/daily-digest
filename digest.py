@@ -376,17 +376,15 @@ def fetch_economist_all(source: dict) -> list[dict]:
     for feed_url in ECONOMIST_SECTION_FEEDS:
         try:
             feed = feedparser.parse(feed_url, request_headers=headers)
-            for entry in feed.entries:
+            feed_items = 0
+            for entry in feed.entries[:10]:  # cap at 10 per section — plenty for selection
                 link = getattr(entry, "link", "")
                 if not link or link in seen_links:
                     continue
                 seen_links.add(link)
                 pub = _parse_entry_date(entry)
+                # Use feed summary only — per-article fetches are too slow (300+ items)
                 summary = (getattr(entry, "summary", "") or "")[:600]
-                if econ_cookie and link:
-                    full_text = _fetch_economist_article_text(link, headers)
-                    if full_text:
-                        summary = full_text[:600]
                 items.append({
                     "source":    "The Economist",
                     "title":     getattr(entry, "title", ""),
@@ -394,7 +392,8 @@ def fetch_economist_all(source: dict) -> list[dict]:
                     "summary":   summary,
                     "published": pub.isoformat() if pub else "",
                 })
-            log.info("Economist feed %s: %d item(s)", feed_url.split("/")[-2], len(feed.entries))
+                feed_items += 1
+            log.info("Economist feed %s: %d item(s)", feed_url.split("/")[-2], feed_items)
         except Exception as exc:
             log.error("Failed to fetch Economist feed %s: %s", feed_url, exc)
 
