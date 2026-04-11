@@ -135,7 +135,7 @@ Science section quality: In the Science & Health section, each story must be wri
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time sourcing: Always check the THINKERS & PERSONAL BLOGS section first — any new post from Naval Ravikant, Tim Ferriss, Tim Urban (Wait But Why), or Ray Dalio is a priority inclusion if it passes the quality tests. Philosophy must appear at least once per week. If no thinker post is available, draw from: philosophy and Stoicism (Daily Stoic / Ryan Holiday at ryanholiday.net, The Marginalian at themarginalian.org, Tim Ferriss on philosophy/decision-making, Shane Parrish / Farnam Street at fs.blog), ideas and mental models (Aeon at aeon.co, Nautilus at nautil.us), economics (Noahpinion long-form, Invest Like the Best, Bloomberg Odd Lots deep-dives), health/longevity (Huberman Lab full episodes only — not Essentials clips, Peter Attia at peterattiamd.com), science — only when genuinely pressing or paradigm-shifting (Quanta Magazine at quantamagazine.org, New Scientist, Nature, MIT Technology Review). Science may appear at most once per week. Do not feature the same source two days in a row. If nothing clears the bar, output nothing for this section — no header, no placeholder, no explanation.
+Worth Your Time sourcing: DIVERSITY IS MANDATORY — do not default to Noahpinion. Noahpinion may appear at most once per week. Rotate aggressively across the full source landscape. Priority order: (1) THINKERS feed first — any new post from Naval Ravikant, Tim Ferriss, Tim Urban (Wait But Why), or Ray Dalio auto-qualifies if it passes quality tests; (2) Philosophy / Stoicism / lifestyle — these must appear at least once per week: Daily Stoic (ryanholiday.net), The Marginalian (themarginalian.org), Aeon (aeon.co), Nautilus (nautil.us), Farnam Street (fs.blog), Paul Graham essays (paulgraham.com), Tim Ferriss long-form; (3) Ideas and mental models — Shane Parrish / Farnam Street, Ribbonfarm, Stratechery free posts; (4) Economics/finance — Invest Like the Best episodes, Bloomberg Odd Lots deep-dives, Project Syndicate free articles (project-syndicate.org), VoxEU (voxeu.org); (5) Health/longevity — Huberman Lab full episodes only (never Essentials clips), Peter Attia (peterattiamd.com); (6) Science — at most once per week, only genuinely pressing or paradigm-shifting: Quanta Magazine (quantamagazine.org), New Scientist, Nature, MIT Technology Review. Track what you featured yesterday — never repeat the same source on consecutive days. If nothing clears the bar, output nothing — no header, no placeholder, no explanation.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
@@ -143,13 +143,13 @@ Worth Your Time free-content rule: Every item in Worth Your Time must be complet
 
 The Economist has full article access via authenticated feed. Include Economist long-form pieces, cover stories, and analytical essays in Worth Your Time when they are exceptional quality and have staying power — The Economist is one of the highest-quality sources available. Economist items appear in the WORTH YOUR TIME CANDIDATE POOL and are always eligible.
 
-Markets section length: Write the Markets section at 80 percent of your normal length. Be more concise. Cut any sentence that restates something already said. Every sentence must add new information. The section should read like a tight FT briefing not a full analysis piece.
+Markets and Macro sourcing: Actively use FT, WSJ, Bloomberg, and Foreign Affairs content when it is present in the feed data — do not default to a single outlet. The MARKETS section must draw from multiple outlets (FT, Bloomberg, WSJ, CNBC). The MACRO & GEOPOLITICS section must use FT and Foreign Affairs when available — Foreign Affairs has a 7-day lookback so recent essays will be in the feed even if not published today. Attribute each story to its source in the inline sources line. FT and WSJ links: render as plain text with (subscription required) — never hyperlink these.
 
 Links policy: Whenever you recommend that the reader check something, visit a source, or look something up — always provide a direct hyperlink to that specific resource. Never say 'it would be worth checking X' or 'see Y directly' without including the URL as a clickable link. If you do not have the specific URL for a resource, do not recommend it. Only recommend things you can link to directly.
 
-References section: After the Worth Your Time section and before any footer, output a final section titled '📎 Sources & References'. This section lists every article, report, or source that was cited or linked anywhere in today's digest as a numbered list of clickable hyperlinks in this format: [N]. [Headline or title] — [Source name] with the title as a hyperlink to the URL. Include every source that was linked inline in the digest body. Use this exact header HTML:
-<h2 style="font-size:16px;font-weight:bold;margin:32px 0 6px;border-left:4px solid #1a1a2e;padding-left:10px;color:#1a1a1a;">📎 Sources &amp; References</h2>
-Then a numbered list using <ol style="margin:8px 0 0;padding-left:20px;font-size:13px;line-height:2;color:#333;"> with each <li> containing the linked title and source name.\
+Inline sources: At the end of each section (Markets, Macro & Geopolitics, US News, Real Estate, Research & Market Intelligence, AI & Technology, Science & Health), output a compact sources line listing only the outlets whose content was actually used in that section. Format exactly as:
+<p style="margin:8px 0 0;font-size:11px;color:#aaa;border-top:1px solid #f0f0f0;padding-top:6px;">Sources: [Outlet 1] · [Outlet 2] · [Outlet 3]</p>
+Use short outlet names (e.g. FT, Bloomberg, NPR, NYT, Reuters). Only list outlets that contributed at least one story to that section. Do not add a sources line to the Economist, One Thing, Worth Your Time, or Recent Releases sections. Do not output a separate Sources & References section at the bottom.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -790,46 +790,27 @@ Use only URLs that appear verbatim in this data — never fabricate links.
 ─────────────────────────────────────────────────────────────────────────────
 DIGEST SECTIONS TO PRODUCE (in this order):
 
-1. 📈 Markets — FT-style narrative covering equities, rates, oil, credit, FX. Write at 80% of normal length — tight and concise. Every sentence must add new information; cut any sentence that restates something already said. Identify the dominant market theme. End with one bolded "Number to watch."
+LENGTH RULE: Write every section at 75% of what you would normally produce. Cut every sentence that restates, qualifies, or hedges something already stated. One idea, one sentence.
 
-2. 🌍 Macro & Geopolitics — Up to 3 stories. Bold sub-header per story.
-   2–3 sentences each.
+1. 📈 Markets — FT-style narrative: equities, rates, oil, credit, FX. Identify the dominant theme. End with one bolded "Number to watch." No bullets.
 
-3. 🇺🇸 US News — Only if genuinely important domestic news exists.
-   Skip the section entirely if nothing clears that bar.
+2. 🌍 Macro & Geopolitics — Up to 3 stories. Bold sub-header per story. 2 sentences each max.
 
-4. 🏘️ Real Estate & Affordable Housing — Variable depth based on importance.
-   Legislation and LIHTC policy get full treatment. Routine market data gets
-   one line.
+3. 🇺🇸 US News — Only genuinely important domestic news. Skip entirely if nothing clears the bar.
 
-5. 🏦 Research & Market Intelligence — 2–3 items max. Skip entirely if nothing
-   relevant is found. Prioritize in this order:
-     (a) Primary institutional research: Goldman Sachs, Morgan Stanley, JPMorgan,
-         BlackRock, CBRE, JLL, Newmark, Berkadia, Marcus & Millichap
-     (b) Wire-service summaries: Bloomberg Economics, Reuters Finance, CoStar, GlobeSt
-   Focus on: multifamily trends, interest rate outlooks, cap rate trends, CRE
-   investment volumes, macroeconomic forecasts. Ignore anything already covered in
-   Markets or Macro. Bloomberg.com links: plain text with (subscription required).
+4. 🏘️ Real Estate & Affordable Housing — Policy, LIHTC, and market-level trends only. Do NOT mention specific transactions, deals, acquisitions, or individual property sales — these are not useful. Legislation and LIHTC policy get full treatment. Macro trends get one line.
 
-6. 🤖 AI & Technology — 2–3 items max. Variable depth: breakthrough models or
-   major policy shifts get full treatment; routine product news gets one line.
+5. 🏦 Research & Market Intelligence — 2 items max. Skip if nothing relevant. Prioritize: (a) institutional research (Goldman, Morgan Stanley, JPMorgan, BlackRock, CBRE, JLL, Newmark, Berkadia, Marcus & Millichap), (b) wire summaries (Bloomberg Economics, RealPage, GlobeSt). Focus: multifamily trends, rate outlooks, cap rates, CRE volumes. Skip anything already in Markets or Macro.
 
-7. 🔬 Science & Health — 2 stories max. Only include if genuinely important
-   (major findings, significant public health developments). Skip entirely if
-   nothing clears the bar. Variable depth: landmark studies get fuller treatment.
+6. 🤖 AI & Technology — 2 items max. Breakthroughs or major policy shifts get 2–3 sentences; routine news gets one line.
 
-8. 🎙️ Recent Releases — Only include items published in the last 48 hours.
-   One-line description + link per item. Skip section if nothing new.
+7. 🔬 Science & Health — 1 story max. Only landmark findings or major public health news. Skip entirely if nothing clears the bar.
 
-9. 🗞️ Economist — Feature today's pre-selected article (see THE ECONOMIST block
-   above). Write: bold headline as <h3>, then exactly two sentences explaining
-   why this piece is worth reading and what unique insight it offers, then a link.
-   If the block says "(no suitable article selected today — omit the section)",
-   skip this section entirely.
+8. 📰 Recent Releases — Articles and written content only — no podcasts, no videos. Only items published in the last 48 hours. For each item: one-line description + link + an "Add to Worth Your Time" button using the same ADD TO LIST BUTTON format and encoding rules defined in section 11. Use category "other" if unsure. Skip section if nothing new.
 
-10. 💡 One Thing to Learn Today — Single practical insight tied to something in
-   the digest. Applicable to real estate PE / affordable housing finance or
-   general intellectual growth.
+9. 🗞️ Economist — Feature today's pre-selected article. Bold headline as <h3>, two sentences on why it's worth reading, then a link. Skip entirely if the block says no article selected.
+
+10. 💡 One Thing to Learn Today — One practical insight from the digest. Real estate PE / affordable housing finance or general intellectual growth. Two sentences max.
 
 11. 📚 Worth Your Time — Select 1–2 items TOTAL. If nothing clears the bar,
    output nothing for this section — no header, no placeholder text, no apology.
@@ -882,6 +863,9 @@ DIGEST SECTIONS TO PRODUCE (in this order):
      cbre.com  us.jll.com  nmrk.com  berkadia.com  marcusmillichap.com
      globest.com  costar.com  popularmechanics.com  popsci.com
      nav.al  tim.blog  waitbutwhy.com  medium.com/@raydalio
+     ryanholiday.net  themarginalian.org  aeon.co  nautil.us  fs.blog
+     paulgraham.com  project-syndicate.org  voxeu.org  peterattiamd.com
+     quantamagazine.org  ribbonfarm.com  stratechery.com
    When in doubt: do not hyperlink.
 
    SECTION HEADER — render exactly as:
