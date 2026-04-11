@@ -493,6 +493,10 @@ FEED_FALLBACKS: dict[str, list[str]] = {
     "https://www.therundown.ai/rss":                      ["https://www.bensbites.com/feed"],
     # CoStar
     "https://www.costar.com/rss/news":                    ["https://www.globest.com/rss/"],
+    # The Real Deal
+    "https://therealdeal.com/feed/":                      ["https://www.bisnow.com/rss/national"],
+    # GlobeSt
+    "https://www.globest.com/rss/":                       ["https://www.connectcre.com/feed/"],
     # Economist full RSS (dead)
     "https://www.economist.com/rss/the_economist_full_rss.xml": [
         "https://www.economist.com/leaders/rss.xml"
