@@ -135,7 +135,7 @@ Science section quality: In the Science & Health section, each story must be wri
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time sourcing: DIVERSITY IS MANDATORY — do not default to Noahpinion. Noahpinion may appear at most once per week. Rotate aggressively across the full source landscape. Priority order: (1) THINKERS feed first — any new post from Naval Ravikant, Tim Ferriss, Tim Urban (Wait But Why), or Ray Dalio auto-qualifies if it passes quality tests; (2) Philosophy / Stoicism / lifestyle — these must appear at least once per week: Daily Stoic (ryanholiday.net), The Marginalian (themarginalian.org), Aeon (aeon.co), Nautilus (nautil.us), Farnam Street (fs.blog), Paul Graham essays (paulgraham.com), Tim Ferriss long-form; (3) Ideas and mental models — Shane Parrish / Farnam Street, Ribbonfarm, Stratechery free posts; (4) Economics/finance — Invest Like the Best episodes, Bloomberg Odd Lots deep-dives, Project Syndicate free articles (project-syndicate.org), VoxEU (voxeu.org); (5) Health/longevity — Huberman Lab full episodes only (never Essentials clips), Peter Attia (peterattiamd.com); (6) Science — at most once per week, only genuinely pressing or paradigm-shifting: Quanta Magazine (quantamagazine.org), New Scientist, Nature, MIT Technology Review. Track what you featured yesterday — never repeat the same source on consecutive days. If nothing clears the bar, output nothing — no header, no placeholder, no explanation.
+Worth Your Time sourcing: The single criterion is staying power — would this still be worth reading or listening to a month from now? Pick the single best item available, or two if both are genuinely exceptional. Do not include something just to fill the section. Check the THINKERS feed first (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio) — these are strong candidates when available. Other strong sources to draw from when they have material worth featuring: philosophy and ideas (Aeon, The Marginalian, Nautilus, Farnam Street, Paul Graham, Ryan Holiday, Tim Urban), economics and finance (Invest Like the Best, Bloomberg Odd Lots deep-dives, Project Syndicate, VoxEU, Noahpinion long-form essays), health and longevity (Huberman Lab full episodes only — never Essentials clips, Peter Attia), science when paradigm-shifting (Quanta Magazine, New Scientist, Nature, MIT Technology Review). These are examples — use them only when the content genuinely earns inclusion. Do not default to any single source. Do not repeat the same source on consecutive days. If nothing clears the bar, output nothing — no header, no placeholder, no explanation.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
@@ -346,10 +346,22 @@ def _fetch_economist_article_text(url: str, headers: dict) -> str:
 
 
 def fetch_economist_all(source: dict) -> list[dict]:
-    """Fetch every entry from The Economist feed regardless of publish date.
-    Uses ECONOMIST_SESSION_COOKIE from .env for authenticated access when set.
+    """Fetch every entry from The Economist across multiple section feeds.
+    The full RSS feed (the_economist_full_rss.xml) is dead as of 2025.
+    We now pull from individual section feeds which are publicly accessible.
+    Uses ECONOMIST_SESSION_COOKIE from .env for full article text when set.
     """
+    ECONOMIST_SECTION_FEEDS = [
+        "https://www.economist.com/leaders/rss.xml",
+        "https://www.economist.com/briefing/rss.xml",
+        "https://www.economist.com/finance-and-economics/rss.xml",
+        "https://www.economist.com/the-world-this-week/rss.xml",
+        "https://www.economist.com/business/rss.xml",
+        "https://www.economist.com/international/rss.xml",
+    ]
+
     items = []
+    seen_links: set[str] = set()
     econ_cookie = os.getenv("ECONOMIST_SESSION_COOKIE", "").strip()
     headers: dict[str, str] = {
         "User-Agent": (
@@ -361,27 +373,32 @@ def fetch_economist_all(source: dict) -> list[dict]:
     if econ_cookie:
         headers["Cookie"] = f"session_id={econ_cookie}"
 
-    try:
-        feed = feedparser.parse(source["url"], request_headers=headers)
-        for entry in feed.entries:
-            pub = _parse_entry_date(entry)
-            summary = (getattr(entry, "summary", "") or "")[:600]
-            link = getattr(entry, "link", "")
-            # Attempt full article fetch when cookie is available
-            if econ_cookie and link:
-                full_text = _fetch_economist_article_text(link, headers)
-                if full_text:
-                    summary = full_text[:600]
-            items.append({
-                "source":    source["name"],
-                "title":     getattr(entry, "title", ""),
-                "link":      link,
-                "summary":   summary,
-                "published": pub.isoformat() if pub else "",
-            })
-        log.info("The Economist feed: %d total item(s)", len(items))
-    except Exception as exc:
-        log.error("Failed to fetch Economist feed: %s", exc)
+    for feed_url in ECONOMIST_SECTION_FEEDS:
+        try:
+            feed = feedparser.parse(feed_url, request_headers=headers)
+            for entry in feed.entries:
+                link = getattr(entry, "link", "")
+                if not link or link in seen_links:
+                    continue
+                seen_links.add(link)
+                pub = _parse_entry_date(entry)
+                summary = (getattr(entry, "summary", "") or "")[:600]
+                if econ_cookie and link:
+                    full_text = _fetch_economist_article_text(link, headers)
+                    if full_text:
+                        summary = full_text[:600]
+                items.append({
+                    "source":    "The Economist",
+                    "title":     getattr(entry, "title", ""),
+                    "link":      link,
+                    "summary":   summary,
+                    "published": pub.isoformat() if pub else "",
+                })
+            log.info("Economist feed %s: %d item(s)", feed_url.split("/")[-2], len(feed.entries))
+        except Exception as exc:
+            log.error("Failed to fetch Economist feed %s: %s", feed_url, exc)
+
+    log.info("The Economist total: %d unique item(s)", len(items))
     return items
 
 
@@ -812,41 +829,25 @@ LENGTH RULE: Write every section at 75% of what you would normally produce. Cut 
 
 10. 💡 One Thing to Learn Today — One practical insight from the digest. Real estate PE / affordable housing finance or general intellectual growth. Two sentences max.
 
-11. 📚 Worth Your Time — Select 1–2 items TOTAL. If nothing clears the bar,
-   output nothing for this section — no header, no placeholder text, no apology.
+11. 📚 Worth Your Time — Select 1–2 items that would be just as valuable to
+   read or listen to one month from now as today. If nothing clears that bar,
+   output nothing — no header, no placeholder text, no apology.
 
    CONTENT TYPES AND MINIMUM LENGTHS:
    📄 Articles/essays  — min ~1 000 words / 5 min read; max ~30 min read.
       Must NOT be breaking news or a daily/weekly data recap.
-   🎬 Videos           — min 2 min; max 30 min. Substantive only — no trailers.
-   🎧 Podcasts         — min 2 min; max 60 min. Full episodes preferred.
+   🎬 Videos           — min 2 min; max 30 min. Substantive only.
+   🎧 Podcasts         — min 20 min; max 60 min. Full episodes only.
 
-   QUALITY TESTS — every item must pass ALL five:
+   QUALITY TESTS — every item must pass ALL four:
    1. Worth consuming one month from now?
-   2. Genuine analysis, original thinking, or narrative depth?
-   3. NOT a breaking news report or weekly data summary?
-   4. High-quality, credible source?
-   5. Freely accessible, or clearly flagged as (subscription required)?
-
-   TOPIC PRIORITIES — apply in this order:
-   1. Philosophy / ideas / mental models — include at least one per week whenever
-      available. Strong sources: Naval Ravikant, Tim Urban (Wait But Why),
-      Ray Dalio, Tim Ferriss long-form, Invest Like the Best framework discussions.
-      Any post from Naval, Tim Urban, Ray Dalio, or Tim Ferriss qualifies
-      automatically if it passes the quality tests — these are priority inclusions.
-   2. Economics/markets:  Noahpinion essays, Invest Like the Best episodes,
-      Bloomberg Odd Lots deep-dives, Goldman/Morgan Stanley structural notes.
-   3. Science/health:     Include at most once per week. Must be genuinely
-      pressing or paradigm-shifting — routine findings do not qualify.
-      Strong sources: New Scientist, Stat News, Nature, MIT Technology Review,
-      Huberman Lab full episodes (not short clips).
-   4. Technology:         MIT Technology Review long-form, Ars Technica deep dives.
-   5. Real estate:        CBRE/JLL market outlook reports, Berkadia research.
+   2. Genuine analysis, original thinking, or narrative depth — not just news?
+   3. High-quality, credible source?
+   4. Freely accessible, or clearly flagged as (subscription required)?
 
    ALWAYS EXCLUDE:
    Breaking news · market recaps · weekly data summaries · press releases ·
-   content shorter than minimums · listicles or aggregator posts.
-   Science articles that are incremental, routine, or not genuinely pressing.
+   listicles · aggregator roundups · podcast clips or highlight reels.
 
    PAYWALL RULES:
    DO NOT hyperlink these domains — render as plain text with (subscription required):

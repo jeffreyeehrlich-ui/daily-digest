@@ -184,8 +184,9 @@ sources:
       lookback_hours: 24
 
   # ── The Economist (daily rotation via economist_history.json) ────────────
-  # Note: full RSS requires an active Economist subscription. If this returns
-  # 403/404, the section is skipped gracefully by digest.py.
+  # The full RSS feed is dead. digest.py now pulls from individual section feeds
+  # directly — the url below is ignored but the section entry is still required
+  # to trigger the Economist curation flow.
   economist:
     - name: The Economist
-      url: https://www.economist.com/rss/the_economist_full_rss.xml
+      url: https://www.economist.com/leaders/rss.xml
