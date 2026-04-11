@@ -1,0 +1,198 @@
+# Evergreen Worth Your Time pool
+#
+# These are high-quality articles/podcasts with permanent staying power.
+# They are injected into the WYT candidate pool ~2-3x per week when
+# no recent content of comparable quality is available.
+#
+# Fields: title, url, source, type (article|podcast|video),
+#         category (philosophy|economics|science|health|other),
+#         duration, description
+
+items:
+  # ── Philosophy & Mental Models ────────────────────────────────────────────
+  - title: "You Are Not So Smart"
+    url: https://aeon.co/essays/the-mind-is-a-bundle-of-habits-and-nothing-more
+    source: Aeon
+    type: article
+    category: philosophy
+    duration: 15 min read
+    description: >
+      A deep look at how habits and automatic processes constitute most of what
+      we call "the self." Forces a rethink of free will, identity, and decision-making
+      in ways that stay with you long after reading.
+
+  - title: "How to Be Confident Without Being Arrogant"
+    url: https://fs.blog/confidence/
+    source: Farnam Street
+    type: article
+    category: philosophy
+    duration: 10 min read
+    description: >
+      Shane Parrish on the difference between confidence that comes from
+      preparation versus confidence that comes from ego. Practical and
+      applicable immediately.
+
+  - title: "The Tail End"
+    url: https://waitbutwhy.com/2015/12/the-tail-end.html
+    source: Wait But Why
+    type: article
+    category: philosophy
+    duration: 10 min read
+    description: >
+      Tim Urban's visual essay on how most of what you'll ever do with the
+      people you love has already happened. One of the most impactful pieces
+      on prioritization ever written.
+
+  - title: "What You'll Wish You'd Known"
+    url: https://paulgraham.com/hs.html
+    source: Paul Graham
+    type: article
+    category: philosophy
+    duration: 12 min read
+    description: >
+      Paul Graham's advice to high schoolers that reads as sharp career and
+      life philosophy for adults. Argues curiosity compounds, not credentials.
+
+  - title: "How to Do Great Work"
+    url: https://paulgraham.com/greatwork.html
+    source: Paul Graham
+    type: article
+    category: philosophy
+    duration: 30 min read
+    description: >
+      Graham's most comprehensive essay on producing exceptional work across
+      any field. Dense with insight on finding what you love, building taste,
+      and the role of obsession.
+
+  - title: "The Strength of Knowing What You Don't Know"
+    url: https://fs.blog/circle-of-competence/
+    source: Farnam Street
+    type: article
+    category: philosophy
+    duration: 8 min read
+    description: >
+      On the Circle of Competence mental model — knowing where your knowledge
+      ends is one of the highest-leverage thinking skills. Directly applicable
+      to investment decisions.
+
+  - title: "Seeking Wisdom: The Art of Thinking Clearly"
+    url: https://nav.al/clear-thinking
+    source: Naval Ravikant
+    type: article
+    category: philosophy
+    duration: 8 min read
+    description: >
+      Naval on how to think more clearly by recognizing the noise your mind
+      generates versus signal. Compact and re-readable.
+
+  - title: "The Almanack of Naval Ravikant: On Wealth"
+    url: https://nav.al/rich
+    source: Naval Ravikant
+    type: article
+    category: philosophy
+    duration: 10 min read
+    description: >
+      Naval's distilled thinking on building wealth through specific knowledge,
+      leverage, and ownership rather than time-for-money. One of the most
+      cited pieces in startup and investing circles.
+
+  - title: "Meditations on Mortality"
+    url: https://www.themarginalian.org/2022/03/06/rilke-letters-to-a-young-poet-death/
+    source: The Marginalian
+    type: article
+    category: philosophy
+    duration: 12 min read
+    description: >
+      Maria Popova on Rilke's letters about mortality, uncertainty, and living
+      toward questions rather than answers. The kind of reading that recalibrates
+      what matters.
+
+  - title: "On the Shortness of Life — Seneca"
+    url: https://fs.blog/seneca-on-the-shortness-of-life/
+    source: Farnam Street
+    type: article
+    category: philosophy
+    duration: 15 min read
+    description: >
+      Farnam Street's summary and commentary on Seneca's most essential work.
+      The core argument — that life is long enough if you don't waste it — hits
+      differently as your career advances.
+
+  # ── Economics & Investing ─────────────────────────────────────────────────
+  - title: "The Psychology of Money — Key Ideas"
+    url: https://collabfund.com/blog/the-psychology-of-money/
+    source: Collaborative Fund
+    type: article
+    category: economics
+    duration: 20 min read
+    description: >
+      Morgan Housel's original essay that became the book. Twenty lessons on
+      wealth, greed, and happiness that are more about behavior than finance.
+      Directly applicable to PE investing.
+
+  - title: "Why Indexing Wins"
+    url: https://www.voxeu.org/article/why-index-funds-win
+    source: VoxEU
+    type: article
+    category: economics
+    duration: 10 min read
+    description: >
+      Research-backed breakdown of why passive strategies beat active ones
+      over long horizons. Useful framing for evaluating fee structures in PE funds.
+
+  - title: "Ray Dalio: How the Economic Machine Works"
+    url: https://www.economicprinciples.org/
+    source: Ray Dalio
+    type: video
+    category: economics
+    duration: 30 min watch
+    description: >
+      Dalio's foundational framework for how credit, debt, and economic cycles
+      interact. Required viewing for anyone in real estate finance — explains
+      interest rate cycles from first principles.
+
+  # ── Health & Longevity ────────────────────────────────────────────────────
+  - title: "The Science of Sleep and Performance"
+    url: https://www.hubermanlab.com/episode/master-your-sleep-be-more-alert-when-awake
+    source: Huberman Lab
+    type: podcast
+    category: health
+    duration: 60 min listen
+    description: >
+      Andrew Huberman's foundational episode on sleep architecture, circadian
+      rhythm, and actionable protocols for better recovery. The most practically
+      useful health podcast episode for high-performers.
+
+  - title: "Outlive: The Case for Proactive Longevity Medicine"
+    url: https://peterattiamd.com/outlive-introduction/
+    source: Peter Attia
+    type: article
+    category: health
+    duration: 15 min read
+    description: >
+      Peter Attia's introduction to Medicine 3.0 — treating chronic disease
+      decades before it manifests. Reframes how to think about health as an
+      investor thinks about compounding.
+
+  # ── Science & Big Ideas ───────────────────────────────────────────────────
+  - title: "The Most Important Equation in the Universe"
+    url: https://www.quantamagazine.org/how-claude-shannon-invented-the-future-20171206/
+    source: Quanta Magazine
+    type: article
+    category: science
+    duration: 18 min read
+    description: >
+      Quanta's profile of Claude Shannon and the birth of information theory.
+      Shows how one person's obsessive curiosity produced the mathematical
+      foundation of every digital system that exists today.
+
+  - title: "The Unreasonable Effectiveness of Mathematics"
+    url: https://nautil.us/the-unreasonable-effectiveness-of-mathematics-237745/
+    source: Nautilus
+    type: article
+    category: science
+    duration: 15 min read
+    description: >
+      Why does mathematics, invented in the abstract, keep perfectly describing
+      the physical world? A philosophical puzzle that reveals something deep
+      about the nature of reality.

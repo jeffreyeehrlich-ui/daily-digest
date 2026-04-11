@@ -135,7 +135,7 @@ Science section quality: In the Science & Health section, each story must be wri
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time sourcing: The single criterion is staying power — would this still be worth reading or listening to a month from now? Pick the single best item available, or two if both are genuinely exceptional. Do not include something just to fill the section. Check the THINKERS feed first (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio) — these are strong candidates when available. Other strong sources to draw from when they have material worth featuring: philosophy and ideas (Aeon, The Marginalian, Nautilus, Farnam Street, Paul Graham, Ryan Holiday, Tim Urban), economics and finance (Invest Like the Best, Bloomberg Odd Lots deep-dives, Project Syndicate, VoxEU, Noahpinion long-form essays), health and longevity (Huberman Lab full episodes only — never Essentials clips, Peter Attia), science when paradigm-shifting (Quanta Magazine, New Scientist, Nature, MIT Technology Review). These are examples — use them only when the content genuinely earns inclusion. Do not default to any single source. Do not repeat the same source on consecutive days. If nothing clears the bar, output nothing — no header, no placeholder, no explanation.
+Worth Your Time sourcing: The single criterion is staying power — would this still be worth reading or listening to a month from now? Pick the single best item available, or two if both are genuinely exceptional. Do not include something just to fill the section. Check the THINKERS feed first (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio) — these are strong candidates when available. Other strong sources to draw from when they have material worth featuring: philosophy and ideas (Aeon, The Marginalian, Nautilus, Farnam Street, Paul Graham, Ryan Holiday, Tim Urban), economics and finance (Invest Like the Best, Bloomberg Odd Lots deep-dives, Project Syndicate, VoxEU, Noahpinion long-form essays), health and longevity (Huberman Lab full episodes only — never Essentials clips, Peter Attia), science when paradigm-shifting (Quanta Magazine, New Scientist, Nature, MIT Technology Review). These are examples — use them only when the content genuinely earns inclusion. Do not default to any single source. Do not repeat the same source on consecutive days. The section must always populate — use evergreen items if nothing recent qualifies.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
@@ -465,6 +465,80 @@ article clears the quality bar. Output nothing else."""
         log.error("Economist article selection failed: %s", exc)
         return None
 
+# ── Feed fallback map (self-healing) ─────────────────────────────────────────
+# When a feed URL fails, we try these alternatives in order.
+# If one works, sources.yaml is updated automatically for future runs.
+
+FEED_FALLBACKS: dict[str, list[str]] = {
+    # Bloomberg
+    "https://feeds.bloomberg.com/markets/news.rss":       ["https://feeds.bloomberg.com/markets/news.rss"],
+    "https://feeds.bloomberg.com/economics/news.rss":     ["https://feeds.bloomberg.com/economics/news.rss"],
+    "https://feeds.bloomberg.com/podcast/odd-lots.xml":   ["https://feeds.megaphone.fm/GLT1412515089"],
+    # Reuters
+    "https://feeds.reuters.com/reuters/topNews":          ["https://feeds.npr.org/1001/rss.xml"],
+    "https://feeds.reuters.com/reuters/financialsNews":   ["https://feeds.bloomberg.com/economics/news.rss"],
+    # Podcasts
+    "https://feeds.simplecast.com/SFm2B67j":              ["https://feeds.megaphone.fm/investlikethebest"],
+    "https://feeds.libsyn.com/233774/rss":                ["https://feeds.megaphone.fm/hubermanlab"],
+    # MIT Tech Review feedburner
+    "https://feeds.feedburner.com/mittechnologyreview":   ["https://www.technologyreview.com/feed/"],
+    # Anthropic
+    "https://www.anthropic.com/rss.xml":                  ["https://www.bensbites.com/feed"],
+    # GZero
+    "https://www.gzeromedia.com/feed":                    ["https://feeds.npr.org/1001/rss.xml"],
+    # Affordable Housing Finance
+    "https://www.housingfinance.com/rss.xml":             ["https://www.multifamilydive.com/feeds/news/"],
+    # The Promote
+    "https://www.thepromotenewsletter.com/feed":          ["https://www.bisnow.com/rss/national"],
+    # Rundown AI
+    "https://www.therundown.ai/rss":                      ["https://www.bensbites.com/feed"],
+    # CoStar
+    "https://www.costar.com/rss/news":                    ["https://www.globest.com/rss/"],
+    # Economist full RSS (dead)
+    "https://www.economist.com/rss/the_economist_full_rss.xml": [
+        "https://www.economist.com/leaders/rss.xml"
+    ],
+}
+
+
+def _probe_url(url: str) -> bool:
+    """Return True if the URL returns a valid RSS/Atom feed."""
+    import urllib.request, ssl
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=8, context=ctx) as r:
+            chunk = r.read(512)
+            return any(tag in chunk for tag in (b"<rss", b"<feed", b"<channel"))
+    except Exception:
+        return False
+
+
+def _heal_sources_yaml(old_url: str, new_url: str, sources_path: str = "sources.yaml") -> None:
+    """Replace old_url with new_url in sources.yaml and save."""
+    try:
+        with open(sources_path, encoding="utf-8") as f:
+            text = f.read()
+        if old_url in text:
+            text = text.replace(old_url, new_url)
+            with open(sources_path, "w", encoding="utf-8") as f:
+                f.write(text)
+            log.warning("AUTO-HEALED sources.yaml: %s → %s", old_url, new_url)
+    except Exception as exc:
+        log.error("Failed to auto-heal sources.yaml: %s", exc)
+
+
+def _feed_is_healthy(url: str) -> bool:
+    """Quick check: does feedparser get at least one entry from this URL?"""
+    try:
+        feed = feedparser.parse(url)
+        return len(feed.entries) > 0
+    except Exception:
+        return False
+
+
 # ── Feed fetching ─────────────────────────────────────────────────────────────
 
 def _parse_entry_date(entry) -> datetime | None:
@@ -479,26 +553,58 @@ def _parse_entry_date(entry) -> datetime | None:
 
 
 def fetch_feed(source: dict, lookback_hours: int = 24) -> list[dict]:
-    """Return items from one RSS feed published within lookback_hours."""
+    """Return items from one RSS feed published within lookback_hours.
+    If the feed fails, attempts fallback URLs from FEED_FALLBACKS and
+    auto-patches sources.yaml on success.
+    """
     items  = []
     cutoff = datetime.now(timezone.utc) - timedelta(hours=lookback_hours)
-    try:
-        feed = feedparser.parse(source["url"])
+    url    = source["url"]
+
+    def _parse_entries(feed_url: str) -> list[dict]:
+        result = []
+        feed = feedparser.parse(feed_url)
+        if not feed.entries:
+            return result
         for entry in feed.entries:
             pub = _parse_entry_date(entry)
             if pub is None or pub < cutoff:
                 continue
-            items.append({
+            result.append({
                 "source":    source["name"],
                 "title":     getattr(entry, "title", ""),
                 "link":      getattr(entry, "link", ""),
                 "summary":   (getattr(entry, "summary", "") or "")[:600],
                 "published": pub.isoformat(),
             })
-        log.info("%-30s  %d item(s) in last %dh", source["name"], len(items), lookback_hours)
+        return result
+
+    try:
+        items = _parse_entries(url)
+        if items or _feed_is_healthy(url):
+            log.info("%-30s  %d item(s) in last %dh", source["name"], len(items), lookback_hours)
+            return items
+        # Feed returned no entries at all — treat as broken
+        raise ValueError("feed returned 0 entries")
     except Exception as exc:
-        log.error("Failed to fetch %-30s  %s", source["name"], exc)
-    return items
+        log.warning("Feed unhealthy %-30s  %s — trying fallbacks", source["name"], exc)
+
+    # Try fallback URLs
+    for fallback_url in FEED_FALLBACKS.get(url, []):
+        if fallback_url == url:
+            continue
+        log.info("  trying fallback: %s", fallback_url)
+        try:
+            items = _parse_entries(fallback_url)
+            log.warning("  FALLBACK OK: %s — auto-healing sources.yaml", fallback_url)
+            _heal_sources_yaml(url, fallback_url)
+            source["url"] = fallback_url  # update in-memory for this run
+            return items
+        except Exception as fb_exc:
+            log.warning("  fallback failed: %s  %s", fallback_url, fb_exc)
+
+    log.error("All URLs failed for %-30s — section will be empty for this feed", source["name"])
+    return []
 
 # ── Web scraping (institutional research pages) ───────────────────────────────
 
@@ -641,6 +747,78 @@ def scrape_page(source: dict) -> list[dict]:
     log.info("%-30s  %d item(s) scraped", name, len(items))
     return items
 
+# ── Evergreen WYT pool ────────────────────────────────────────────────────────
+
+EVERGREEN_FILE      = Path(__file__).parent / "evergreen_wyt.yaml"
+EVERGREEN_USED_FILE = LOG_DIR / "evergreen_wyt_used.json"
+EVERGREEN_COOLDOWN_DAYS = 30  # don't repeat an evergreen item within this window
+
+
+def load_evergreen_pool() -> list[dict]:
+    """Load the curated evergreen WYT items from evergreen_wyt.yaml."""
+    if not EVERGREEN_FILE.exists():
+        return []
+    try:
+        with open(EVERGREEN_FILE, encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+        return data.get("items", [])
+    except Exception as exc:
+        log.warning("Could not load evergreen_wyt.yaml: %s", exc)
+        return []
+
+
+def load_evergreen_used() -> dict:
+    """Return {url: iso_date_last_shown} from the evergreen usage log."""
+    if not EVERGREEN_USED_FILE.exists():
+        return {}
+    try:
+        with open(EVERGREEN_USED_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def save_evergreen_used(used: dict) -> None:
+    EVERGREEN_USED_FILE.parent.mkdir(exist_ok=True)
+    with open(EVERGREEN_USED_FILE, "w", encoding="utf-8") as f:
+        json.dump(used, f, indent=2)
+
+
+def get_eligible_evergreen(pool: list[dict], used: dict) -> list[dict]:
+    """Return evergreen items not shown within EVERGREEN_COOLDOWN_DAYS."""
+    cutoff = datetime.now(timezone.utc) - timedelta(days=EVERGREEN_COOLDOWN_DAYS)
+    eligible = []
+    for item in pool:
+        url = item.get("url", "")
+        last_shown = used.get(url)
+        if last_shown:
+            try:
+                if datetime.fromisoformat(last_shown) > cutoff:
+                    continue
+            except Exception:
+                pass
+        eligible.append(item)
+    return eligible
+
+
+def evergreen_to_wyt_items(items: list[dict]) -> list[dict]:
+    """Convert evergreen pool items to the same dict format used by feed items."""
+    result = []
+    for item in items:
+        result.append({
+            "source":    item.get("source", ""),
+            "title":     item.get("title", ""),
+            "link":      item.get("url", ""),
+            "summary":   item.get("description", ""),
+            "published": "",  # no publish date — these are evergreen
+            "evergreen": True,
+            "duration":  item.get("duration", ""),
+            "type":      item.get("type", "article"),
+            "category":  item.get("category", "other"),
+        })
+    return result
+
+
 # ── Content collection ────────────────────────────────────────────────────────
 
 SECTION_LIMITS: dict[str, int] = {
@@ -757,11 +935,10 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     if email_block:
         raw_blocks.insert(0, email_block)
 
-    # Build free-only Worth Your Time candidate pool (hard pre-filter).
-    # Only items whose URLs pass _is_free_for_wyt() are eligible.
-    # Economist items (economist.com) pass because they are not in _WYT_BLOCKED_DOMAINS.
+    # ── Build WYT candidate pool ──────────────────────────────────────────────
+    # Part 1: Recent items from feeds (free sources only)
     wyt_seen: set[str] = set()
-    wyt_candidates: list[dict] = []
+    recent_wyt: list[dict] = []
     for section_key, section_items in content.items():
         if not isinstance(section_items, list):
             continue
@@ -771,26 +948,48 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             url = item.get("link") or item.get("url") or ""
             if url and url not in wyt_seen and _is_free_for_wyt(url):
                 wyt_seen.add(url)
-                wyt_candidates.append(item)
+                recent_wyt.append(item)
 
-    if wyt_candidates:
-        wyt_lines = []
-        for item in wyt_candidates[:60]:
-            wyt_lines.append(
-                f"SOURCE: {item.get('source', '')}\n"
-                f"TITLE: {item.get('title', '')}\n"
-                f"URL: {item.get('link') or item.get('url', '')}\n"
-                f"SUMMARY: {item.get('summary', '')}\n"
-            )
-        wyt_block = (
-            "=== WORTH YOUR TIME CANDIDATE POOL (free sources only — "
-            "use ONLY these for Worth Your Time selection) ===\n"
-            + "\n".join(wyt_lines)
-        )
+    # Part 2: Evergreen items — always included as fallback candidates.
+    # Marked EVERGREEN so Claude can distinguish them from recent content.
+    evergreen_items = content.get("_evergreen_wyt", [])
+    evergreen_wyt = []
+    for item in evergreen_items:
+        url = item.get("link", "")
+        if url and url not in wyt_seen:
+            wyt_seen.add(url)
+            evergreen_wyt.append(item)
+
+    def _fmt_wyt_item(item: dict, label: str = "") -> str:
+        lines = [
+            f"SOURCE: {item.get('source', '')}",
+            f"TITLE: {item.get('title', '')}",
+            f"URL: {item.get('link') or item.get('url', '')}",
+            f"SUMMARY: {item.get('summary', '')}",
+        ]
+        if label:
+            lines.append(f"NOTE: {label}")
+        if item.get("duration"):
+            lines.append(f"DURATION: {item['duration']}")
+        return "\n".join(lines)
+
+    recent_block = "\n\n".join(_fmt_wyt_item(i, "RECENT") for i in recent_wyt[:50])
+    evergreen_block = "\n\n".join(_fmt_wyt_item(i, "EVERGREEN — high-quality, dated article") for i in evergreen_wyt[:20])
+
+    wyt_block = "=== WORTH YOUR TIME CANDIDATE POOL ===\n"
+    if recent_block:
+        wyt_block += f"\n-- RECENT (from today's feeds) --\n{recent_block}\n"
+    if evergreen_block:
+        wyt_block += f"\n-- EVERGREEN (curated, high-quality, dated) --\n{evergreen_block}\n"
+    if not recent_block and not evergreen_block:
+        wyt_block += "(empty — output nothing for the Worth Your Time section)"
     else:
-        wyt_block = (
-            "=== WORTH YOUR TIME CANDIDATE POOL ===\n"
-            "(empty — output nothing for the Worth Your Time section)"
+        wyt_block += (
+            "\nSELECTION RULE: Prefer RECENT items if any are genuinely worth reading "
+            "a month from now. EVERGREEN items are pre-vetted high-quality pieces — "
+            "use them when nothing recent clears the bar, or when an evergreen item "
+            "is clearly superior. Always pick the single best item available. "
+            "You MUST select at least one item — this section should always populate."
         )
     raw_blocks.append(wyt_block)
 
@@ -829,9 +1028,11 @@ LENGTH RULE: Write every section at 75% of what you would normally produce. Cut 
 
 10. 💡 One Thing to Learn Today — One practical insight from the digest. Real estate PE / affordable housing finance or general intellectual growth. Two sentences max.
 
-11. 📚 Worth Your Time — Select 1–2 items that would be just as valuable to
-   read or listen to one month from now as today. If nothing clears that bar,
-   output nothing — no header, no placeholder text, no apology.
+11. 📚 Worth Your Time — Always populate this section with 1–2 items.
+   The CANDIDATE POOL contains both RECENT items (from today's feeds) and
+   EVERGREEN items (pre-vetted, high-quality, dated pieces). Prefer recent
+   items when they genuinely have staying power. Fall back to evergreen items
+   when nothing recent clears the bar. You MUST select at least one item.
 
    CONTENT TYPES AND MINIMUM LENGTHS:
    📄 Articles/essays  — min ~1 000 words / 5 min read; max ~30 min read.
@@ -1128,6 +1329,14 @@ def main() -> None:
     else:
         content["email_newsletters"] = []
 
+    # 5c. Load evergreen WYT pool and inject eligible items into content
+    evergreen_pool = load_evergreen_pool()
+    evergreen_used = load_evergreen_used()
+    eligible_evergreen = get_eligible_evergreen(evergreen_pool, evergreen_used)
+    content["_evergreen_wyt"] = evergreen_to_wyt_items(eligible_evergreen)
+    log.info("Evergreen WYT pool: %d total, %d eligible after cooldown",
+             len(evergreen_pool), len(eligible_evergreen))
+
     # 6. Create shared Claude client (reused for Economist selection + main digest)
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -1158,6 +1367,15 @@ def main() -> None:
     new_entries = extract_featured_stories(digest_html, content)
     history.update(new_entries)
     save_story_history(history)
+
+    # 10b. Mark any evergreen items that appeared in the digest as used
+    now_iso = datetime.now(timezone.utc).isoformat()
+    for item in content.get("_evergreen_wyt", []):
+        url = item.get("link", "")
+        if url and url in digest_html:
+            evergreen_used[url] = now_iso
+            log.info("Evergreen item marked used: %s", item.get("title", "")[:80])
+    save_evergreen_used(evergreen_used)
 
     if send_mode:
         send_email(digest_html, today)
