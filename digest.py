@@ -880,24 +880,27 @@ def filter_wyt_by_source_cap(
 # is only used for WYT candidate building, not for the digest sections.
 
 WYT_ARCHIVE_SOURCES = [
-    {"name": "Naval Ravikant",           "url": "https://nav.al/feed"},
-    {"name": "Naval Ravikant (Substack)","url": "https://naval.substack.com/feed"},
-    {"name": "Tim Ferriss",              "url": "https://tim.blog/feed/"},
-    {"name": "Wait But Why (Tim Urban)", "url": "https://waitbutwhy.com/feed"},
-    {"name": "Ray Dalio (Medium)",       "url": "https://medium.com/feed/@raydalio"},
-    {"name": "Ryan Holiday",             "url": "https://ryanholiday.net/feed/"},
+    {"name": "Naval Ravikant",            "url": "https://nav.al/feed"},
+    {"name": "Naval Ravikant (Substack)", "url": "https://naval.substack.com/feed"},
+    {"name": "Tim Ferriss",               "url": "https://tim.blog/feed/"},
+    {"name": "Wait But Why (Tim Urban)",  "url": "https://waitbutwhy.com/feed"},
+    {"name": "Ray Dalio",                 "url": "https://medium.com/feed/@raydalio"},
+    {"name": "Ryan Holiday",              "url": "https://ryanholiday.net/feed/"},
     {"name": "Daily Stoic (Ryan Holiday)","url": "https://dailystoic.com/feed/"},
-    {"name": "Noahpinion",               "url": "https://www.noahpinion.blog/feed"},
-    {"name": "Farnam Street",            "url": "https://fs.blog/feed/"},
-    {"name": "Paul Graham",              "url": "https://www.aaronsw.com/2002/feeds/pgessays.rss"},
+    {"name": "Noahpinion",                "url": "https://www.noahpinion.blog/feed"},
+    {"name": "Farnam Street",             "url": "https://fs.blog/feed/"},
+    {"name": "Paul Graham",               "url": "https://feeds.feedburner.com/PaulGrahamEssays"},
 ]
 
 
 def fetch_wyt_archive() -> list[dict]:
-    """Fetch up to 1 year of posts from long-form thinker sources for WYT."""
+    """Fetch posts from long-form thinker sources for WYT.
+    No date cutoff — these sources are selected for staying power, so older
+    posts are just as valid as recent ones. The per-source weekly cap and
+    7-day article dedup prevent repetition.
+    """
     items: list[dict] = []
     seen: set[str] = set()
-    cutoff = datetime.now(timezone.utc) - timedelta(days=365)
 
     for source in WYT_ARCHIVE_SOURCES:
         try:
@@ -907,11 +910,8 @@ def fetch_wyt_archive() -> list[dict]:
                 link = getattr(entry, "link", "")
                 if not link or link in seen:
                     continue
-                pub = _parse_entry_date(entry)
-                # Include undated entries (many personal blogs omit dates)
-                if pub is not None and pub < cutoff:
-                    continue
                 seen.add(link)
+                pub = _parse_entry_date(entry)
                 items.append({
                     "source":    source["name"],
                     "title":     getattr(entry, "title", ""),
@@ -1195,7 +1195,8 @@ LENGTH RULE: Write every section at 75% of what you would normally produce. Cut 
      cbre.com  us.jll.com  nmrk.com  berkadia.com  marcusmillichap.com
      globest.com  costar.com  popularmechanics.com  popsci.com
      nav.al  naval.substack.com  tim.blog  waitbutwhy.com  medium.com/@raydalio
-     ryanholiday.net  dailystoic.com  themarginalian.org  aeon.co  nautil.us  fs.blog
+     ryanholiday.net  dailystoic.com  ryanholiday.substack.com
+     themarginalian.org  aeon.co  nautil.us  fs.blog  paulgraham.com
      paulgraham.com  project-syndicate.org  voxeu.org  peterattiamd.com
      quantamagazine.org  ribbonfarm.com  stratechery.com
    When in doubt: do not hyperlink.
