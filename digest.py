@@ -135,7 +135,7 @@ Science section quality: In the Science & Health section, each story must be wri
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time sourcing: The single criterion is staying power — would this still be worth reading or listening to a month from now? Pick the single best item available, or two if both are genuinely exceptional. Do not include something just to fill the section. Check the THINKERS feed first (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio) — these are strong candidates when available. Other strong sources to draw from when they have material worth featuring: philosophy and ideas (Aeon, The Marginalian, Nautilus, Farnam Street, Paul Graham, Ryan Holiday, Tim Urban), economics and finance (Invest Like the Best, Bloomberg Odd Lots deep-dives, Project Syndicate, VoxEU, Noahpinion long-form essays), health and longevity (Huberman Lab full episodes only — never Essentials clips, Peter Attia), science when paradigm-shifting (Quanta Magazine, New Scientist, Nature, MIT Technology Review). These are examples — use them only when the content genuinely earns inclusion. Do not default to any single source. Do not repeat the same source on consecutive days. The section must always populate — use evergreen items if nothing recent qualifies.
+Worth Your Time sourcing: The single criterion is staying power — would this still be worth reading or listening to a month from now? Pick the single best item available, or two if both are genuinely exceptional. Do not include something just to fill the section. Check the THINKERS feed first (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio, Ryan Holiday, Daily Stoic) — these are strong candidates when available. Any new post from these authors auto-qualifies if it passes the quality tests. Other strong sources to draw from when they have material worth featuring: philosophy and ideas (Aeon, The Marginalian, Nautilus, Farnam Street, Paul Graham, Ryan Holiday, Tim Urban), economics and finance (Invest Like the Best, Bloomberg Odd Lots deep-dives, Project Syndicate, VoxEU, Noahpinion long-form essays), health and longevity (Huberman Lab full episodes only — never Essentials clips, Peter Attia), science when paradigm-shifting (Quanta Magazine, New Scientist, Nature, MIT Technology Review). These are examples — use them only when the content genuinely earns inclusion. Do not default to any single source. Do not repeat the same source on consecutive days. The section must always populate — use evergreen items if nothing recent qualifies.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
@@ -932,7 +932,7 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         ),
         section("SCIENCE & HEALTH (New Scientist, Stat News, Nature, NYT Science, Popular Mechanics, Popular Science)", "science_health"),
         section("RECENT RELEASES — PODCASTS & NEWSLETTERS (72-hour window)", "podcasts_newsletters"),
-        section("THINKERS & PERSONAL BLOGS — PRIORITY WORTH YOUR TIME CANDIDATES (Naval, Tim Ferriss, Tim Urban, Ray Dalio — 7-day window)", "thinkers"),
+        section("THINKERS & PERSONAL BLOGS — PRIORITY WORTH YOUR TIME CANDIDATES (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio, Ryan Holiday / Daily Stoic — 7-day window)", "thinkers"),
         econ_block,
     ]
     if email_block:
@@ -1067,8 +1067,8 @@ LENGTH RULE: Write every section at 75% of what you would normally produce. Cut 
      goldmansachs.com  morganstanley.com  jpmorgan.com  blackrock.com
      cbre.com  us.jll.com  nmrk.com  berkadia.com  marcusmillichap.com
      globest.com  costar.com  popularmechanics.com  popsci.com
-     nav.al  tim.blog  waitbutwhy.com  medium.com/@raydalio
-     ryanholiday.net  themarginalian.org  aeon.co  nautil.us  fs.blog
+     nav.al  naval.substack.com  tim.blog  waitbutwhy.com  medium.com/@raydalio
+     ryanholiday.net  dailystoic.com  themarginalian.org  aeon.co  nautil.us  fs.blog
      paulgraham.com  project-syndicate.org  voxeu.org  peterattiamd.com
      quantamagazine.org  ribbonfarm.com  stratechery.com
    When in doubt: do not hyperlink.

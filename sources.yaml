@@ -107,6 +107,9 @@ sources:
     - name: Naval Ravikant
       url: https://nav.al/feed
       lookback_hours: 168
+    - name: Naval Ravikant (Substack)
+      url: https://naval.substack.com/feed
+      lookback_hours: 168
     - name: Tim Ferriss
       url: https://tim.blog/feed/
       lookback_hours: 168
@@ -115,6 +118,12 @@ sources:
       lookback_hours: 168
     - name: Ray Dalio (Medium)
       url: https://medium.com/feed/@raydalio
+      lookback_hours: 168
+    - name: Ryan Holiday
+      url: https://ryanholiday.net/feed/
+      lookback_hours: 168
+    - name: Daily Stoic (Ryan Holiday)
+      url: https://dailystoic.com/feed/
       lookback_hours: 168
 
   # ── Research & Market Intelligence ────────────────────────────────────────
