@@ -822,6 +822,113 @@ def evergreen_to_wyt_items(items: list[dict]) -> list[dict]:
     return result
 
 
+# ── WYT source-per-week cap ───────────────────────────────────────────────────
+
+WYT_SOURCE_HISTORY_FILE = LOG_DIR / "wyt_source_history.json"
+WYT_SOURCE_COOLDOWN_DAYS = 7
+
+
+def load_wyt_source_history() -> dict:
+    """Return {source_name: iso_date_last_shown}."""
+    if not WYT_SOURCE_HISTORY_FILE.exists():
+        return {}
+    try:
+        with open(WYT_SOURCE_HISTORY_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def save_wyt_source_history(history: dict) -> None:
+    WYT_SOURCE_HISTORY_FILE.parent.mkdir(exist_ok=True)
+    with open(WYT_SOURCE_HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2)
+
+
+def filter_wyt_by_source_cap(
+    items: list[dict], source_history: dict
+) -> tuple[list[dict], list[dict]]:
+    """Split items into (eligible, capped).
+    A source is capped if it appeared in WYT within the last 7 days.
+    Evergreen items bypass the cap — they already have their own 30-day cooldown.
+    """
+    cutoff = datetime.now(timezone.utc) - timedelta(days=WYT_SOURCE_COOLDOWN_DAYS)
+    eligible, capped = [], []
+    for item in items:
+        if item.get("evergreen"):
+            eligible.append(item)
+            continue
+        source = item.get("source", "")
+        last_shown = source_history.get(source)
+        if last_shown:
+            try:
+                if datetime.fromisoformat(last_shown) > cutoff:
+                    capped.append(item)
+                    continue
+            except Exception:
+                pass
+        eligible.append(item)
+    if capped:
+        log.info("WYT source cap: %d item(s) from recently-used sources excluded",
+                 len(capped))
+    return eligible, capped
+
+
+# ── WYT 1-year archive fetch ──────────────────────────────────────────────────
+# Sources whose long-form content is worth surfacing up to 1 year back.
+# These are fetched separately from the normal news feeds — the long lookback
+# is only used for WYT candidate building, not for the digest sections.
+
+WYT_ARCHIVE_SOURCES = [
+    {"name": "Naval Ravikant",           "url": "https://nav.al/feed"},
+    {"name": "Naval Ravikant (Substack)","url": "https://naval.substack.com/feed"},
+    {"name": "Tim Ferriss",              "url": "https://tim.blog/feed/"},
+    {"name": "Wait But Why (Tim Urban)", "url": "https://waitbutwhy.com/feed"},
+    {"name": "Ray Dalio (Medium)",       "url": "https://medium.com/feed/@raydalio"},
+    {"name": "Ryan Holiday",             "url": "https://ryanholiday.net/feed/"},
+    {"name": "Daily Stoic (Ryan Holiday)","url": "https://dailystoic.com/feed/"},
+    {"name": "Noahpinion",               "url": "https://www.noahpinion.blog/feed"},
+    {"name": "Farnam Street",            "url": "https://fs.blog/feed/"},
+    {"name": "Paul Graham",              "url": "https://www.aaronsw.com/2002/feeds/pgessays.rss"},
+]
+
+
+def fetch_wyt_archive() -> list[dict]:
+    """Fetch up to 1 year of posts from long-form thinker sources for WYT."""
+    items: list[dict] = []
+    seen: set[str] = set()
+    cutoff = datetime.now(timezone.utc) - timedelta(days=365)
+
+    for source in WYT_ARCHIVE_SOURCES:
+        try:
+            feed = feedparser.parse(source["url"])
+            count = 0
+            for entry in feed.entries:
+                link = getattr(entry, "link", "")
+                if not link or link in seen:
+                    continue
+                pub = _parse_entry_date(entry)
+                # Include undated entries (many personal blogs omit dates)
+                if pub is not None and pub < cutoff:
+                    continue
+                seen.add(link)
+                items.append({
+                    "source":    source["name"],
+                    "title":     getattr(entry, "title", ""),
+                    "link":      link,
+                    "summary":   (getattr(entry, "summary", "") or "")[:600],
+                    "published": pub.isoformat() if pub else "",
+                    "wyt_archive": True,
+                })
+                count += 1
+            log.info("WYT archive %-30s  %d item(s)", source["name"], count)
+        except Exception as exc:
+            log.warning("WYT archive fetch failed %-25s  %s", source["name"], exc)
+
+    log.info("WYT archive total: %d item(s)", len(items))
+    return items
+
+
 # ── Content collection ────────────────────────────────────────────────────────
 
 SECTION_LIMITS: dict[str, int] = {
@@ -939,11 +1046,12 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         raw_blocks.insert(0, email_block)
 
     # ── Build WYT candidate pool ──────────────────────────────────────────────
-    # Part 1: Recent items from feeds (free sources only)
     wyt_seen: set[str] = set()
-    recent_wyt: list[dict] = []
+
+    # Part 1: Recent items from feeds (free sources only)
+    raw_recent: list[dict] = []
     for section_key, section_items in content.items():
-        if not isinstance(section_items, list):
+        if section_key.startswith("_") or not isinstance(section_items, list):
             continue
         for item in section_items:
             if not isinstance(item, dict):
@@ -951,17 +1059,29 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             url = item.get("link") or item.get("url") or ""
             if url and url not in wyt_seen and _is_free_for_wyt(url):
                 wyt_seen.add(url)
-                recent_wyt.append(item)
+                raw_recent.append(item)
 
-    # Part 2: Evergreen items — always included as fallback candidates.
-    # Marked EVERGREEN so Claude can distinguish them from recent content.
-    evergreen_items = content.get("_evergreen_wyt", [])
-    evergreen_wyt = []
-    for item in evergreen_items:
+    # Part 2: 1-year archive items (thinkers / long-form sources)
+    raw_archive: list[dict] = []
+    for item in content.get("_wyt_archive", []):
+        url = item.get("link", "")
+        if url and url not in wyt_seen and _is_free_for_wyt(url):
+            wyt_seen.add(url)
+            raw_archive.append(item)
+
+    # Part 3: Evergreen curated items
+    raw_evergreen: list[dict] = []
+    for item in content.get("_evergreen_wyt", []):
         url = item.get("link", "")
         if url and url not in wyt_seen:
             wyt_seen.add(url)
-            evergreen_wyt.append(item)
+            raw_evergreen.append(item)
+
+    # Apply source-per-week cap to recent and archive (evergreen has its own cooldown)
+    source_history = content.get("_wyt_source_history", {})
+    recent_wyt,   _  = filter_wyt_by_source_cap(raw_recent,   source_history)
+    archive_wyt,  _  = filter_wyt_by_source_cap(raw_archive,  source_history)
+    evergreen_wyt    = raw_evergreen  # already filtered by 30-day cooldown
 
     def _fmt_wyt_item(item: dict, label: str = "") -> str:
         lines = [
@@ -970,29 +1090,36 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             f"URL: {item.get('link') or item.get('url', '')}",
             f"SUMMARY: {item.get('summary', '')}",
         ]
+        if item.get("published"):
+            lines.append(f"PUBLISHED: {item['published'][:10]}")
         if label:
             lines.append(f"NOTE: {label}")
         if item.get("duration"):
             lines.append(f"DURATION: {item['duration']}")
         return "\n".join(lines)
 
-    recent_block = "\n\n".join(_fmt_wyt_item(i, "RECENT") for i in recent_wyt[:50])
-    evergreen_block = "\n\n".join(_fmt_wyt_item(i, "EVERGREEN — high-quality, dated article") for i in evergreen_wyt[:20])
+    recent_block   = "\n\n".join(_fmt_wyt_item(i, "RECENT")   for i in recent_wyt[:40])
+    archive_block  = "\n\n".join(_fmt_wyt_item(i, "ARCHIVE — up to 1 year old, long-form") for i in archive_wyt[:30])
+    evergreen_block= "\n\n".join(_fmt_wyt_item(i, "EVERGREEN — curated, high-quality") for i in evergreen_wyt[:15])
 
     wyt_block = "=== WORTH YOUR TIME CANDIDATE POOL ===\n"
     if recent_block:
-        wyt_block += f"\n-- RECENT (from today's feeds) --\n{recent_block}\n"
+        wyt_block += f"\n-- RECENT (last 24-168h from feeds) --\n{recent_block}\n"
+    if archive_block:
+        wyt_block += f"\n-- ARCHIVE (thinker blogs, up to 1 year old) --\n{archive_block}\n"
     if evergreen_block:
-        wyt_block += f"\n-- EVERGREEN (curated, high-quality, dated) --\n{evergreen_block}\n"
-    if not recent_block and not evergreen_block:
-        wyt_block += "(empty — output nothing for the Worth Your Time section)"
+        wyt_block += f"\n-- EVERGREEN (pre-vetted classics) --\n{evergreen_block}\n"
+    if not any([recent_block, archive_block, evergreen_block]):
+        wyt_block += "(empty)"
     else:
         wyt_block += (
-            "\nSELECTION RULE: Prefer RECENT items if any are genuinely worth reading "
-            "a month from now. EVERGREEN items are pre-vetted high-quality pieces — "
-            "use them when nothing recent clears the bar, or when an evergreen item "
-            "is clearly superior. Always pick the single best item available. "
-            "You MUST select at least one item — this section should always populate."
+            "\nSELECTION RULE: Prefer RECENT items if any genuinely have staying power. "
+            "ARCHIVE items are from personal blogs of Naval, Tim Ferriss, Tim Urban, "
+            "Ray Dalio, Ryan Holiday, Farnam Street — older posts are fine if the "
+            "insight is timeless. EVERGREEN items are pre-vetted classics. "
+            "Each source may appear at most once per week — sources already used "
+            "this week have been excluded from this pool. "
+            "You MUST select at least one item."
         )
     raw_blocks.append(wyt_block)
 
@@ -1340,6 +1467,14 @@ def main() -> None:
     log.info("Evergreen WYT pool: %d total, %d eligible after cooldown",
              len(evergreen_pool), len(eligible_evergreen))
 
+    # 5d. Fetch 1-year WYT archive from thinker/long-form sources
+    log.info("Fetching WYT 1-year archive …")
+    content["_wyt_archive"] = fetch_wyt_archive()
+
+    # 5e. Load WYT source history (per-week cap) and pass into content
+    wyt_source_history = load_wyt_source_history()
+    content["_wyt_source_history"] = wyt_source_history
+
     # 6. Create shared Claude client (reused for Economist selection + main digest)
     api_key = os.environ.get("ANTHROPIC_API_KEY")
     if not api_key:
@@ -1379,6 +1514,22 @@ def main() -> None:
             evergreen_used[url] = now_iso
             log.info("Evergreen item marked used: %s", item.get("title", "")[:80])
     save_evergreen_used(evergreen_used)
+
+    # 10c. Record which sources appeared in WYT for per-week source cap
+    all_wyt_candidates = (
+        content.get("_wyt_archive", [])
+        + [i for section_items in content.values()
+           if isinstance(section_items, list)
+           for i in section_items
+           if isinstance(i, dict)]
+    )
+    for item in all_wyt_candidates:
+        url = item.get("link", "")
+        source = item.get("source", "")
+        if source and url and url in digest_html:
+            wyt_source_history[source] = now_iso
+            log.info("WYT source cap recorded: %s", source)
+    save_wyt_source_history(wyt_source_history)
 
     if send_mode:
         send_email(digest_html, today)
