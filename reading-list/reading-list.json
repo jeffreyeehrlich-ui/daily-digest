@@ -1,6 +1,18 @@
 {
   "items": [
     {
+      "id": "47c66305-35bb-4ef6-9cf4-869b0755e012",
+      "title": "What if a few AI companies end up with all the money and power?",
+      "url": "https://www.noahpinion.blog/p/what-if-a-few-ai-companies-end-up",
+      "source": "Noahpinion",
+      "type": "read",
+      "category": "other",
+      "duration": "10 min read",
+      "description": "Smith thinks seriously through the Robot Lords scenario in which AI concentration produces entities with unprecedented economic and political power. The piece maps conditions under which concentration becomes irreversible and what policy interventions have realistic chance of working.",
+      "dateAdded": "2026-04-13",
+      "read": false
+    },
+    {
       "id": "e9dc8b29-3063-455d-8540-a35464e0ee50",
       "title": "Risk Revisited",
       "url": "https://www.oaktreecapital.com/docs/default-source/memos/2014-09-03-risk-revisited.pdf",
@@ -14,7 +26,7 @@
     },
     {
       "id": "78851c2b-674b-4a82-aebc-811dd810822b",
-      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soonâhere's why",
+      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soonÃ¢ÂÂhere's why",
       "url": "https://technologyreview.com/2026/04/08/1135398/mustafa-suleyman-ai-future/",
       "source": "MIT Technology Review",
       "type": "read",
