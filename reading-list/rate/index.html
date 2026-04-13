@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rate — Worth Your Time</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f8f8f6;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: #1a3a6e;
+    color: #fff;
+    padding: 28px 24px 22px;
+    text-align: center;
+  }
+  header h1 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  header p {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .container {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 32px 28px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .status-icon {
+    font-size: 52px;
+    margin-bottom: 16px;
+    line-height: 1;
+  }
+
+  .status-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 8px;
+  }
+
+  .status-msg {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 16px;
+    line-height: 1.6;
+  }
+
+  .article-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a3a6e;
+    margin: 0 0 24px;
+    padding: 10px 14px;
+    background: #f0f4fb;
+    border-radius: 6px;
+    word-break: break-word;
+  }
+
+  .rating-display {
+    display: inline-block;
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  .meta-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: #f0f0f0;
+    color: #555;
+    margin: 2px;
+  }
+
+  .meta-badges {
+    margin-bottom: 20px;
+  }
+
+  .error-detail {
+    font-size: 12px;
+    color: #999;
+    margin-top: 8px;
+    font-family: monospace;
+  }
+
+  .token-section {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+    text-align: left;
+  }
+  .token-section label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .token-input-row {
+    display: flex;
+    gap: 8px;
+  }
+  .token-input {
+    flex: 1;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    padding: 9px 11px;
+    font-size: 13px;
+    font-family: monospace;
+    outline: none;
+    transition: border-color 0.15s;
+    min-height: 40px;
+  }
+  .token-input:focus { border-color: #1a3a6e; }
+  .btn {
+    border: none;
+    border-radius: 6px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    min-height: 40px;
+    white-space: nowrap;
+  }
+  .btn-primary { background: #1a3a6e; color: #fff; }
+  .btn-primary:hover { background: #152f5a; }
+  .btn-primary:disabled { background: #aaa; cursor: default; }
+  .btn-secondary { background: #f0f0f0; color: #444; }
+  .btn-secondary:hover { background: #e4e4e4; }
+
+  .token-note {
+    font-size: 11px;
+    color: #999;
+    margin-top: 6px;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (max-width: 480px) {
+    .container { padding: 24px 14px 40px; }
+    .card { padding: 24px 18px; }
+    .token-input-row { flex-direction: column; }
+    .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Worth Your Time</h1>
+  <p>Jeff's curated reading shelf</p>
+</header>
+
+<div class="container">
+  <div class="card" id="card">
+    <div class="status-icon" id="statusIcon">⏳</div>
+    <div class="status-title" id="statusTitle">Processing your rating…</div>
+    <div class="status-msg" id="statusMsg">Please wait a moment.</div>
+    <div id="articleTitle" class="article-title" style="display:none;"></div>
+    <div id="metaBadges" class="meta-badges" style="display:none;"></div>
+    <div id="ratingDisplay" class="rating-display" style="display:none;"></div>
+    <div id="errorDetail" class="error-detail" style="display:none;"></div>
+
+    <!-- Token entry (shown when token missing or invalid) -->
+    <div class="token-section" id="tokenSection" style="display:none;">
+      <label>GitHub Token Required</label>
+      <div class="token-input-row">
+        <input type="password" class="token-input" id="tokenInput"
+               placeholder="github_pat_..." autocomplete="off">
+        <button class="btn btn-primary" id="tokenSaveBtn">Save &amp; Submit</button>
+      </div>
+      <p class="token-note">Stored only in your browser (localStorage). Required to save ratings.</p>
+    </div>
+
+    <div style="margin-top:20px;" id="actionButtons" style="display:none;"></div>
+  </div>
+</div>
+
+<script>
+const TOKEN_KEY = 'reading_list_gh_token';
+const GH_DISPATCH_URL = 'https://api.github.com/repos/jeffreyeehrlich-ui/daily-digest/actions/workflows/rate-wyt-item.yml/dispatches';
+
+function getToken() {
+  return localStorage.getItem(TOKEN_KEY) || '';
+}
+function setToken(t) {
+  localStorage.setItem(TOKEN_KEY, t.trim());
+}
+
+function getParam(name) {
+  return new URLSearchParams(window.location.search).get(name) || '';
+}
+
+const RATING_LABELS = { '1': 'Thumbs up', '0': 'Neutral', '-1': 'Thumbs down' };
+const RATING_ICONS  = { '1': '👍', '0': '😐', '-1': '👎' };
+
+function setStatus(icon, title, msg) {
+  document.getElementById('statusIcon').textContent  = icon;
+  document.getElementById('statusTitle').textContent = title;
+  document.getElementById('statusMsg').innerHTML     = msg;
+}
+
+async function submitRating(itemUrl, title, rating, category, tier, token) {
+  const res = await fetch(GH_DISPATCH_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: `token ${token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      ref: 'main',
+      inputs: {
+        item_url:  itemUrl,
+        title:     title,
+        rating:    rating,
+        category:  category,
+        tier:      tier,
+      },
+    }),
+  });
+
+  if (res.status === 204) return { ok: true };
+  if (res.status === 401) return { ok: false, error: 'Token expired or invalid.' };
+  if (res.status === 404) return { ok: false, error: 'Workflow not found. Check repo config.' };
+  if (res.status === 422) return { ok: false, error: 'Invalid inputs sent to workflow.' };
+  return { ok: false, error: `GitHub API error: ${res.status}` };
+}
+
+async function run() {
+  const itemUrl  = getParam('item');
+  const title    = decodeURIComponent(getParam('title'));
+  const rating   = getParam('rating');
+  const category = getParam('category');
+  const tier     = getParam('tier');
+
+  // Validate params
+  if (!itemUrl || !rating || !['1', '0', '-1'].includes(rating)) {
+    setStatus('⚠️', 'Invalid Rating Link', 'This rating link is missing required parameters. Please use the link from the email.');
+    return;
+  }
+
+  // Show article info
+  if (title) {
+    const titleEl = document.getElementById('articleTitle');
+    titleEl.textContent = title;
+    titleEl.style.display = 'block';
+  }
+
+  const ratingEl = document.getElementById('ratingDisplay');
+  ratingEl.textContent = RATING_ICONS[rating] || '';
+  ratingEl.style.display = 'block';
+
+  if (category || tier) {
+    const badgesEl = document.getElementById('metaBadges');
+    let html = '';
+    if (category) html += `<span class="meta-badge">${category.replace(/_/g, ' ')}</span>`;
+    if (tier)     html += `<span class="meta-badge">Tier ${tier}</span>`;
+    badgesEl.innerHTML = html;
+    badgesEl.style.display = 'block';
+  }
+
+  const token = getToken();
+  if (!token) {
+    setStatus('🔑', 'Token Required', 'A GitHub token is needed to save your rating.');
+    showTokenSection(itemUrl, title, rating, category, tier);
+    return;
+  }
+
+  await doSubmit(itemUrl, title, rating, category, tier, token);
+}
+
+async function doSubmit(itemUrl, title, rating, category, tier, token) {
+  setStatus('⏳', 'Saving your rating…', '<span><span class="spinner"></span>Connecting to GitHub…</span>');
+
+  const result = await submitRating(itemUrl, title, rating, category, tier, token);
+
+  if (result.ok) {
+    const label = RATING_LABELS[rating] || 'Rated';
+    const icon  = RATING_ICONS[rating]  || '✓';
+    setStatus(icon, `${label} — thanks!`,
+      'Your rating has been saved. It will influence future Worth Your Time selections.');
+
+    const btns = document.getElementById('actionButtons');
+    btns.innerHTML = `<a href="${itemUrl}" target="_blank" style="display:inline-block;margin-right:10px;padding:9px 18px;background:#1a3a6e;color:#fff;text-decoration:none;border-radius:6px;font-size:13px;font-weight:600;">Read the article</a>`;
+    btns.style.display = 'block';
+  } else {
+    setStatus('❌', 'Could not save rating', result.error || 'An unexpected error occurred.');
+    document.getElementById('errorDetail').textContent = 'If this persists, try refreshing your GitHub token.';
+    document.getElementById('errorDetail').style.display = 'block';
+
+    if (result.error && result.error.includes('Token')) {
+      showTokenSection(itemUrl, title, rating, category, tier);
+    }
+  }
+}
+
+function showTokenSection(itemUrl, title, rating, category, tier) {
+  const sec = document.getElementById('tokenSection');
+  sec.style.display = 'block';
+
+  document.getElementById('tokenSaveBtn').addEventListener('click', async () => {
+    const val = document.getElementById('tokenInput').value.trim();
+    if (!val) return;
+    setToken(val);
+    sec.style.display = 'none';
+    document.getElementById('errorDetail').style.display = 'none';
+    await doSubmit(itemUrl, title, rating, category, tier, val);
+  });
+
+  document.getElementById('tokenInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('tokenSaveBtn').click();
+  });
+}
+
+run().catch(err => {
+  setStatus('❌', 'Unexpected Error', err.message || 'Something went wrong.');
+});
+</script>
+
+</body>
+</html>

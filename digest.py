@@ -135,7 +135,7 @@ Science section quality: In the Science & Health section, each story must be wri
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time sourcing: The single criterion is staying power — would this still be worth reading or listening to a month from now? Pick the single best item available, or two if both are genuinely exceptional. Do not include something just to fill the section. Check the THINKERS feed first (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio, Ryan Holiday, Daily Stoic) — these are strong candidates when available. Any new post from these authors auto-qualifies if it passes the quality tests. Other strong sources to draw from when they have material worth featuring: philosophy and ideas (Aeon, The Marginalian, Nautilus, Farnam Street, Paul Graham, Ryan Holiday, Tim Urban), economics and finance (Invest Like the Best, Bloomberg Odd Lots deep-dives, Project Syndicate, VoxEU, Noahpinion long-form essays), health and longevity (Huberman Lab full episodes only — never Essentials clips, Peter Attia), science when paradigm-shifting (Quanta Magazine, New Scientist, Nature, MIT Technology Review). These are examples — use them only when the content genuinely earns inclusion. Do not default to any single source. Do not repeat the same source on consecutive days. The section must always populate — use evergreen items if nothing recent qualifies.
+Worth Your Time is Jeff's curated reading shelf — not a news feed extension. Every item must make him meaningfully smarter, wiser, or better informed in a way that sticks. The section draws from three pools: LIVE (recent feed items), ARCHIVE (thinker blogs), and EVERGREEN LIBRARY (pre-vetted classics). Each day has a tier: EVERGREEN (Tier 1 — shelf life 50+ years), DURABLE (Tier 2 — 1-3 years), TOPICAL (Tier 3 — 1-4 weeks). Today's tier and under-quota topics are in the candidate pool header — prioritize accordingly. For topics outside Jeff's domain (science, philosophy, history, linguistics), prefer journalism over academia, narrative over jargon. Always include 1-2 items — the Evergreen Library always has something worthy. Never leave Worth Your Time empty.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
@@ -278,9 +278,15 @@ def extract_featured_stories(html: str, content: dict[str, list[dict]]) -> dict:
     for section, items in content.items():
         if section in _HISTORY_SKIP_SECTIONS:
             continue
+        if not isinstance(items, list):
+            continue
         for item in items:
-            if item["link"]:
-                url_to_title[item["link"]] = item["title"]
+            if not isinstance(item, dict):
+                continue
+            url = item.get("link") or item.get("url") or ""
+            title = item.get("title", "")
+            if url and title:
+                url_to_title[url] = title
 
     now = datetime.now(timezone.utc).isoformat()
     featured: dict = {}
@@ -750,128 +756,289 @@ def scrape_page(source: dict) -> list[dict]:
     log.info("%-30s  %d item(s) scraped", name, len(items))
     return items
 
-# ── Evergreen WYT pool ────────────────────────────────────────────────────────
+# ── WYT — New System: topic rotation, accessibility filter, evergreen library ──
 
-EVERGREEN_FILE      = Path(__file__).parent / "evergreen_wyt.yaml"
-EVERGREEN_USED_FILE = LOG_DIR / "evergreen_wyt_used.json"
-EVERGREEN_COOLDOWN_DAYS = 30  # don't repeat an evergreen item within this window
+WYT_LIBRARY_FILE  = Path(__file__).parent / "wyt_library.yaml"
+WYT_HISTORY_FILE  = LOG_DIR / "wyt_history.json"
+WYT_RATINGS_FILE  = LOG_DIR / "wyt_ratings.json"
+
+# Day-of-week → tier (Monday=0 … Sunday=6)
+_WYT_DAY_TIER: dict[int, int] = {
+    0: 2,  # Monday
+    1: 3,  # Tuesday
+    2: 1,  # Wednesday
+    3: 2,  # Thursday
+    4: 3,  # Friday
+    5: 1,  # Saturday
+    6: 2,  # Sunday
+}
+
+_TIER_NAMES = {1: "EVERGREEN", 2: "DURABLE", 3: "TOPICAL"}
+
+# 14-day quota targets per category
+_WYT_QUOTA_14D: dict[str, tuple[int, int]] = {
+    # category: (min_target, max_target)
+    "philosophy_stoicism":   (3, 3),
+    "philosophy_other":      (1, 1),
+    "investing_finance":     (2, 3),
+    "hard_science":          (2, 2),
+    "applied_science_tech":  (2, 2),
+    "explainer":             (2, 6),
+    "human_performance":     (1, 2),
+    "ideas_mental_models":   (2, 2),
+    "real_estate_adjacent":  (1, 1),
+    "viral_topical":         (1, 1),
+    "surprise":              (1, 1),
+}
 
 
-def load_evergreen_pool() -> list[dict]:
-    """Load the curated evergreen WYT items from evergreen_wyt.yaml."""
-    if not EVERGREEN_FILE.exists():
+def get_today_tier(today: datetime | None = None) -> tuple[int, str]:
+    """Return (tier_number, tier_name) for today's day of week."""
+    if today is None:
+        today = datetime.now(timezone.utc)
+    tier = _WYT_DAY_TIER[today.weekday()]
+    return tier, _TIER_NAMES[tier]
+
+
+def load_wyt_history() -> dict:
+    """Return the WYT history dict from wyt_history.json."""
+    if not WYT_HISTORY_FILE.exists():
+        return {"featured": [], "topic_counts_14d": {}, "source_counts_7d": {},
+                "explainer_count_28d": 0, "last_updated": ""}
+    try:
+        with open(WYT_HISTORY_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as exc:
+        log.warning("Could not read wyt_history.json: %s — starting fresh", exc)
+        return {"featured": [], "topic_counts_14d": {}, "source_counts_7d": {},
+                "explainer_count_28d": 0, "last_updated": ""}
+
+
+def save_wyt_history(history: dict) -> None:
+    WYT_HISTORY_FILE.parent.mkdir(exist_ok=True)
+    with open(WYT_HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=False)
+    log.info("Saved wyt_history.json")
+
+
+def load_wyt_library() -> list[dict]:
+    """Load items from wyt_library.yaml. Returns empty list on failure."""
+    if not WYT_LIBRARY_FILE.exists():
+        log.warning("wyt_library.yaml not found")
         return []
     try:
-        with open(EVERGREEN_FILE, encoding="utf-8") as f:
+        with open(WYT_LIBRARY_FILE, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         return data.get("items", [])
     except Exception as exc:
-        log.warning("Could not load evergreen_wyt.yaml: %s", exc)
+        log.warning("Could not load wyt_library.yaml: %s", exc)
         return []
 
 
-def load_evergreen_used() -> dict:
-    """Return {url: iso_date_last_shown} from the evergreen usage log."""
-    if not EVERGREEN_USED_FILE.exists():
-        return {}
+def save_wyt_library(items: list[dict]) -> None:
     try:
-        with open(EVERGREEN_USED_FILE, encoding="utf-8") as f:
+        with open(WYT_LIBRARY_FILE, encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+        data["items"] = items
+        with open(WYT_LIBRARY_FILE, "w", encoding="utf-8") as f:
+            yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
+    except Exception as exc:
+        log.warning("Could not save wyt_library.yaml: %s", exc)
+
+
+def load_wyt_ratings() -> dict:
+    """Return the ratings data from wyt_ratings.json."""
+    if not WYT_RATINGS_FILE.exists():
+        return {"ratings": [], "category_scores": {}, "source_scores": {}}
+    try:
+        with open(WYT_RATINGS_FILE, encoding="utf-8") as f:
             return json.load(f)
     except Exception:
-        return {}
+        return {"ratings": [], "category_scores": {}, "source_scores": {}}
 
 
-def save_evergreen_used(used: dict) -> None:
-    EVERGREEN_USED_FILE.parent.mkdir(exist_ok=True)
-    with open(EVERGREEN_USED_FILE, "w", encoding="utf-8") as f:
-        json.dump(used, f, indent=2)
+def calculate_topic_quotas(history: dict) -> tuple[list[str], list[str]]:
+    """
+    Read the 14-day featured history and return:
+      under_quota: categories below their minimum target
+      over_quota:  categories at or above their maximum target
+    """
+    cutoff = datetime.now(timezone.utc) - timedelta(days=14)
+    recent_featured = [
+        f for f in history.get("featured", [])
+        if f.get("date", "") >= cutoff.strftime("%Y-%m-%d")
+    ]
+    counts: dict[str, int] = {}
+    for entry in recent_featured:
+        cat = entry.get("category", "")
+        if cat:
+            counts[cat] = counts.get(cat, 0) + 1
+
+    under_quota: list[str] = []
+    over_quota:  list[str] = []
+    for cat, (min_t, max_t) in _WYT_QUOTA_14D.items():
+        c = counts.get(cat, 0)
+        if c < min_t:
+            under_quota.append(cat)
+        if c >= max_t:
+            over_quota.append(cat)
+
+    log.info("WYT topic counts (14d): %s", counts)
+    log.info("WYT under-quota: %s", under_quota)
+    log.info("WYT over-quota: %s", over_quota)
+    return under_quota, over_quota
 
 
-def get_eligible_evergreen(pool: list[dict], used: dict) -> list[dict]:
-    """Return evergreen items not shown within EVERGREEN_COOLDOWN_DAYS."""
-    cutoff = datetime.now(timezone.utc) - timedelta(days=EVERGREEN_COOLDOWN_DAYS)
-    eligible = []
-    for item in pool:
-        url = item.get("url", "")
-        last_shown = used.get(url)
-        if last_shown:
-            try:
-                if datetime.fromisoformat(last_shown) > cutoff:
-                    continue
-            except Exception:
-                pass
-        eligible.append(item)
-    return eligible
+def filter_by_accessibility(items: list[dict]) -> list[dict]:
+    """Remove expert-only items from the candidate pool."""
+    return [i for i in items if i.get("accessibility", "general") != "expert-only"]
 
 
-def evergreen_to_wyt_items(items: list[dict]) -> list[dict]:
-    """Convert evergreen pool items to the same dict format used by feed items."""
+def apply_rating_boost(items: list[dict], ratings: dict) -> list[dict]:
+    """
+    Adjust item priority_score based on category ratings:
+      - category avg > 0.5: boost 20%
+      - category avg < -0.3: reduce 20%
+      - cumulative_rating < -2: exclude for 60 days
+    """
+    cat_scores = ratings.get("category_scores", {})
     result = []
     for item in items:
-        result.append({
-            "source":    item.get("source", ""),
-            "title":     item.get("title", ""),
-            "link":      item.get("url", ""),
-            "summary":   item.get("description", ""),
-            "published": "",  # no publish date — these are evergreen
-            "evergreen": True,
-            "duration":  item.get("duration", ""),
-            "type":      item.get("type", "article"),
-            "category":  item.get("category", "other"),
-        })
+        cr = item.get("cumulative_rating", 0)
+        if cr < -2:
+            # Check if we should exclude
+            # Use times_featured as a proxy — if it's a library item, skip
+            if item.get("_library_item"):
+                log.info("WYT exclude (low rating): %s", item.get("title", "")[:60])
+                continue
+        cat = item.get("category", "")
+        score_data = cat_scores.get(cat, {})
+        count = score_data.get("count", 0)
+        if count > 0:
+            avg = score_data["total"] / count
+            if avg > 0.5:
+                item["_priority_boost"] = 1.2
+            elif avg < -0.3:
+                item["_priority_boost"] = 0.8
+        result.append(item)
     return result
 
 
-# ── WYT source-per-week cap ───────────────────────────────────────────────────
-
-WYT_SOURCE_HISTORY_FILE = LOG_DIR / "wyt_source_history.json"
-WYT_SOURCE_COOLDOWN_DAYS = 7
-
-
-def load_wyt_source_history() -> dict:
-    """Return {source_name: iso_date_last_shown}."""
-    if not WYT_SOURCE_HISTORY_FILE.exists():
-        return {}
-    try:
-        with open(WYT_SOURCE_HISTORY_FILE, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return {}
-
-
-def save_wyt_source_history(history: dict) -> None:
-    WYT_SOURCE_HISTORY_FILE.parent.mkdir(exist_ok=True)
-    with open(WYT_SOURCE_HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(history, f, indent=2)
-
-
-def filter_wyt_by_source_cap(
-    items: list[dict], source_history: dict
-) -> tuple[list[dict], list[dict]]:
-    """Split items into (eligible, capped).
-    A source is capped if it appeared in WYT within the last 7 days.
-    Evergreen items bypass the cap — they already have their own 30-day cooldown.
+def get_eligible_library_items(
+    library: list[dict],
+    history: dict,
+    over_quota: list[str],
+) -> list[dict]:
     """
-    cutoff = datetime.now(timezone.utc) - timedelta(days=WYT_SOURCE_COOLDOWN_DAYS)
-    eligible, capped = [], []
-    for item in items:
-        if item.get("evergreen"):
-            eligible.append(item)
+    Filter library items:
+    - Remove items within their cooldown window
+    - Remove items in over-quota categories
+    - Sort: under-quota categories first, then by cumulative_rating/max(times_featured,1)
+    """
+    now = datetime.now(timezone.utc)
+    eligible = []
+    for item in library:
+        if item.get("accessibility") == "expert-only":
             continue
-        source = item.get("source", "")
-        last_shown = source_history.get(source)
-        if last_shown:
-            try:
-                if datetime.fromisoformat(last_shown) > cutoff:
-                    capped.append(item)
-                    continue
-            except Exception:
-                pass
+        url = item.get("url", "")
+        cat = item.get("category", "")
+        if cat in over_quota:
+            continue
+        cooldown = item.get("cooldown_days", 21)
+        # Check if item appeared in history within cooldown
+        cutoff_str = (now - timedelta(days=cooldown)).strftime("%Y-%m-%d")
+        recently_used = any(
+            f.get("url") == url and f.get("date", "") >= cutoff_str
+            for f in history.get("featured", [])
+        )
+        if recently_used:
+            log.info("WYT library cooldown: %s", item.get("title", "")[:60])
+            continue
+        item["_library_item"] = True
         eligible.append(item)
-    if capped:
-        log.info("WYT source cap: %d item(s) from recently-used sources excluded",
-                 len(capped))
-    return eligible, capped
+
+    # Sort: prioritize items whose category is under-quota
+    def _sort_key(item):
+        cat = item.get("category", "")
+        tf  = max(item.get("times_featured", 0), 1)
+        cr  = item.get("cumulative_rating", 0)
+        under = -1 if cat in [c for c, (mn, _) in _WYT_QUOTA_14D.items() if mn > 0] else 0
+        return (under, -(cr / tf))
+
+    eligible.sort(key=_sort_key)
+    return eligible
+
+
+def record_wyt_selections(
+    digest_html: str,
+    wyt_candidates: list[dict],
+    history: dict,
+    library: list[dict],
+) -> None:
+    """
+    After digest generation, find WYT section URLs in the HTML,
+    match against candidates, record in wyt_history.json,
+    and update times_featured in wyt_library.yaml.
+    """
+    # Extract the WYT section from the HTML
+    wyt_section_match = re.search(
+        r'Worth Your Time.*?(?=<h2[^>]*>(?!.*Worth Your Time)|$)',
+        digest_html, re.DOTALL | re.IGNORECASE
+    )
+    if not wyt_section_match:
+        log.info("WYT record: could not isolate WYT section in HTML")
+        wyt_section = digest_html  # fall back to full HTML
+    else:
+        wyt_section = wyt_section_match.group(0)
+
+    # Build URL→candidate map
+    url_to_candidate: dict[str, dict] = {}
+    for item in wyt_candidates:
+        url = item.get("url") or item.get("link") or ""
+        if url:
+            url_to_candidate[url] = item
+
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    found_urls: list[str] = []
+    for href in re.findall(r'href="([^"]+)"', wyt_section):
+        if href in url_to_candidate and href not in found_urls:
+            found_urls.append(href)
+
+    if not found_urls:
+        log.info("WYT record: no candidate URLs found in WYT section")
+        return
+
+    log.info("WYT record: recording %d selection(s)", len(found_urls))
+    library_url_to_idx = {item.get("url", ""): i for i, item in enumerate(library)}
+
+    for url in found_urls:
+        candidate = url_to_candidate[url]
+        entry = {
+            "url":      url,
+            "title":    candidate.get("title", ""),
+            "category": candidate.get("category", ""),
+            "tier":     candidate.get("tier", 2),
+            "date":     today_str,
+        }
+        history.setdefault("featured", []).append(entry)
+        log.info("WYT recorded: %s", candidate.get("title", "")[:80])
+
+        # Update library times_featured
+        lib_idx = library_url_to_idx.get(url)
+        if lib_idx is not None:
+            library[lib_idx]["times_featured"] = library[lib_idx].get("times_featured", 0) + 1
+
+    # Prune history older than 28 days
+    cutoff_str = (datetime.now(timezone.utc) - timedelta(days=28)).strftime("%Y-%m-%d")
+    history["featured"] = [
+        f for f in history.get("featured", [])
+        if f.get("date", "") >= cutoff_str
+    ]
+    history["last_updated"] = today_str
+
+
+# ── WYT 1-year archive fetch ──────────────────────────────────────────────────
+# Keep WYT_ARCHIVE_SOURCES and fetch_wyt_archive() — used for Pool B
 
 
 # ── WYT 1-year archive fetch ──────────────────────────────────────────────────
@@ -1048,8 +1215,13 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     # ── Build WYT candidate pool ──────────────────────────────────────────────
     wyt_seen: set[str] = set()
 
-    # Part 1: Recent items from feeds (free sources only)
-    raw_recent: list[dict] = []
+    # Metadata injected by main()
+    wyt_tier, wyt_tier_name   = content.get("_wyt_tier", (2, "DURABLE"))
+    wyt_under_quota: list[str] = content.get("_wyt_under_quota", [])
+    wyt_over_quota:  list[str] = content.get("_wyt_over_quota", [])
+
+    # Pool A: Live feed items (free, from today's news feeds)
+    pool_a: list[dict] = []
     for section_key, section_items in content.items():
         if section_key.startswith("_") or not isinstance(section_items, list):
             continue
@@ -1057,70 +1229,91 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             if not isinstance(item, dict):
                 continue
             url = item.get("link") or item.get("url") or ""
+            cat = item.get("category", "")
             if url and url not in wyt_seen and _is_free_for_wyt(url):
-                wyt_seen.add(url)
-                raw_recent.append(item)
+                if cat not in wyt_over_quota:
+                    wyt_seen.add(url)
+                    pool_a.append(item)
 
-    # Part 2: 1-year archive items (thinkers / long-form sources)
-    raw_archive: list[dict] = []
+    # Pool B: Archive (thinker blogs — WYT_ARCHIVE_SOURCES, up to 1 year old)
+    pool_b: list[dict] = []
     for item in content.get("_wyt_archive", []):
         url = item.get("link", "")
+        cat = item.get("category", "")
         if url and url not in wyt_seen and _is_free_for_wyt(url):
-            wyt_seen.add(url)
-            raw_archive.append(item)
+            if cat not in wyt_over_quota:
+                wyt_seen.add(url)
+                pool_b.append(item)
 
-    # Part 3: Evergreen curated items
-    raw_evergreen: list[dict] = []
-    for item in content.get("_evergreen_wyt", []):
-        url = item.get("link", "")
+    # Pool C: Evergreen library (wyt_library.yaml, already filtered by cooldown)
+    pool_c_raw: list[dict] = content.get("_wyt_library", [])
+    pool_c: list[dict] = []
+    for item in pool_c_raw:
+        url = item.get("url", "")
         if url and url not in wyt_seen:
             wyt_seen.add(url)
-            raw_evergreen.append(item)
+            pool_c.append(item)
 
-    # Apply source-per-week cap to recent and archive (evergreen has its own cooldown)
-    source_history = content.get("_wyt_source_history", {})
-    recent_wyt,   _  = filter_wyt_by_source_cap(raw_recent,   source_history)
-    archive_wyt,  _  = filter_wyt_by_source_cap(raw_archive,  source_history)
-    evergreen_wyt    = raw_evergreen  # already filtered by 30-day cooldown
+    # Store all candidates for post-processing in main()
+    content["_wyt_all_candidates"] = pool_a + pool_b + pool_c
 
-    def _fmt_wyt_item(item: dict, label: str = "") -> str:
+    def _fmt_wyt_item(item: dict, pool_label: str = "") -> str:
         lines = [
             f"SOURCE: {item.get('source', '')}",
             f"TITLE: {item.get('title', '')}",
             f"URL: {item.get('link') or item.get('url', '')}",
-            f"SUMMARY: {item.get('summary', '')}",
+            f"SUMMARY: {item.get('summary') or item.get('why_worth_reading', '')}",
         ]
         if item.get("published"):
             lines.append(f"PUBLISHED: {item['published'][:10]}")
-        if label:
-            lines.append(f"NOTE: {label}")
-        if item.get("duration"):
-            lines.append(f"DURATION: {item['duration']}")
+        if pool_label:
+            lines.append(f"POOL: {pool_label}")
+        duration = item.get("duration") or (
+            f"{item.get('estimated_read_minutes')} min read"
+            if item.get("estimated_read_minutes") else ""
+        )
+        if duration:
+            lines.append(f"DURATION: {duration}")
+        cat = item.get("category", "")
+        if cat:
+            lines.append(f"CATEGORY: {cat}")
+        tier = item.get("tier", "")
+        if tier:
+            lines.append(f"ITEM_TIER: {tier}")
+        acc = item.get("accessibility", "general")
+        if acc and acc != "general":
+            lines.append(f"ACCESSIBILITY: {acc}")
         return "\n".join(lines)
 
-    recent_block   = "\n\n".join(_fmt_wyt_item(i, "RECENT")   for i in recent_wyt[:40])
-    archive_block  = "\n\n".join(_fmt_wyt_item(i, "ARCHIVE — up to 1 year old, long-form") for i in archive_wyt[:30])
-    evergreen_block= "\n\n".join(_fmt_wyt_item(i, "EVERGREEN — curated, high-quality") for i in evergreen_wyt[:15])
+    pool_a_block = "\n\n".join(
+        _fmt_wyt_item(i, "LIVE — recent from news feeds") for i in pool_a[:30]
+    )
+    pool_b_block = "\n\n".join(
+        _fmt_wyt_item(i, "ARCHIVE — thinker blogs, long-form") for i in pool_b[:25]
+    )
+    pool_c_block = "\n\n".join(
+        _fmt_wyt_item(i, "EVERGREEN LIBRARY — pre-vetted classics") for i in pool_c[:20]
+    )
 
-    wyt_block = "=== WORTH YOUR TIME CANDIDATE POOL ===\n"
-    if recent_block:
-        wyt_block += f"\n-- RECENT (last 24-168h from feeds) --\n{recent_block}\n"
-    if archive_block:
-        wyt_block += f"\n-- ARCHIVE (thinker blogs, up to 1 year old) --\n{archive_block}\n"
-    if evergreen_block:
-        wyt_block += f"\n-- EVERGREEN (pre-vetted classics) --\n{evergreen_block}\n"
-    if not any([recent_block, archive_block, evergreen_block]):
-        wyt_block += "(empty)"
-    else:
-        wyt_block += (
-            "\nSELECTION RULE: Prefer RECENT items if any genuinely have staying power. "
-            "ARCHIVE items are from personal blogs of Naval, Tim Ferriss, Tim Urban, "
-            "Ray Dalio, Ryan Holiday, Farnam Street — older posts are fine if the "
-            "insight is timeless. EVERGREEN items are pre-vetted classics. "
-            "Each source may appear at most once per week — sources already used "
-            "this week have been excluded from this pool. "
-            "You MUST select at least one item."
-        )
+    under_quota_str = (
+        ", ".join(wyt_under_quota).replace("_", " ") if wyt_under_quota else "none"
+    )
+
+    wyt_block = (
+        f"=== WORTH YOUR TIME CANDIDATE POOL ===\n"
+        f"TODAY'S TIER: {wyt_tier} — {wyt_tier_name}\n"
+        f"DAY: {today.strftime('%A')}\n"
+        f"UNDER-QUOTA TOPICS (prioritize these): {under_quota_str}\n"
+    )
+    if pool_a_block:
+        wyt_block += f"\n-- POOL A: LIVE (recent feed items, free only) --\n{pool_a_block}\n"
+    if pool_b_block:
+        wyt_block += f"\n-- POOL B: ARCHIVE (thinker blogs, Naval/Ferriss/Holiday/Farnam St) --\n{pool_b_block}\n"
+    if pool_c_block:
+        wyt_block += f"\n-- POOL C: EVERGREEN LIBRARY (curated, high cooldown) --\n{pool_c_block}\n"
+    if not any([pool_a_block, pool_b_block, pool_c_block]):
+        wyt_block += "(no candidates available — this should not happen)\n"
+
     raw_blocks.append(wyt_block)
 
     raw_content = "\n\n".join(raw_blocks)
@@ -1159,47 +1352,57 @@ LENGTH RULE: Write every section at 75% of what you would normally produce. Cut 
 10. 💡 One Thing to Learn Today — One practical insight from the digest. Real estate PE / affordable housing finance or general intellectual growth. Two sentences max.
 
 11. 📚 Worth Your Time — Always populate this section with 1–2 items.
-   The CANDIDATE POOL contains both RECENT items (from today's feeds) and
-   EVERGREEN items (pre-vetted, high-quality, dated pieces). Prefer recent
-   items when they genuinely have staying power. Fall back to evergreen items
-   when nothing recent clears the bar. You MUST select at least one item.
+   The CANDIDATE POOL is labeled with today's tier and under-quota topics.
+   Select items that match today's tier first; under-quota topics second.
+   The Evergreen Library always has something worthy — never leave this empty.
 
-   CONTENT TYPES AND MINIMUM LENGTHS:
-   📄 Articles/essays  — min ~1 000 words / 5 min read; max ~30 min read.
-      Must NOT be breaking news or a daily/weekly data recap.
-   🎬 Videos           — min 2 min; max 30 min. Substantive only.
-   🎧 Podcasts         — min 20 min; max 60 min. Full episodes only.
+   SELECTION PRIORITY:
+   1. Items from under-quota topic categories
+   2. Items that match today's tier (Tier 1=EVERGREEN, 2=DURABLE, 3=TOPICAL)
+   3. Items with highest quality and staying power
 
-   QUALITY TESTS — every item must pass ALL four:
-   1. Worth consuming one month from now?
-   2. Genuine analysis, original thinking, or narrative depth — not just news?
-   3. High-quality, credible source?
-   4. Freely accessible, or clearly flagged as (subscription required)?
+   EVERY ITEM MUST PASS ALL FOUR:
+   1. A thoughtful well-read person would enthusiastically recommend this to a smart friend
+   2. Freely accessible — no paywall, no login required
+   3. 5–10 minutes to read (flag if outside this range)
+   4. Written for an intelligent general reader if outside Jeff's domain
+
+   TIER DEFINITIONS:
+   - EVERGREEN (Tier 1): shelf life 50+ years — classical philosophy, foundational thinking
+   - DURABLE (Tier 2): shelf life 1-3 years — high quality analysis, well-reasoned essays
+   - TOPICAL (Tier 3): shelf life 1-4 weeks — exceptional pieces highly relevant right now
+
+   ACCESSIBILITY RULES:
+   - For topics WITHIN Jeff's domain (LIHTC, affordable housing, real estate finance): depth and technicality are fine
+   - For topics OUTSIDE his domain (science, philosophy, history, linguistics): always prefer journalism over academia
+   - If dense but exceptional: flag as 'This one is dense, worth the effort — [one sentence why]'
+   - Never include arXiv preprints or academic papers requiring expert background
 
    ALWAYS EXCLUDE:
    Breaking news · market recaps · weekly data summaries · press releases ·
-   listicles · aggregator roundups · podcast clips or highlight reels.
+   under 3 minutes · over 20 minutes (unless truly landmark, flag explicitly) ·
+   listicles · aggregator roundups · podcast clips or highlight reels ·
+   WSJ · FT · Bloomberg · NYT · New Yorker · The Atlantic · Foreign Affairs ·
+   HBR · Washington Post (paywalled)
 
-   PAYWALL RULES:
-   DO NOT hyperlink these domains — render as plain text with (subscription required):
-     wsj.com  ft.com  bloomberg.com  theinformation.com  nytimes.com
-     newyorker.com  theatlantic.com  foreignaffairs.com  hbr.org
-     wired.com  businessinsider.com  washingtonpost.com
-   economist.com — always link freely (authenticated access enabled).
-   Always link freely:
-     reuters.com  thehill.com  npr.org  noahpinion.blog  bensbites.com
-     anthropic.com  housingfinance.com  congress.gov  *.gov  *.edu
-     newscientist.com  statnews.com  technologyreview.com  therealdeal.com
-     colossus.com  hubermanlab.com  arstechnica.com  therundown.ai  nature.com
-     goldmansachs.com  morganstanley.com  jpmorgan.com  blackrock.com
-     cbre.com  us.jll.com  nmrk.com  berkadia.com  marcusmillichap.com
-     globest.com  costar.com  popularmechanics.com  popsci.com
-     nav.al  naval.substack.com  tim.blog  waitbutwhy.com  medium.com/@raydalio
-     ryanholiday.net  dailystoic.com  ryanholiday.substack.com
-     themarginalian.org  aeon.co  nautil.us  fs.blog  paulgraham.com
-     paulgraham.com  project-syndicate.org  voxeu.org  peterattiamd.com
-     quantamagazine.org  ribbonfarm.com  stratechery.com
+   ALWAYS FREE — link without restriction:
+     aeon.co  nautil.us  quantamagazine.org  waitbutwhy.com  paulgraham.com
+     fs.blog  jamesclear.com  dailystoic.com  ryanholiday.net  nav.al
+     hubermanlab.com  peterattiamd.com  collaborativefund.com  noahpinion.blog
+     oaktreecapital.com  berkshirehathaway.com  notboring.co  epsilontheory.com
+     writings.stephenwolfram.com  eugenewei.com  a16z.com  medium.com
+     themarginalian.org  outsideonline.com  vox.com  strongtowns.org
+     stlouisfed.org  huduser.gov  r2d3.us  classics.mit.edu  en.wikisource.org
+     economist.com (authenticated access) · npr.org · statnews.com · technologyreview.com
    When in doubt: do not hyperlink.
+
+   TIER BADGE HTML STYLES:
+   - EVERGREEN: style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:bold;background:#1a1a2e;color:#fff;"
+   - DURABLE:   style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:bold;background:#1e4d2b;color:#fff;"
+   - TOPICAL:   style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;font-weight:bold;background:#b45309;color:#fff;"
+
+   TOPIC BADGE HTML STYLE:
+   style="display:inline-block;padding:2px 8px;border-radius:3px;font-size:11px;background:#f0f0f0;color:#555;margin-left:6px;"
 
    SECTION HEADER — render exactly as:
    <h2 style="font-size:16px;font-weight:bold;margin:32px 0 2px;\
@@ -1211,74 +1414,75 @@ font-family:Arial,Helvetica,sans-serif;">
      Curated reads, listens, and watches with staying power
    </p>
 
-   ITEM FORMAT — for each selected item:
+   ITEM FORMAT — for each selected item render in this order:
 
-   Icon by type:  📄 article   🎬 video   🎧 podcast
+   1. Icon + Title link + Author + Source:
+      📄 <a href="[URL]">[TITLE]</a> — [AUTHOR], [SOURCE] ([YEAR if not current year])
 
-   Badge colours:
-     READ   → background:#d4edda;color:#155724
-     WATCH  → background:#cce5ff;color:#004085
-     LISTEN → background:#fff3cd;color:#856404
+   2. Tier badge + Topic badge + Duration badge:
+      [TIER BADGE] [TOPIC BADGE] <span style="color:#888;font-size:12px;">[N] min read</span>
 
-   Duration labels:  "[N] min read" / "[N] min watch" / "[N] min listen"
+   3. Optional flag (if dense or extended):
+      <p style="margin:4px 0;font-size:12px;color:#b45309;font-style:italic;">
+        This one is dense, worth the effort — [one sentence why]
+      </p>
 
-   ADD TO LIST BUTTON — construct a static percent-encoded href:
-   Base:  https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=
-   Append the URL-encoded version of a JSON object with these fields:
-     {{"title": "[TITLE]", "url": "[ITEM_URL]", "source": "[SOURCE]", "type": "[article|podcast|video]", "category": "[one of: markets|real-estate|macro|ai|science|health|philosophy|policy|other]", "duration": "[duration]", "description": "[2-3 sentence description]"}}
+   4. Description — 2-3 sentences:
+      Sentence 1: What this piece argues, explores, or teaches
+      Sentence 2: What Jeff will specifically take away
+      Sentence 3: Why it has staying power or matters now
 
-   Valid category values (use EXACTLY one of these strings):
-     markets, real-estate, macro, ai, science, health, philosophy, policy, other
+   5. Rating buttons (ALWAYS include):
+      <p style="margin:8px 0 0;font-size:12px;color:#888;">
+        Rate this pick:
+        <a href="https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/rate/?item=[url-encoded-article-url]&rating=1&title=[url-encoded-title]&category=[category]&tier=[tier]" style="text-decoration:none;">👍</a> &nbsp;
+        <a href="https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/rate/?item=[url-encoded-article-url]&rating=0&title=[url-encoded-title]&category=[category]&tier=[tier]" style="text-decoration:none;">😐</a> &nbsp;
+        <a href="https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/rate/?item=[url-encoded-article-url]&rating=-1&title=[url-encoded-title]&category=[category]&tier=[tier]" style="text-decoration:none;">👎</a>
+      </p>
 
-   Encoding rules (apply to the entire JSON string):
-     space->%20  newline->%0A  :->%3A  /->%2F  ?->%3F  =->%3D  &->%26  #->%23  +->%2B  quote->%22  open-brace->%7B  close-brace->%7D  open-bracket->%5B  close-bracket->%5D  comma->%2C
+   6. Add to list button (ALWAYS include for free items):
+      <a href="[ADD_TO_LIST_HREF]" target="_blank"
+         style="display:inline-block;padding:5px 12px;background:#1a1a2e;\
+color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:12px;\
+text-decoration:none;border-radius:3px;">
+        + Add to list
+      </a>
 
-   Worked example (title "Why Rates Matter", url "https://noahpinion.blog/p/x"):
-   https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=%7B%22title%22%3A%22Why%20Rates%20Matter%22%2C%22url%22%3A%22https%3A%2F%2Fnoahpinion.blog%2Fp%2Fx%22%2C%22source%22%3A%22Noahpinion%22%2C%22type%22%3A%22article%22%2C%22category%22%3A%22macro%22%2C%22duration%22%3A%2212%20min%20read%22%2C%22description%22%3A%22A%20clear%20look%20at%20rate%20dynamics.%22%7D
-
-   FREELY-LINKED ITEM TEMPLATE:
+   FULL ITEM CARD TEMPLATE:
    <div style="margin:0 0 20px;padding:14px 16px;border:1px solid #e8e8e8;\
 border-radius:4px;background:#fafafa;">
-     <p style="margin:0 0 4px;font-size:14px;font-weight:bold;color:#1a1a1a;">
-       [ICON] <a href="[ITEM_URL]" style="color:#1a3a6e;text-decoration:none;">
-         [HEADLINE]
-       </a> — <span style="color:#555;">[SOURCE]</span>
+     <p style="margin:0 0 6px;font-size:14px;font-weight:bold;color:#1a1a1a;">
+       [ICON] <a href="[ITEM_URL]" style="color:#1a3a6e;text-decoration:none;">[HEADLINE]</a>
+       — <span style="color:#555;">[AUTHOR], [SOURCE]</span>
+       [YEAR SPAN if not current year: <span style="color:#888;font-size:13px;font-weight:normal;"> ([YEAR])</span>]
      </p>
      <p style="margin:0 0 8px;font-size:12px;">
-       <span style="display:inline-block;padding:2px 7px;border-radius:3px;\
-font-weight:bold;font-size:11px;[BADGE_STYLE]">[READ|WATCH|LISTEN]</span>
-       &nbsp;<span style="color:#888;">[DURATION]</span>
+       [TIER BADGE] [TOPIC BADGE] &nbsp;<span style="color:#888;">[DURATION]</span>
      </p>
+     [OPTIONAL DENSE FLAG]
      <p style="margin:0 0 10px;font-size:14px;line-height:1.7;color:#333;">
-       [2-3 sentence description: what does this argue/explore/teach, why will
-       it still be valuable in a month, what will the reader/listener take away?]
+       [2-3 sentence description]
+     </p>
+     <p style="margin:8px 0 0;font-size:12px;color:#888;">
+       Rate this pick:
+       <a href="https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/rate/?item=[URL_ENC_ARTICLE_URL]&rating=1&title=[URL_ENC_TITLE]&category=[CATEGORY]&tier=[TIER_NUM]" style="text-decoration:none;">👍</a> &nbsp;
+       <a href="https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/rate/?item=[URL_ENC_ARTICLE_URL]&rating=0&title=[URL_ENC_TITLE]&category=[CATEGORY]&tier=[TIER_NUM]" style="text-decoration:none;">😐</a> &nbsp;
+       <a href="https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/rate/?item=[URL_ENC_ARTICLE_URL]&rating=-1&title=[URL_ENC_TITLE]&category=[CATEGORY]&tier=[TIER_NUM]" style="text-decoration:none;">👎</a>
      </p>
      <a href="[ADD_TO_LIST_HREF]" target="_blank"
-        style="display:inline-block;padding:5px 12px;background:#1a1a2e;\
+        style="display:inline-block;margin-top:8px;padding:5px 12px;background:#1a1a2e;\
 color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:12px;\
 text-decoration:none;border-radius:3px;">
        + Add to list
      </a>
    </div>
 
-   PAYWALLED ITEM TEMPLATE (no hyperlinks, no button):
-   <div style="margin:0 0 20px;padding:14px 16px;border:1px solid #e8e8e8;\
-border-radius:4px;background:#fafafa;">
-     <p style="margin:0 0 4px;font-size:14px;font-weight:bold;color:#1a1a1a;">
-       [ICON] [HEADLINE] — <span style="color:#555;">[SOURCE]</span>
-       <span style="color:#999;font-weight:normal;font-size:13px;">
-         (subscription required)
-       </span>
-     </p>
-     <p style="margin:0 0 8px;font-size:12px;">
-       <span style="display:inline-block;padding:2px 7px;border-radius:3px;\
-font-weight:bold;font-size:11px;[BADGE_STYLE]">[READ|WATCH|LISTEN]</span>
-       &nbsp;<span style="color:#888;">[DURATION]</span>
-     </p>
-     <p style="margin:0;font-size:14px;line-height:1.7;color:#333;">
-       [2-3 sentence description]
-     </p>
-   </div>
+   ADD TO LIST HREF construction:
+   Base:  https://jeffreyeehrlich-ui.github.io/daily-digest/reading-list/?add=
+   Append URL-encoded JSON: {{"title":"[TITLE]","url":"[ITEM_URL]","source":"[SOURCE]","type":"[article|podcast|video]","category":"[one of: markets|real-estate|macro|ai|science|health|philosophy|policy|other]","duration":"[duration]","description":"[2-3 sentence description]"}}
+   Encoding: space->%20 :->%3A /->%2F ?->%3F =->%3D &->%26 #->%23 +->%2B quote->%22 open-brace->%7B close-brace->%7D open-bracket->%5B close-bracket->%5D comma->%2C
+
+   RATE LINK URL encoding: percent-encode both the article URL and the title using standard URL encoding (space->%20, etc.). Tier should be the integer tier number (1, 2, or 3). Category should use the library category key (e.g. philosophy_stoicism, investing_finance, hard_science).
 
 Output raw HTML only. No markdown fences."""
 
@@ -1460,21 +1664,33 @@ def main() -> None:
     else:
         content["email_newsletters"] = []
 
-    # 5c. Load evergreen WYT pool and inject eligible items into content
-    evergreen_pool = load_evergreen_pool()
-    evergreen_used = load_evergreen_used()
-    eligible_evergreen = get_eligible_evergreen(evergreen_pool, evergreen_used)
-    content["_evergreen_wyt"] = evergreen_to_wyt_items(eligible_evergreen)
-    log.info("Evergreen WYT pool: %d total, %d eligible after cooldown",
-             len(evergreen_pool), len(eligible_evergreen))
+    # 5c. WYT — tier, quota analysis, library, archive
+    wyt_today_tier, wyt_today_tier_name = get_today_tier(today)
+    log.info("WYT today: Tier %d (%s) — %s", wyt_today_tier, wyt_today_tier_name,
+             today.strftime("%A"))
 
-    # 5d. Fetch 1-year WYT archive from thinker/long-form sources
-    log.info("Fetching WYT 1-year archive …")
+    wyt_history  = load_wyt_history()
+    wyt_ratings  = load_wyt_ratings()
+    wyt_under_quota, wyt_over_quota = calculate_topic_quotas(wyt_history)
+
+    wyt_library_all = load_wyt_library()
+    wyt_library_eligible = get_eligible_library_items(
+        wyt_library_all, wyt_history, wyt_over_quota
+    )
+    wyt_library_eligible = filter_by_accessibility(wyt_library_eligible)
+    wyt_library_eligible = apply_rating_boost(wyt_library_eligible, wyt_ratings)
+    content["_wyt_library"] = wyt_library_eligible
+    log.info("WYT library: %d total, %d eligible after cooldown/quota/accessibility",
+             len(wyt_library_all), len(wyt_library_eligible))
+
+    # 5d. Fetch WYT archive from thinker/long-form sources
+    log.info("Fetching WYT archive (thinker blogs) …")
     content["_wyt_archive"] = fetch_wyt_archive()
 
-    # 5e. Load WYT source history (per-week cap) and pass into content
-    wyt_source_history = load_wyt_source_history()
-    content["_wyt_source_history"] = wyt_source_history
+    # 5e. Inject WYT metadata for use in build_user_prompt()
+    content["_wyt_tier"]        = (wyt_today_tier, wyt_today_tier_name)
+    content["_wyt_under_quota"] = wyt_under_quota
+    content["_wyt_over_quota"]  = wyt_over_quota
 
     # 6. Create shared Claude client (reused for Economist selection + main digest)
     api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -1483,7 +1699,13 @@ def main() -> None:
     claude_client = anthropic.Anthropic(api_key=api_key)
 
     # 7. Select best unread Economist article
-    today_headlines = [item["title"] for items in content.values() for item in items]
+    today_headlines = [
+        item["title"]
+        for items in content.values()
+        if isinstance(items, list)
+        for item in items
+        if isinstance(item, dict) and "title" in item
+    ]
     economist_pick  = select_economist_article(
         economist_all, economist_used, today_headlines, claude_client
     )
@@ -1507,30 +1729,11 @@ def main() -> None:
     history.update(new_entries)
     save_story_history(history)
 
-    # 10b. Mark any evergreen items that appeared in the digest as used
-    now_iso = datetime.now(timezone.utc).isoformat()
-    for item in content.get("_evergreen_wyt", []):
-        url = item.get("link", "")
-        if url and url in digest_html:
-            evergreen_used[url] = now_iso
-            log.info("Evergreen item marked used: %s", item.get("title", "")[:80])
-    save_evergreen_used(evergreen_used)
-
-    # 10c. Record which sources appeared in WYT for per-week source cap
-    all_wyt_candidates = (
-        content.get("_wyt_archive", [])
-        + [i for section_items in content.values()
-           if isinstance(section_items, list)
-           for i in section_items
-           if isinstance(i, dict)]
-    )
-    for item in all_wyt_candidates:
-        url = item.get("link", "")
-        source = item.get("source", "")
-        if source and url and url in digest_html:
-            wyt_source_history[source] = now_iso
-            log.info("WYT source cap recorded: %s", source)
-    save_wyt_source_history(wyt_source_history)
+    # 10b. Record WYT selections — update wyt_history.json and wyt_library.yaml
+    all_wyt_candidates = content.get("_wyt_all_candidates", [])
+    record_wyt_selections(digest_html, all_wyt_candidates, wyt_history, wyt_library_all)
+    save_wyt_history(wyt_history)
+    save_wyt_library(wyt_library_all)
 
     if send_mode:
         send_email(digest_html, today)

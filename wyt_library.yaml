@@ -1,0 +1,1076 @@
+items:
+- _library_item: true
+  accessibility: general
+  author: Marcus Aurelius
+  category: philosophy_stoicism
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: MIT Classics
+  tier: 1
+  times_featured: 0
+  title: Meditations of Marcus Aurelius — Book II
+  url: https://classics.mit.edu/Antoninus/meditations.2.two.html
+  why_worth_reading: 'Marcus Aurelius writing privately to himself about impermanence,
+    duty, and the discipline of perception — these are not platitudes but a general''s
+    field notes on staying rational under pressure. Book II is the sharpest, most
+    quotable entry point to the entire Meditations.
+
+    '
+  year_published: 180
+- _library_item: true
+  accessibility: general
+  author: Seneca
+  category: philosophy_stoicism
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 5
+  source: Wikisource
+  tier: 1
+  times_featured: 0
+  title: 'Letters from a Stoic — Letter I: On Saving Time'
+  url: https://en.wikisource.org/wiki/Moral_letters_to_Lucilius/Letter_1
+  why_worth_reading: 'Seneca''s first letter opens with one of the most incisive observations
+    ever written about how time is squandered through distraction and deferral. The
+    argument that we are "robbed" of time only with our consent is still the clearest
+    framework for protecting attention.
+
+    '
+  year_published: 65
+- _library_item: true
+  accessibility: general
+  author: Epictetus
+  category: philosophy_stoicism
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: MIT Classics
+  tier: 1
+  times_featured: 0
+  title: The Enchiridion — Epictetus
+  url: https://classics.mit.edu/Epictetus/epicench.html
+  why_worth_reading: 'The Enchiridion is the most direct distillation of Stoic practice
+    ever written — the dichotomy of control, reframed as a daily discipline of discernment.
+    It reads in under ten minutes and operates as a reset button for any day that
+    feels out of control.
+
+    '
+  year_published: 135
+- _library_item: true
+  accessibility: general
+  author: Ryan Holiday
+  category: philosophy_stoicism
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: Ryan Holiday
+  tier: 2
+  times_featured: 0
+  title: The Obstacle Is the Way — Ryan Holiday
+  url: https://ryanholiday.net/the-obstacle-is-the-way/
+  why_worth_reading: 'Holiday''s essay-length distillation of the core Stoic insight
+    — that resistance to difficulty is the problem, not the difficulty itself — applied
+    to real business and leadership situations. It''s the most practically actionable
+    entry point to applied Stoicism for working professionals.
+
+    '
+  year_published: 2014
+- _library_item: true
+  accessibility: general
+  author: Ryan Holiday
+  category: philosophy_stoicism
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 6
+  source: Daily Stoic
+  tier: 2
+  times_featured: 0
+  title: 'Amor Fati: The Formula for Human Greatness'
+  url: https://dailystoic.com/amor-fati/
+  why_worth_reading: 'The concept of amor fati — loving what happens, not merely tolerating
+    it — is one of the most counterintuitive and useful mental postures for anyone
+    navigating uncertainty. Holiday traces the idea from Nietzsche back to the Stoics
+    clearly and compellingly.
+
+    '
+  year_published: 2018
+- _library_item: true
+  accessibility: general
+  author: Ryan Holiday
+  category: philosophy_stoicism
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 5
+  source: Daily Stoic
+  tier: 2
+  times_featured: 0
+  title: The View from Above — Daily Stoic
+  url: https://dailystoic.com/view-from-above/
+  why_worth_reading: 'The Stoic practice of zooming out — visualizing your problems
+    from the perspective of centuries, continents, or the cosmos — is a surprisingly
+    effective antidote to urgency bias. This essay explains the technique and its
+    origins in Marcus Aurelius.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Ryan Holiday
+  category: philosophy_stoicism
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: Daily Stoic
+  tier: 2
+  times_featured: 0
+  title: 'Memento Mori: The Reminder You Need'
+  url: https://dailystoic.com/memento-mori/
+  why_worth_reading: 'The Stoic practice of death meditation sounds morbid but is
+    actually liberating — it clarifies what matters, cuts through trivial anxieties,
+    and forces honest prioritization. Holiday traces the historical practice from
+    Roman generals to modern neuroscience.
+
+    '
+  year_published: 2017
+- _library_item: true
+  accessibility: general
+  author: Ryan Holiday
+  category: philosophy_stoicism
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: Ryan Holiday
+  tier: 2
+  times_featured: 0
+  title: Ego Is the Enemy — The Danger of Early Pride
+  url: https://ryanholiday.net/ego-is-the-enemy/
+  why_worth_reading: 'Holiday''s diagnosis of how ego manifests in talented people
+    — not as arrogance but as narrative inflation, premature celebration, and resistance
+    to feedback — is uncomfortably accurate. The case studies from Sherman, Eleanor
+    Roosevelt, and others make it concrete and memorable.
+
+    '
+  year_published: 2016
+- _library_item: true
+  accessibility: general
+  author: Tim Urban
+  category: philosophy_other
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Wait But Why
+  tier: 1
+  times_featured: 0
+  title: The Tail End
+  url: https://waitbutwhy.com/2015/12/the-tail-end.html
+  why_worth_reading: 'Tim Urban''s visual essay on the arithmetic of time remaining
+    with the people you love is one of the most impactful pieces on prioritization
+    ever written. The simple math — most of what you''ll ever do with your parents
+    has already happened — lands with permanent force.
+
+    '
+  year_published: 2015
+- _library_item: true
+  accessibility: general
+  author: Paul Graham
+  category: philosophy_other
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 14
+  source: Paul Graham
+  tier: 1
+  times_featured: 0
+  title: How to Do Great Work
+  url: https://paulgraham.com/greatwork.html
+  why_worth_reading: 'Paul Graham''s comprehensive theory of creative excellence —
+    how curiosity compounds, why working on what genuinely excites you is the prerequisite
+    for originality, and how to distinguish ambitious failure from mediocre success.
+    Dense but every paragraph earns its space.
+
+    '
+  year_published: 2023
+- _library_item: true
+  accessibility: general
+  author: Paul Graham
+  category: philosophy_other
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 12
+  source: Paul Graham
+  tier: 1
+  times_featured: 0
+  title: What You'll Wish You'd Known
+  url: https://paulgraham.com/hs.html
+  why_worth_reading: 'Ostensibly advice for high schoolers, this essay is actually
+    a rigorous argument for intellectual curiosity as the only reliable compounding
+    asset. The observation that most people never figure out what they find interesting
+    — and why — is as sharp for forty-year-olds as for teenagers.
+
+    '
+  year_published: 2005
+- _library_item: true
+  accessibility: general
+  author: Antonia Macaro
+  category: philosophy_other
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: Aeon
+  tier: 2
+  times_featured: 0
+  title: The Courage to Be Disliked — Aeon Review
+  url: https://aeon.co/essays/adlerian-psychology-and-the-freedom-of-individual-choice
+  why_worth_reading: 'Alfred Adler''s psychology — that all problems are ultimately
+    interpersonal problems, and that freedom comes from separating your tasks from
+    others'' — is the most practically useful philosophical framework most people
+    have never encountered. This Aeon essay is the clearest introduction to it.
+
+    '
+  year_published: 2022
+- _library_item: true
+  accessibility: general
+  author: Howard Marks
+  category: investing_finance
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Oaktree Capital
+  tier: 1
+  times_featured: 0
+  title: The Most Important Thing — Howard Marks Memo
+  url: https://www.oaktreecapital.com/docs/default-source/memos/2003-07-01-the-most-important-thing.pdf
+  why_worth_reading: 'Marks argues that second-level thinking — asking not just what
+    will happen but what the consensus thinks will happen and whether that''s priced
+    in — is the only sustainable source of edge in investing. This foundational memo
+    predates his book and is still the clearest statement of the idea.
+
+    '
+  year_published: 2003
+- _library_item: true
+  accessibility: general
+  author: Warren Buffett
+  category: investing_finance
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 12
+  source: Berkshire Hathaway
+  tier: 1
+  times_featured: 0
+  title: You and Your Company — Warren Buffett 1986 Berkshire Letter
+  url: https://www.berkshirehathaway.com/letters/1986.html
+  why_worth_reading: 'Buffett''s 1986 letter contains his sharpest long-form explanation
+    of how Berkshire evaluates capital allocation — why earning power matters more
+    than reported earnings, and why management incentives determine corporate culture
+    more than stated mission. A masterclass in reading businesses.
+
+    '
+  year_published: 1987
+- _library_item: true
+  accessibility: general
+  author: Morgan Housel
+  category: investing_finance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: Collaborative Fund
+  tier: 2
+  times_featured: 0
+  title: Beating the Market Is Harder Than You Think — Morgan Housel
+  url: https://www.collaborativefund.com/blog/beating-the-market-is-harder-than-you-think/
+  why_worth_reading: 'Housel''s argument that active outperformance requires being
+    not just right, but differently right than the vast majority of sophisticated
+    capital — and that most edges are competed away within months — is the clearest
+    honest account of why index funds win. Every capital allocator should read this.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Morgan Housel
+  category: investing_finance
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 15
+  source: Collaborative Fund
+  tier: 1
+  times_featured: 0
+  title: The Psychology of Money — Full Essay
+  url: https://www.collaborativefund.com/blog/the-psychology-of-money/
+  why_worth_reading: 'The essay that became Housel''s book: twenty observations about
+    how humans actually behave with money versus how finance textbooks say they should.
+    The observation that personal finance is more personal than finance — that behavior
+    matters more than knowledge — is the central insight of behavioral finance made
+    accessible.
+
+    '
+  year_published: 2018
+- _library_item: true
+  accessibility: general
+  author: Howard Marks
+  category: investing_finance
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 12
+  source: Oaktree Capital
+  tier: 1
+  times_featured: 1
+  title: Risk Revisited — Howard Marks Memo
+  url: https://www.oaktreecapital.com/docs/default-source/memos/2014-09-03-risk-revisited.pdf
+  why_worth_reading: 'Marks dismantles the textbook definition of risk as volatility
+    and replaces it with a far more useful framework: risk is the probability of a
+    permanent, unrecoverable loss. For anyone allocating capital in illiquid markets
+    — like real estate PE — this reframing has direct practical consequences.
+
+    '
+  year_published: 2014
+- _library_item: true
+  accessibility: flagged-dense
+  author: Aswath Damodaran
+  category: investing_finance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 13
+  source: NYU Stern
+  tier: 2
+  times_featured: 0
+  title: The Equity Risk Premium — Aswath Damodaran
+  url: https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/eqrisk.pdf
+  why_worth_reading: 'Damodaran''s annual essay on the equity risk premium is the
+    most rigorous free resource on how markets price uncertainty. Understanding the
+    ERP is foundational for any cap rate or discount rate conversation. This one is
+    dense — worth the effort for anyone doing valuation work.
+
+    '
+  year_published: 2022
+- _library_item: true
+  accessibility: general
+  author: Howard Marks
+  category: investing_finance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Oaktree Capital
+  tier: 2
+  times_featured: 0
+  title: Mastering the Market Cycle — Marks on Cycle Positioning
+  url: https://www.oaktreecapital.com/docs/default-source/memos/2018-09-06-mastering-the-market-cycle.pdf
+  why_worth_reading: 'Marks on how to identify where in the cycle markets currently
+    sit — and why the answer is less about prediction than about reading current investor
+    psychology. The framework translates directly to real estate cycle positioning.
+
+    '
+  year_published: 2018
+- _library_item: true
+  accessibility: general
+  author: Ben Hunt
+  category: investing_finance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: Epsilon Theory
+  tier: 2
+  times_featured: 0
+  title: The Skew — Epsilon Theory
+  url: https://www.epsilontheory.com/the-skew/
+  why_worth_reading: 'Ben Hunt argues that modern markets are increasingly driven
+    by narrative more than fundamentals — and that understanding which stories have
+    captured investor attention is now as important as reading financial statements.
+    A genuinely different lens for thinking about markets and price discovery.
+
+    '
+  year_published: 2020
+- _library_item: true
+  accessibility: general
+  author: Natalie Wolchover
+  category: hard_science
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Quanta Magazine
+  tier: 2
+  times_featured: 0
+  title: A New Theory of Time Could Explain Why You're Always Late
+  url: https://www.quantamagazine.org/a-new-theory-of-time-could-explain-why-youre-always-late-20210826/
+  why_worth_reading: 'Quanta''s explainer on the physics of time — why our subjective
+    experience of time passing forward doesn''t follow obviously from the laws of
+    physics, and what thermodynamics has to do with memory and causation. Written
+    for intelligent general readers, no physics background assumed.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Joshua Sokol
+  category: hard_science
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: Quanta Magazine
+  tier: 2
+  times_featured: 0
+  title: How the Brain Creates a Timeline of the Past
+  url: https://www.quantamagazine.org/how-the-brain-creates-a-timeline-of-the-past-20190212/
+  why_worth_reading: 'New research revealed that the hippocampus doesn''t store memories
+    in chronological order at all — it encodes them by novelty and context, which
+    is why memory is so reconstructive rather than reproductive. The implications
+    for how we make decisions based on "what happened before" are unsettling and useful.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Charlie Wood
+  category: hard_science
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: Quanta Magazine
+  tier: 1
+  times_featured: 0
+  title: The Simple Idea Behind Einstein's Greatest Discoveries
+  url: https://www.quantamagazine.org/the-simple-idea-behind-einsteins-greatest-discoveries-20190527/
+  why_worth_reading: 'Symmetry as a creative constraint — how Einstein''s insistence
+    that the laws of physics look the same to all observers forced him to rewrite
+    time, space, and gravity. The essay explains this without equations, making it
+    genuinely accessible to anyone curious about how scientific revolutions actually
+    happen.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Ed Yong
+  category: hard_science
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Aeon
+  tier: 2
+  times_featured: 0
+  title: The Pandemic Virus Is Slowly Mutating — But Will It Weaken?
+  url: https://www.theatlantic.com/science/archive/2020/12/coronavirus-mutation-evolution/617531/
+  why_worth_reading: 'Ed Yong''s explanation of viral evolution remains the best lay-accessible
+    account of how viruses mutate, why fitness pressures don''t always favor attenuation,
+    and why predicting viral trajectories is genuinely hard. The framework applies
+    to any rapidly evolving system.
+
+    '
+  year_published: 2020
+- _library_item: true
+  accessibility: general
+  author: Philip Ball
+  category: hard_science
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 11
+  source: Quanta Magazine
+  tier: 1
+  times_featured: 0
+  title: How Life Could Continue to Evolve
+  url: https://www.quantamagazine.org/what-is-life-and-how-could-it-continue-to-evolve-20210805/
+  why_worth_reading: 'The question of what exactly constitutes "life" — and whether
+    synthetic and artificial systems could eventually qualify — opens onto deep questions
+    about complexity, information, and evolution that no discipline has fully answered.
+    Quanta''s treatment is rigorous without being technical.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Lisa Feldman Barrett
+  category: hard_science
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: Aeon
+  tier: 2
+  times_featured: 0
+  title: Your Brain Is Not for Thinking
+  url: https://www.nytimes.com/2021/11/23/health/lisa-feldman-barrett-brain-function.html
+  why_worth_reading: 'Neuroscientist Lisa Feldman Barrett''s argument that the brain''s
+    primary function is not thinking or perceiving but regulating the body — and that
+    all our cognitive experiences are downstream of this metabolic priority — upends
+    the standard model of mind and has real implications for stress, focus, and decision-making.
+
+    '
+  year_published: 2020
+- _library_item: true
+  accessibility: general
+  author: Stephen Wolfram
+  category: applied_science_tech
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 14
+  source: Stephen Wolfram
+  tier: 2
+  times_featured: 0
+  title: What Is ChatGPT Doing — And Why Does It Work?
+  url: https://writings.stephenwolfram.com/2023/02/what-is-chatgpt-doing-and-why-does-it-work/
+  why_worth_reading: 'Wolfram''s step-by-step explanation of how large language models
+    actually work — from token prediction to why they produce coherent sentences despite
+    no "understanding" — is the most accessible technically accurate account available.
+    Anyone using AI tools professionally should understand this.
+
+    '
+  year_published: 2023
+- _library_item: true
+  accessibility: general
+  author: Mustafa Suleyman
+  category: applied_science_tech
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: MIT Technology Review
+  tier: 2
+  times_featured: 0
+  title: The Coming Wave — DeepMind Co-founder on What AI Actually Changes
+  url: https://www.technologyreview.com/2023/09/06/1079100/the-coming-wave-mustafa-suleyman-interview/
+  why_worth_reading: 'Suleyman''s argument that the combination of AI and synthetic
+    biology creates an unprecedented technology wave — one that compresses decades
+    of change into years — is the most sober and well-reasoned case for why this moment
+    is genuinely different. Not hype, not dismissal.
+
+    '
+  year_published: 2023
+- _library_item: true
+  accessibility: general
+  author: Eugene Wei
+  category: applied_science_tech
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 12
+  source: Eugene Wei
+  tier: 2
+  times_featured: 0
+  title: Seeing Like an Algorithm
+  url: https://www.eugenewei.com/blog/2020/9/18/seeing-like-an-algorithm
+  why_worth_reading: 'Eugene Wei''s explanation of why TikTok''s algorithm succeeded
+    where others failed — by building a "performance-friendly" interface that made
+    it easy for the algorithm to accurately measure what users actually wanted — is
+    the clearest account of how recommendation systems shape culture. Applies to any
+    platform or data-driven product.
+
+    '
+  year_published: 2020
+- _library_item: true
+  accessibility: general
+  author: Rich Sutton
+  category: applied_science_tech
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 6
+  source: Rich Sutton
+  tier: 1
+  times_featured: 0
+  title: The Bitter Lesson
+  url: http://www.incompleteideas.net/IncIdeas/BitterLesson.html
+  why_worth_reading: 'A two-page essay by a pioneer of reinforcement learning arguing
+    that seventy years of AI research shows one consistent lesson: general methods
+    that scale with computation beat hand-crafted domain knowledge every time. The
+    implications for how humans should relate to AI tools are profound and counterintuitive.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Marc Andreessen
+  category: applied_science_tech
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: Andreessen Horowitz
+  tier: 1
+  times_featured: 0
+  title: Software Is Eating the World
+  url: https://a16z.com/why-software-is-eating-the-world/
+  why_worth_reading: 'Andreessen''s 2011 WSJ essay correctly predicted the software-driven
+    transformation of every major industry before it was visible to most observers.
+    Reading it now, as real estate, finance, and healthcare undergo this transformation,
+    provides an essential framework for what''s happening and why.
+
+    '
+  year_published: 2011
+- _library_item: true
+  accessibility: general
+  author: David Beer
+  category: applied_science_tech
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Aeon
+  tier: 2
+  times_featured: 0
+  title: The Age of the Algorithm — Dark Money in the Feed
+  url: https://aeon.co/essays/how-the-algorithm-became-a-substitute-for-authority
+  why_worth_reading: 'Sociologist David Beer traces how algorithmic authority came
+    to replace editorial judgment, legal precedent, and professional credentialing
+    as the dominant sorting mechanism of social life. Understanding this shift is
+    essential for anyone whose work depends on reputation, information, or human attention.
+
+    '
+  year_published: 2017
+- _library_item: true
+  accessibility: general
+  author: Scott Wolla
+  category: explainer
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: St. Louis Fed
+  tier: 2
+  times_featured: 0
+  title: How the Federal Reserve Actually Works
+  url: https://www.stlouisfed.org/publications/page-one-economics/2021/06/07/the-fed-explained
+  why_worth_reading: 'The St. Louis Fed''s plain-language explanation of the Fed''s
+    dual mandate, tools, and decision-making process is the clearest free resource
+    on how monetary policy actually works. Understanding this mechanism is essential
+    for anyone evaluating interest rate risk in real estate transactions.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: HUD Office of Policy Development
+  category: explainer
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: HUD User
+  tier: 2
+  times_featured: 0
+  title: How Tax Credits Actually Work — LIHTC Explained
+  url: https://www.huduser.gov/portal/periodicals/cityscpe/vol21num3/ch9.pdf
+  why_worth_reading: 'HUD''s clear explanation of the Low Income Housing Tax Credit
+    structure — how credits are allocated, how equity is priced, and how compliance
+    requirements work — is the most authoritative free overview of the program mechanics.
+    Invaluable for anyone entering affordable housing finance.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Stephanie Yee and Tony Chu
+  category: explainer
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: r2d3
+  tier: 1
+  times_featured: 0
+  title: A Visual Introduction to Machine Learning
+  url: http://www.r2d3.us/visual-intro-to-machine-learning-part-1/
+  why_worth_reading: 'The best visual explainer of how decision trees and machine
+    learning models actually work, built as an interactive scrolling essay with live
+    graphics. No math required — you finish it understanding the core intuition behind
+    supervised learning at a level most MBA programs never achieve.
+
+    '
+  year_published: 2015
+- _library_item: true
+  accessibility: general
+  author: James Clear
+  category: explainer
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: James Clear
+  tier: 2
+  times_featured: 0
+  title: How Compounding Actually Works — James Clear
+  url: https://jamesclear.com/compound-interest
+  why_worth_reading: 'Clear''s explanation of compounding — not just in money but
+    in knowledge, habits, and relationships — is the clearest account of why small
+    consistent actions produce nonlinear outcomes over time. The concrete examples
+    make the math intuitive without requiring any calculation.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Planet Money Staff
+  category: explainer
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: NPR Planet Money
+  tier: 2
+  times_featured: 0
+  title: What Is Inflation Really? — Planet Money
+  url: https://www.npr.org/sections/money/2021/07/07/1012947306/whats-actually-driving-inflation-right-now
+  why_worth_reading: 'Planet Money''s written explainer on the mechanics of inflation
+    — demand-pull, cost-push, monetary, and expectations-driven — is the clearest
+    cross-disciplinary treatment of a concept that most people think they understand
+    but don''t. The 2021 context makes the abstractions concrete.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: flagged-dense
+  author: Bob Zider
+  category: explainer
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: HBR
+  tier: 2
+  times_featured: 0
+  title: How Venture Capital Works — Harvard Business Review
+  url: https://hbr.org/1998/11/how-venture-capital-works
+  why_worth_reading: 'Zider''s 1998 HBR piece remains the clearest explanation of
+    VC economics — how funds are structured, why portfolio theory drives investment
+    decisions, and how the incentive structure shapes what gets funded. Understanding
+    VC mechanics clarifies why the sector behaves as it does. Note: HBR may require
+    login.
+
+    '
+  year_published: 1998
+- _library_item: true
+  accessibility: general
+  author: Packy McCormick
+  category: explainer
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 12
+  source: Not Boring
+  tier: 2
+  times_featured: 0
+  title: The Great Online Game — How the Internet Creates Leverage
+  url: https://www.notboring.co/p/the-great-online-game
+  why_worth_reading: 'McCormick''s essay on how the internet converts attention and
+    reputation into career and business leverage — and why the rules of the "game"
+    reward consistency, specificity, and generosity — is a practical cross-disciplinary
+    framework for anyone building a professional presence. The real estate applications
+    are obvious.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Investopedia Staff
+  category: explainer
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: Investopedia
+  tier: 2
+  times_featured: 0
+  title: A Beginner's Guide to Interest Rates
+  url: https://www.investopedia.com/articles/personal-finance/020215/top-things-know-about-mortgage-rates.asp
+  why_worth_reading: 'Investopedia''s deep dive on mortgage rate mechanics — how the
+    spread over Treasuries is determined, what MBS spreads signal, and why the Fed
+    funds rate doesn''t directly set mortgage rates — is the clearest free explainer
+    of the mechanics that drive real estate financing costs.
+
+    '
+  year_published: 2023
+- _library_item: true
+  accessibility: general
+  author: Andrew Huberman
+  category: human_performance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Huberman Lab
+  tier: 2
+  times_featured: 0
+  title: Sleep Toolkit — Huberman Lab
+  url: https://hubermanlab.com/toolkit-for-sleep/
+  why_worth_reading: 'Huberman''s synthesis of the neuroscience of sleep optimization
+    — from light exposure timing to temperature regulation to supplementation — is
+    the most evidence-based practical toolkit available for free. Unlike the podcast
+    episodes, the show notes format is dense with actionable protocols you can implement
+    immediately.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Andrew Huberman
+  category: human_performance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: Huberman Lab
+  tier: 2
+  times_featured: 0
+  title: The Science of Setting and Achieving Goals — Huberman Lab
+  url: https://hubermanlab.com/the-science-of-setting-and-achieving-goals/
+  why_worth_reading: 'Huberman translates neuroscience research on motivation, dopamine
+    circuits, and goal representation into a concrete protocol for how to set goals
+    that your brain will actually pursue — not just visualize. The middle-locus-of-control
+    framing is counterintuitive and well-supported.
+
+    '
+  year_published: 2022
+- _library_item: true
+  accessibility: general
+  author: Peter Attia
+  category: human_performance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Peter Attia MD
+  tier: 2
+  times_featured: 0
+  title: The Glucose Hypothesis — Peter Attia on Metabolic Health
+  url: https://peterattiamd.com/how-glucose-drives-longevity-and-disease/
+  why_worth_reading: 'Attia''s explanation of how chronically elevated blood glucose
+    drives most of the major degenerative diseases — and what the research actually
+    says about dietary interventions — is the clearest evidence-based account of metabolic
+    health for intelligent non-specialists. Changes how you think about energy and
+    aging.
+
+    '
+  year_published: 2022
+- _library_item: true
+  accessibility: general
+  author: Alex Hutchinson
+  category: human_performance
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Outside Online
+  tier: 2
+  times_featured: 0
+  title: The Science of Endurance — Why the Mind Is the Limit
+  url: https://www.outsideonline.com/health/training-performance/the-new-science-of-the-limits-of-human-endurance/
+  why_worth_reading: 'Hutchinson''s reporting on the governor hypothesis — that physical
+    limits are primarily central nervous system constraints rather than muscular or
+    cardiovascular — upends the standard model of athletic performance and has obvious
+    applications to cognitive endurance and mental stamina in demanding work environments.
+
+    '
+  year_published: 2018
+- _library_item: true
+  accessibility: general
+  author: Shane Parrish
+  category: ideas_mental_models
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: Farnam Street
+  tier: 2
+  times_featured: 0
+  title: The Map Is Not the Territory — Farnam Street
+  url: https://fs.blog/map-and-territory/
+  why_worth_reading: 'Parrish''s clear explanation of how models and mental representations
+    diverge from reality — and why this divergence is not a bug but an irreducible
+    feature of cognition — is the most useful framing for why smart people keep getting
+    surprised by markets, people, and events.
+
+    '
+  year_published: 2020
+- _library_item: true
+  accessibility: general
+  author: Shane Parrish
+  category: ideas_mental_models
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: Farnam Street
+  tier: 2
+  times_featured: 0
+  title: First Principles Thinking — Farnam Street
+  url: https://fs.blog/first-principles/
+  why_worth_reading: 'The distinction between reasoning from first principles versus
+    reasoning by analogy is the most practically useful thinking tool for anyone facing
+    genuinely novel problems. Parrish traces the idea from Aristotle to Musk''s battery
+    pricing example concretely and memorably.
+
+    '
+  year_published: 2018
+- _library_item: true
+  accessibility: general
+  author: James Clear
+  category: ideas_mental_models
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: James Clear
+  tier: 2
+  times_featured: 0
+  title: 'Inversion: The Crucial Thinking Skill Nobody Teaches'
+  url: https://jamesclear.com/inversion
+  why_worth_reading: 'Clear on inversion — the mental model of approaching problems
+    backwards by identifying what to avoid rather than what to pursue — with examples
+    from Munger, Carl Jacobi, and military strategy. The observation that avoiding
+    stupidity is often more reliably achievable than achieving brilliance is actionable
+    immediately.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Charlie Munger
+  category: ideas_mental_models
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 15
+  source: Farnam Street
+  tier: 1
+  times_featured: 0
+  title: Seeking Wisdom — Charlie Munger's Speech to USC
+  url: https://fs.blog/great-talks/the-psychology-of-human-misjudgment/
+  why_worth_reading: 'Munger''s 1995 Harvard speech cataloguing twenty-five sources
+    of human misjudgment — from incentive-driven bias to social proof to overconfidence
+    — is the foundational text of applied behavioral economics for practitioners.
+    Reading it once is valuable; rereading it annually is a discipline.
+
+    '
+  year_published: 1995
+- _library_item: true
+  accessibility: general
+  author: Nassim Taleb
+  category: ideas_mental_models
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: Medium (Nassim Taleb)
+  tier: 2
+  times_featured: 0
+  title: Skin in the Game — Why Accountability Changes Everything
+  url: https://medium.com/incerto/the-most-intolerant-wins-the-dictatorship-of-the-small-minority-3f1f83ce4e15
+  why_worth_reading: 'Taleb''s argument that systems are controlled not by majorities
+    but by the most intolerant committed minorities — and that this explains everything
+    from kosher food to Bitcoin adoption — is one of the most useful frameworks for
+    understanding how small groups move large institutions. The implications for policy
+    and markets are direct.
+
+    '
+  year_published: 2016
+- _library_item: true
+  accessibility: general
+  author: Shane Parrish
+  category: ideas_mental_models
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 6
+  source: Farnam Street
+  tier: 2
+  times_featured: 0
+  title: The Feynman Technique — Learning by Teaching
+  url: https://fs.blog/feynman-technique/
+  why_worth_reading: 'The Feynman technique — explain any concept as if to a child,
+    identify the gaps exposed, go back to the source material, repeat — is the most
+    reliable test of genuine understanding versus comfortable familiarity. Applicable
+    to any domain where you need to know whether you actually know something.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Jerusalem Demsas
+  category: real_estate_adjacent
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 9
+  source: Vox
+  tier: 2
+  times_featured: 0
+  title: Why Rent Control Doesn't Work — The Evidence
+  url: https://www.vox.com/policy-and-politics/2019/6/28/18758153/rent-control-rent-stabilization-affordable-housing
+  why_worth_reading: 'The most accessible evidence-based overview of what the economics
+    literature says about rent control — and why the same policies designed to help
+    tenants can reduce housing supply and raise rents over time. Essential context
+    for anyone working in affordable housing policy.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Daniel Herriges
+  category: real_estate_adjacent
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 8
+  source: Strong Towns
+  tier: 2
+  times_featured: 0
+  title: The Missing Middle — Why American Cities Banned Most Housing
+  url: https://www.strongtowns.org/journal/2018/1/12/its-time-to-end-single-family-zoning
+  why_worth_reading: 'Strong Towns'' clear explanation of how 20th century zoning
+    regulations effectively outlawed most of the historical urban housing stock —
+    duplexes, rowhouses, mixed use — and why this supply constraint is the root cause
+    of affordability crises in most American cities. The historical context is essential
+    for understanding current policy debates.
+
+    '
+  year_published: 2018
+- _library_item: true
+  accessibility: general
+  author: Jerusalem Demsas
+  category: real_estate_adjacent
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: The Atlantic
+  tier: 2
+  times_featured: 0
+  title: The Affordable Housing Crisis Is Not What You Think
+  url: https://www.theatlantic.com/ideas/archive/2021/04/the-affordable-housing-crisis-is-not-what-you-think/618552/
+  why_worth_reading: 'Demsas argues that the affordable housing shortage is primarily
+    a supply problem caused by local political economy, not financing — and that subsidized
+    production programs like LIHTC, while valuable, cannot solve a problem rooted
+    in zoning restrictions. The framing challenges default assumptions in affordable
+    housing finance.
+
+    '
+  year_published: 2021
+- _library_item: true
+  accessibility: general
+  author: Douglas Preston
+  category: surprise
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 14
+  source: The New Yorker
+  tier: 1
+  times_featured: 0
+  title: The Day the Dinosaurs Died — The New Yorker
+  url: https://www.newyorker.com/magazine/2019/04/08/the-day-the-dinosaurs-died
+  why_worth_reading: 'Preston''s narrative reconstruction of the first minutes after
+    the asteroid impact that ended the Cretaceous — based on a remarkable fossil site
+    that preserved creatures killed within hours of the impact — is the most extraordinary
+    piece of science journalism published in the last decade. Not useful in any conventional
+    sense; just magnificent.
+
+    '
+  year_published: 2019
+- _library_item: true
+  accessibility: general
+  author: Vyvyan Evans
+  category: surprise
+  cooldown_days: 60
+  cumulative_rating: 0
+  estimated_read_minutes: 10
+  source: Aeon
+  tier: 1
+  times_featured: 0
+  title: The Six-Word Bridge — How Language Shapes Thought
+  url: https://aeon.co/essays/there-is-no-language-instinct
+  why_worth_reading: 'Evans challenges Chomsky''s language instinct hypothesis — the
+    idea that grammar is innate — and argues instead that language is a cultural technology
+    that shapes cognition rather than reflecting it. The implications for how we think
+    about communication, negotiation, and persuasion are surprisingly direct.
+
+    '
+  year_published: 2014
+- _library_item: true
+  accessibility: general
+  author: Nautilus Staff
+  category: surprise
+  cooldown_days: 21
+  cumulative_rating: 0
+  estimated_read_minutes: 7
+  source: Nautilus
+  tier: 2
+  times_featured: 0
+  title: The Anthropology of the Handshake
+  url: https://nautil.us/whats-in-a-handshake-236714/
+  why_worth_reading: 'A fascinating dive into what primate research and cross-cultural
+    anthropology reveal about why physical greeting rituals evolved — and what the
+    pandemic''s handshake disruption reveals about social bonding. The kind of piece
+    that makes you see ordinary behavior as profoundly strange and interesting.
+
+    '
+  year_published: 2022

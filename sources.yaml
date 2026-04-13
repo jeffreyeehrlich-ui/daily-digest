@@ -46,7 +46,7 @@ sources:
   # ── Real Estate & Affordable Housing ──────────────────────────────────────
   real_estate:
     - name: The Real Deal
-      url: https://therealdeal.com/feed/
+      url: https://www.bisnow.com/rss/national
       lookback_hours: 72
     - name: Multifamily Dive
       url: https://www.multifamilydive.com/feeds/news/
@@ -189,7 +189,7 @@ sources:
       lookback_hours: 24
 
     - name: GlobeSt
-      url: https://www.globest.com/rss/
+      url: https://www.connectcre.com/feed/
       lookback_hours: 24
 
   # ── The Economist (daily rotation via economist_history.json) ────────────
