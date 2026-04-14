@@ -1,6 +1,18 @@
 {
   "items": [
     {
+      "id": "c9aff9d5-7128-4df7-98a0-7f415eecaf3b",
+      "title": "The Most Important Thing",
+      "url": "https://www.oaktreecapital.com/docs/default-source/memos/2003-07-01-the-most-important-thing.pdf",
+      "source": "Oaktree Capital",
+      "type": "read",
+      "category": "other",
+      "duration": "10 min read",
+      "description": "Marks argues that second-level thinking is the only durable source of investment edge. The clearest statement of how to think about risk and price rather than risk and outcome.",
+      "dateAdded": "2026-04-14",
+      "read": false
+    },
+    {
       "id": "931edc60-8a9b-4ac5-9bfc-b90f1e7c2223",
       "title": "The Enchiridion",
       "url": "https://classics.mit.edu/Epictetus/epicench.html",
@@ -38,7 +50,7 @@
     },
     {
       "id": "78851c2b-674b-4a82-aebc-811dd810822b",
-      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soonÃÂ¢ÃÂÃÂhere's why",
+      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soonÃÂÃÂ¢ÃÂÃÂÃÂÃÂhere's why",
       "url": "https://technologyreview.com/2026/04/08/1135398/mustafa-suleyman-ai-future/",
       "source": "MIT Technology Review",
       "type": "read",
