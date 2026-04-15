@@ -1,6 +1,18 @@
 {
   "items": [
     {
+      "id": "44beaca8-9099-47a9-b43b-22097c1f5e1d",
+      "title": "Meditations — Book II",
+      "url": "https://classics.mit.edu/Antorinus/meditations.2.two.html",
+      "source": "MIT Classics",
+      "type": "read",
+      "category": "philosophy",
+      "duration": "8 min read",
+      "description": "Marcus Aurelius writing privately to himself about impermanence, duty, and the discipline of perception. Book II is the sharpest, most quotable entry point to the entire Meditations and the clearest framework for staying rational under pressure.",
+      "dateAdded": "2026-04-15",
+      "read": false
+    },
+    {
       "id": "c9aff9d5-7128-4df7-98a0-7f415eecaf3b",
       "title": "The Most Important Thing",
       "url": "https://www.oaktreecapital.com/docs/default-source/memos/2003-07-01-the-most-important-thing.pdf",
@@ -50,7 +62,7 @@
     },
     {
       "id": "78851c2b-674b-4a82-aebc-811dd810822b",
-      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soonÃÂÃÂ¢ÃÂÃÂÃÂÃÂhere's why",
+      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soonÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂhere's why",
       "url": "https://technologyreview.com/2026/04/08/1135398/mustafa-suleyman-ai-future/",
       "source": "MIT Technology Review",
       "type": "read",
