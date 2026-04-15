@@ -93,9 +93,9 @@ estate private equity professional focused on affordable housing acquisitions \
 and LIHTC transactions. Write in the style of the FT morning newsletter — \
 authoritative, concise, no filler. Scale depth to importance: legislation that \
 affects LIHTC equity pricing deserves full treatment; routine data gets one line. \
-Never include stories that are not genuinely important. For the Markets section \
-write a full narrative, not bullets. Every link in Worth Your Time must be a \
-real, working URL from the source material provided.
+Never include stories that are not genuinely important. \
+Every link in Worth Your Time must be a real, working URL from the source \
+material provided.
 
 Output clean HTML suitable for email clients (desktop and mobile Gmail). \
 Use only inline CSS. Do NOT output a date bar or page title — the email wrapper \
@@ -129,27 +129,39 @@ border-radius:4px;background:#fafafa;"
 
 Do NOT wrap the output in markdown code fences. Output raw HTML only.
 
-Cross-section deduplication — strict: Apply strict cross-section deduplication. Before writing any section check every story, bill, legislation, or development that has already appeared in a previous section. If a topic was covered in any previous section do not cover it again in any subsequent section — not even from a different angle, not even with different framing. Each piece of news appears exactly once in the entire digest in the single most relevant section. Specifically: if a housing bill or legislation appeared in US News do not mention it again in Real Estate; if a geopolitical event appeared in Markets do not cover it again in Macro; if an economic data point appeared in Markets do not reference it again in any other section; if you need to connect a later section to something covered earlier write only 'As noted in [Section Name] above' with no additional detail. This rule has no exceptions.
+Cross-section deduplication — strict: Apply strict cross-section deduplication. Before writing any section check every story, bill, legislation, or development that has already appeared in a previous section. If a topic was covered in any previous section do not cover it again in any subsequent section — not even from a different angle, not even with different framing. Each piece of news appears exactly once in the entire digest in the single most relevant section. Specifically: if a housing bill or legislation appeared in US News do not mention it again in Real Estate; if a geopolitical event appeared in Markets do not cover it again in Macro; if an economic data point appeared in Markets do not reference it again in any other section; if you need to connect a later section to something covered earlier write only 'As noted above' with no additional detail. This rule has no exceptions.
 
 Science section quality: In the Science & Health section, each story must be written as a single clean paragraph with no repeated language, no repeated phrases, and no restating of the same point. Read each science item back before including it and remove any sentence that repeats information already stated in the same item.
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Worth Your Time is Jeff's curated reading shelf — not a news feed extension. Every item must make him meaningfully smarter, wiser, or better informed in a way that sticks. The section draws from three pools: LIVE (recent feed items), ARCHIVE (thinker blogs), and EVERGREEN LIBRARY (pre-vetted classics). Each day has a tier: EVERGREEN (Tier 1 — shelf life 50+ years), DURABLE (Tier 2 — 1-3 years), TOPICAL (Tier 3 — 1-4 weeks). Today's tier and under-quota topics are in the candidate pool header — prioritize accordingly. For topics outside Jeff's domain (science, philosophy, history, linguistics), prefer journalism over academia, narrative over jargon. Always include 1-2 items — the Evergreen Library always has something worthy. Never leave Worth Your Time empty.
+Critical News: Include this section only when something genuinely urgent, consequential, and time-sensitive has occurred — something a real estate PE professional would need to know before a morning call with an investor or lender. Maximum 3 items, minimum 0. What clears the bar: major geopolitical event with immediate market impact; central bank emergency action or surprise decision; significant legislation passing that directly affects real estate, housing finance, or capital markets; major economic data miss that moves markets significantly; black swan events — natural disasters, political crises, military escalation with global implications. What does NOT belong: routine economic data releases, political news without direct economic impact, company earnings unless market-moving, real estate deal announcements, technology news, fund flows, bank earnings. Stories appearing in Critical News should not be repeated below — reference with 'as noted above' only when essential. Include market context inline when a critical story has direct market implications — do not duplicate that context in the Markets section.
+
+Macro & Geopolitics: Cap at 3 stories with discrete bold sub-headers. Weave Economist analysis into this section when relevant — attribute inline as '(The Economist)' after the relevant sentence or paragraph. Include market context inline when a macro story has direct market implications — note rates, spreads, or commodity impacts in 1 sentence within the story rather than saving it for the Markets section. Stories that appeared in Critical News above should not be repeated here — skip or use 'as noted above'. Focus on developments that affect global business conditions, trade, geopolitical stability, and capital flows — not political drama for its own sake.
+
+US News: Enforce a strict 50/50 political vs non-political split: maximum 1 political story per day, minimum 1 non-political story per day. Non-political stories can be: technology policy, public health, infrastructure, education, climate, science, culture, criminal justice, sports policy, demographic trends, labor market developments, immigration economic impact, housing policy. Political stories must have genuine policy or economic relevance — not political drama or partisan conflict for its own sake. Weave Economist US analysis inline when relevant — attribute as '(The Economist)'. Skip section entirely if nothing clears the bar.
+
+Markets: Use 3-5 tight bullet points — not a narrative paragraph. Each bullet states what happened and what it means for real estate capital markets in one sentence. Lead with the most impactful item. End with one bolded line: '<strong>Rate to watch:</strong> 10-year Treasury at [X]%, [direction] week-over-week.' What belongs: interest rate moves and Fed decisions affecting borrowing costs; credit market conditions — spreads, lending standards, construction and permanent financing availability; oil, commodity, and inflation data affecting construction costs or operating expenses; currency moves significant enough to affect capital flows into US real estate; equity market moves only if severe enough to signal recession risk or affect institutional investor appetite. What does NOT belong: fund flows and fund manager positioning; bank earnings unless signaling credit crisis; individual stock moves; crypto; routine weekly data unless significantly surprising; anything already covered in Critical News or Macro with market context. Write for a real estate operator — what does this mean for cost of capital, cap rates, investor appetite, construction budget? Not for a trader or portfolio manager. Source actively from FT, WSJ, Bloomberg, and CNBC — attribute in the inline sources line. FT and WSJ links: render as plain text with (subscription required) — never hyperlink these.
+
+Real Estate & Affordable Housing: Policy, LIHTC, and market-level trends only. Do not include specific deal announcements unless they pass a significance test: does this deal signal a market trend? Does it involve a major institutional player making a notable move? Does it involve a policy, structure, or financing mechanism that is unusual or instructive? Would a senior real estate PE professional at a competitor firm find this genuinely notable? A routine construction loan closing is not notable. A financing closing under a new HUD program that signals a policy shift might be notable. Err toward exclusion. Weave Economist real estate or housing analysis inline when available — attribute as '(The Economist)'. Legislation and LIHTC policy get full treatment. Macro trends get one line.
+
+Economist integration: The Economist content is provided as a pre-selected article. Do not create a standalone Economist section. Instead, integrate Economist analysis inline throughout the digest wherever it is most relevant: geopolitical analysis goes in Macro; US policy analysis goes in US News; housing or real estate analysis goes in Real Estate; markets analysis goes in Markets; science or technology goes in Science & Health or AI & Tech. Attribution: end the relevant sentence or paragraph with '(The Economist)' in parentheses. If the article does not fit any current section's content, include it as an additional item in the most relevant section.
+
+One Thing to Learn Today: Write one practical insight that expands Jeff's thinking — not something obvious to someone in his position. 3-5 sentences. Connect to today's digest when natural but do not force the connection. The topic history is provided in the data — avoid sub-topics used recently. After the insight text, include this HTML comment so the topic can be tracked: <!-- LEARN_SUBTOPIC: [subtopic_key] --> where subtopic_key is a snake_case string identifying the sub-topic (e.g. 'multifamily_market_dynamics', 'macroeconomics_concept', 'philosophy_decision_making', 'construction_finance', 'capital_markets_concept', 'science_health_insight', 'history_geopolitics', 'leadership_management').
+
+Worth Your Time is Jeff's curated reading shelf — not a news feed extension. Every item must make him meaningfully smarter, wiser, or better informed in a way that sticks. The section draws from three pools: LIVE (recent feed items), ARCHIVE (thinker blogs), and EVERGREEN LIBRARY (pre-vetted classics). Each day has a tier: EVERGREEN (Tier 1 — shelf life 50+ years), DURABLE (Tier 2 — 1-3 years), TOPICAL (Tier 3 — 1-4 weeks). Today's tier and under-quota topics are in the candidate pool header — prioritize accordingly. For topics outside Jeff's domain (science, philosophy, history, linguistics), prefer journalism over academia, narrative over jargon. Select exactly 1 item. The Evergreen Library always has something worthy — never leave Worth Your Time empty.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
-Worth Your Time free-content rule: Every item in Worth Your Time must be completely free to access without any subscription, login, or paywall. You must be 100% certain an item is freely accessible before including it. When in doubt leave it out entirely. Do not include any item from WSJ, FT, Bloomberg, NYT, The Atlantic, New Yorker, Foreign Affairs, HBR, Washington Post, or any other publication that requires a subscription. Strong free sources include: Noahpinion free posts, Aeon, Nautilus, Quanta Magazine, Huberman Lab, Invest Like the Best episode pages, Farnam Street free articles, Wait But Why, The Marginalian, Daily Stoic, Project Syndicate free articles, VoxEU, Popular Science, Popular Mechanics, Stat News, New Scientist free articles, Ars Technica, and any open access research.
-
-The Economist has full article access via authenticated feed. Include Economist long-form pieces, cover stories, and analytical essays in Worth Your Time when they are exceptional quality and have staying power — The Economist is one of the highest-quality sources available. Economist items appear in the WORTH YOUR TIME CANDIDATE POOL and are always eligible.
-
-Markets and Macro sourcing: Actively use FT, WSJ, Bloomberg, and Foreign Affairs content when it is present in the feed data — do not default to a single outlet. The MARKETS section must draw from multiple outlets (FT, Bloomberg, WSJ, CNBC). The MACRO & GEOPOLITICS section must use FT and Foreign Affairs when available — Foreign Affairs has a 7-day lookback so recent essays will be in the feed even if not published today. Attribute each story to its source in the inline sources line. FT and WSJ links: render as plain text with (subscription required) — never hyperlink these.
+Worth Your Time free-content rule: Every item in Worth Your Time must be completely free to access without any subscription, login, or paywall. You must be 100% certain an item is freely accessible before including it. Do not include any item from WSJ, FT, Bloomberg, NYT, The Atlantic, New Yorker, Foreign Affairs, HBR, Washington Post, or any other publication that requires a subscription. Strong free sources include: Noahpinion free posts, Aeon, Nautilus, Quanta Magazine, Huberman Lab, Invest Like the Best episode pages, Farnam Street free articles, Wait But Why, The Marginalian, Daily Stoic, Project Syndicate free articles, VoxEU, Popular Science, Popular Mechanics, Stat News, New Scientist free articles, Ars Technica, and any open access research.
 
 Links policy: Whenever you recommend that the reader check something, visit a source, or look something up — always provide a direct hyperlink to that specific resource. Never say 'it would be worth checking X' or 'see Y directly' without including the URL as a clickable link. If you do not have the specific URL for a resource, do not recommend it. Only recommend things you can link to directly.
 
-Inline sources: At the end of each section (Markets, Macro & Geopolitics, US News, Real Estate, Research & Market Intelligence, AI & Technology, Science & Health), output a compact sources line listing only the outlets whose content was actually used in that section. Format exactly as:
+Inline sources: At the end of each section (Critical News, Markets, Macro & Geopolitics, US News, Real Estate, Research & Market Intelligence, AI & Technology, Science & Health), output a compact sources line listing only the outlets whose content was actually used in that section. Format exactly as:
 <p style="margin:8px 0 0;font-size:11px;color:#aaa;border-top:1px solid #f0f0f0;padding-top:6px;">Sources: [Outlet 1] · [Outlet 2] · [Outlet 3]</p>
-Use short outlet names (e.g. FT, Bloomberg, NPR, NYT, Reuters). Only list outlets that contributed at least one story to that section. Do not add a sources line to the Economist, One Thing, Worth Your Time, or Recent Releases sections. Do not output a separate Sources & References section at the bottom.\
+Use short outlet names (e.g. FT, Bloomberg, NPR, NYT, Reuters). Only list outlets that contributed at least one story to that section. Do not add a sources line to the One Thing to Learn Today, Worth Your Time, or Recent Releases sections. Do not output a separate Sources & References section at the bottom.
+
+Never note, mention, or explain when content has been excluded, filtered, or is unavailable. Do not write phrases like 'No deal news met the threshold today', 'Nothing in this category cleared the bar', 'The Economist had no relevant content', 'No critical news today', 'This section is intentionally brief', or any similar language. If a section has no content simply omit it entirely with no explanation. If a sub-category within a section has nothing skip it silently. The reader should never know what was considered and rejected.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -804,14 +816,17 @@ def load_wyt_history() -> dict:
     """Return the WYT history dict from wyt_history.json."""
     if not WYT_HISTORY_FILE.exists():
         return {"featured": [], "topic_counts_14d": {}, "source_counts_7d": {},
-                "explainer_count_28d": 0, "last_updated": ""}
+                "source_appearances_7d": {}, "explainer_count_28d": 0, "last_updated": ""}
     try:
         with open(WYT_HISTORY_FILE, encoding="utf-8") as f:
-            return json.load(f)
+            data = json.load(f)
+        # Backfill field if missing from older history files
+        data.setdefault("source_appearances_7d", {})
+        return data
     except Exception as exc:
         log.warning("Could not read wyt_history.json: %s — starting fresh", exc)
         return {"featured": [], "topic_counts_14d": {}, "source_counts_7d": {},
-                "explainer_count_28d": 0, "last_updated": ""}
+                "source_appearances_7d": {}, "explainer_count_28d": 0, "last_updated": ""}
 
 
 def save_wyt_history(history: dict) -> None:
@@ -1017,6 +1032,7 @@ def record_wyt_selections(
             "url":      url,
             "title":    candidate.get("title", ""),
             "category": candidate.get("category", ""),
+            "source":   candidate.get("source", ""),
             "tier":     candidate.get("tier", 2),
             "date":     today_str,
         }
@@ -1096,6 +1112,111 @@ def fetch_wyt_archive() -> list[dict]:
     return items
 
 
+
+# ── Learn history (One Thing to Learn Today topic rotation) ───────────────────
+
+LEARN_HISTORY_FILE = LOG_DIR / "learn_history.json"
+
+_LEARN_REAL_ESTATE_SUBTOPICS = [
+    "multifamily_market_dynamics",
+    "construction_finance",
+    "capital_markets_debt_structures",
+    "property_management_operations",
+    "affordable_housing_policy",
+    "cre_adjacent_sectors",
+    "real_estate_investment_structures",
+    "underwriting_valuation",
+    "zoning_land_use",
+    "real_estate_history_cycles",
+]
+
+_LEARN_OTHER_SUBTOPICS = [
+    "macroeconomics_concept",
+    "capital_markets_concept",
+    "technology_ai_business",
+    "science_health_insight",
+    "history_geopolitics",
+    "philosophy_decision_making",
+    "leadership_management",
+]
+
+
+def load_learn_history() -> dict:
+    if not LEARN_HISTORY_FILE.exists():
+        return {"entries": [], "real_estate_count_14d": 0,
+                "other_count_14d": 0, "subtopic_last_used": {}}
+    try:
+        with open(LEARN_HISTORY_FILE, encoding="utf-8") as f:
+            data = json.load(f)
+        data.setdefault("entries", [])
+        data.setdefault("real_estate_count_14d", 0)
+        data.setdefault("other_count_14d", 0)
+        data.setdefault("subtopic_last_used", {})
+        return data
+    except Exception as exc:
+        log.warning("Could not read learn_history.json: %s — starting fresh", exc)
+        return {"entries": [], "real_estate_count_14d": 0,
+                "other_count_14d": 0, "subtopic_last_used": {}}
+
+
+def save_learn_history(history: dict) -> None:
+    LEARN_HISTORY_FILE.parent.mkdir(exist_ok=True)
+    with open(LEARN_HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, indent=2, ensure_ascii=False)
+    log.info("Saved learn_history.json")
+
+
+def compute_learn_context(history: dict) -> str:
+    """Build a text block summarizing recent learn topics for the prompt."""
+    now = datetime.now(timezone.utc)
+    cutoff_7d  = (now - timedelta(days=7)).strftime("%Y-%m-%d")
+    cutoff_14d = (now - timedelta(days=14)).strftime("%Y-%m-%d")
+
+    recent_7d  = [e for e in history.get("entries", []) if e.get("date", "") >= cutoff_7d]
+    recent_14d = [e for e in history.get("entries", []) if e.get("date", "") >= cutoff_14d]
+
+    subtopics_7d  = [e.get("subtopic", "") for e in recent_7d if e.get("subtopic")]
+    re_count_14d  = sum(1 for e in recent_14d if e.get("category") == "real_estate")
+    oth_count_14d = sum(1 for e in recent_14d if e.get("category") == "other")
+
+    avoid_str = ", ".join(subtopics_7d) if subtopics_7d else "none"
+    lines = [
+        "=== ONE THING TO LEARN — TOPIC HISTORY (inform selection, avoid repetition) ===",
+        f"Sub-topics used in last 7 days (avoid repeating): {avoid_str}",
+        f"Real estate sub-topics used in last 14 days: {re_count_14d} of 7 target",
+        f"Other sub-topics used in last 14 days: {oth_count_14d} of 7 target",
+    ]
+    if re_count_14d < oth_count_14d:
+        lines.append("Preference: lean toward a real estate sub-topic today to rebalance.")
+    elif oth_count_14d < re_count_14d:
+        lines.append("Preference: lean toward a non-real-estate sub-topic today to rebalance.")
+    return "\n".join(lines)
+
+
+def record_learn_subtopic(digest_html: str, history: dict) -> None:
+    """Parse <!-- LEARN_SUBTOPIC: key --> from HTML and record in learn_history."""
+    match = re.search(r'<!--\s*LEARN_SUBTOPIC:\s*([\w]+)\s*-->', digest_html)
+    if not match:
+        log.info("learn_history: no LEARN_SUBTOPIC comment found in HTML")
+        return
+    subtopic = match.group(1).strip()
+    today_str = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    category = "real_estate" if any(
+        subtopic.startswith(s.split("_")[0]) for s in _LEARN_REAL_ESTATE_SUBTOPICS
+    ) else "other"
+    # More precise mapping
+    if subtopic in _LEARN_REAL_ESTATE_SUBTOPICS:
+        category = "real_estate"
+    elif subtopic in _LEARN_OTHER_SUBTOPICS:
+        category = "other"
+    entry = {"subtopic": subtopic, "category": category, "date": today_str}
+    history.setdefault("entries", []).append(entry)
+    # Prune to 28 days
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=28)).strftime("%Y-%m-%d")
+    history["entries"] = [e for e in history["entries"] if e.get("date", "") >= cutoff]
+    history["subtopic_last_used"][subtopic] = today_str
+    log.info("learn_history: recorded subtopic '%s' (%s)", subtopic, category)
+
 # ── Content collection ────────────────────────────────────────────────────────
 
 SECTION_LIMITS: dict[str, int] = {
@@ -1128,6 +1249,20 @@ def collect_content(sources: dict) -> dict[str, list[dict]]:
                 items.extend(fetch_feed(feed, lookback_hours=lookback))
         result[section] = items
     return result
+
+
+def compute_wyt_source_cap_exceeded(history: dict) -> set:
+    """Return set of source names that have appeared >= 2 times in WYT in last 7 days."""
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
+    counts: dict[str, int] = {}
+    for entry in history.get("featured", []):
+        if entry.get("date", "") >= cutoff and entry.get("source"):
+            src_name = entry["source"]
+            counts[src_name] = counts.get(src_name, 0) + 1
+    exceeded = {s for s, c in counts.items() if c >= 2}
+    if exceeded:
+        log.info("WYT source cap exceeded (2/7d): %s", exceeded)
+    return exceeded
 
 # ── Prompt building ───────────────────────────────────────────────────────────
 
@@ -1168,17 +1303,14 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     if econ_items:
         e = econ_items[0]
         econ_block = (
-            "=== THE ECONOMIST (today's curated selection) ===\n"
+            "=== THE ECONOMIST (integrate inline — do NOT create a standalone Economist section) ===\n"
             f"SOURCE: {e['source']}\n"
             f"TITLE: {e['title']}\n"
             f"URL: {e['link']}\n"
             f"SUMMARY: {e['summary']}\n"
         )
     else:
-        econ_block = (
-            "=== THE ECONOMIST ===\n"
-            "(no suitable article selected today — omit the section)"
-        )
+        econ_block = None
 
     # Email newsletter block (GZero, The Promote, etc.)
     email_items = content.get("email_newsletters", [])
@@ -1207,8 +1339,9 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         section("SCIENCE & HEALTH (New Scientist, Stat News, Nature, NYT Science, Popular Mechanics, Popular Science)", "science_health"),
         section("RECENT RELEASES — PODCASTS & NEWSLETTERS (72-hour window)", "podcasts_newsletters"),
         section("THINKERS & PERSONAL BLOGS — PRIORITY WORTH YOUR TIME CANDIDATES (Naval Ravikant, Tim Ferriss, Tim Urban, Ray Dalio, Ryan Holiday / Daily Stoic — 7-day window)", "thinkers"),
-        econ_block,
     ]
+    if econ_block:
+        raw_blocks.append(econ_block)
     if email_block:
         raw_blocks.insert(0, email_block)
 
@@ -1219,6 +1352,8 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     wyt_tier, wyt_tier_name   = content.get("_wyt_tier", (2, "DURABLE"))
     wyt_under_quota: list[str] = content.get("_wyt_under_quota", [])
     wyt_over_quota:  list[str] = content.get("_wyt_over_quota", [])
+    # Sources that have already appeared >= 2x in WYT in the last 7 days
+    wyt_source_cap_exceeded: set[str] = content.get("_wyt_source_cap_exceeded", set())
 
     # Pool A: Live feed items (free, from today's news feeds)
     pool_a: list[dict] = []
@@ -1230,8 +1365,9 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
                 continue
             url = item.get("link") or item.get("url") or ""
             cat = item.get("category", "")
+            src_name = item.get("source", "")
             if url and url not in wyt_seen and _is_free_for_wyt(url):
-                if cat not in wyt_over_quota:
+                if cat not in wyt_over_quota and src_name not in wyt_source_cap_exceeded:
                     wyt_seen.add(url)
                     pool_a.append(item)
 
@@ -1240,8 +1376,9 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     for item in content.get("_wyt_archive", []):
         url = item.get("link", "")
         cat = item.get("category", "")
+        src_name = item.get("source", "")
         if url and url not in wyt_seen and _is_free_for_wyt(url):
-            if cat not in wyt_over_quota:
+            if cat not in wyt_over_quota and src_name not in wyt_source_cap_exceeded:
                 wyt_seen.add(url)
                 pool_b.append(item)
 
@@ -1250,7 +1387,9 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     pool_c: list[dict] = []
     for item in pool_c_raw:
         url = item.get("url", "")
+        src_name = item.get("source", "")
         if url and url not in wyt_seen:
+            # Allow library items even if source cap exceeded — library is guaranteed fallback
             wyt_seen.add(url)
             pool_c.append(item)
 
@@ -1299,6 +1438,10 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         ", ".join(wyt_under_quota).replace("_", " ") if wyt_under_quota else "none"
     )
 
+    learn_context = content.get("_learn_context", "")
+    if learn_context:
+        raw_blocks.append(learn_context)
+
     wyt_block = (
         f"=== WORTH YOUR TIME CANDIDATE POOL ===\n"
         f"TODAY'S TIER: {wyt_tier} — {wyt_tier_name}\n"
@@ -1331,27 +1474,27 @@ DIGEST SECTIONS TO PRODUCE (in this order):
 
 LENGTH RULE: Write every section at 75% of what you would normally produce. Cut every sentence that restates, qualifies, or hedges something already stated. One idea, one sentence.
 
-1. 📈 Markets — FT-style narrative: equities, rates, oil, credit, FX. Identify the dominant theme. End with one bolded "Number to watch." No bullets.
+1. 🚨 Critical News — Include only if something genuinely critical happened today. Maximum 3 items, minimum 0. See system prompt for what clears the bar. Bold sub-header per item. If nothing qualifies, omit entirely with no explanation.
 
-2. 🌍 Macro & Geopolitics — Up to 3 stories. Bold sub-header per story. 2 sentences each max.
+2. 🌍 Macro & Geopolitics — Up to 3 stories. Bold sub-header per story. 2 sentences each max. Weave Economist analysis inline with attribution. Include market context inline when directly relevant.
 
-3. 🇺🇸 US News — Only genuinely important domestic news. Skip entirely if nothing clears the bar.
+3. 🇺🇸 US News — Max 1 political story, min 1 non-political story. Political must have genuine policy/economic relevance. Skip entirely if nothing clears the bar.
 
-4. 🏘️ Real Estate & Affordable Housing — Policy, LIHTC, and market-level trends only. Do NOT mention specific transactions, deals, acquisitions, or individual property sales — these are not useful. Legislation and LIHTC policy get full treatment. Macro trends get one line.
+4. 📈 Markets — 3-5 tight bullet points. Each bullet: what happened + what it means for real estate capital markets in one sentence. End with bolded 'Rate to watch' line showing current 10-year Treasury yield and week-over-week direction.
 
-5. 🏦 Research & Market Intelligence — 2 items max. Skip if nothing relevant. Prioritize: (a) institutional research (Goldman, Morgan Stanley, JPMorgan, BlackRock, CBRE, JLL, Newmark, Berkadia, Marcus & Millichap), (b) wire summaries (Bloomberg Economics, RealPage, GlobeSt). Focus: multifamily trends, rate outlooks, cap rates, CRE volumes. Skip anything already in Markets or Macro.
+5. 🏘️ Real Estate & Affordable Housing — Policy, LIHTC, and market-level trends only. Apply the deal significance test before including any transaction. Legislation and LIHTC policy get full treatment. Weave Economist analysis inline when relevant.
 
-6. 🤖 AI & Technology — 2 items max. Breakthroughs or major policy shifts get 2–3 sentences; routine news gets one line.
+6. 🏦 Research & Market Intelligence — 2 items max. Skip if nothing relevant. Prioritize: (a) institutional research (Goldman, Morgan Stanley, JPMorgan, BlackRock, CBRE, JLL, Newmark, Berkadia, Marcus & Millichap), (b) wire summaries (Bloomberg Economics, RealPage, GlobeSt). Focus: multifamily trends, rate outlooks, cap rates, CRE volumes. Skip anything already in Markets or Macro.
 
-7. 🔬 Science & Health — 1 story max. Only landmark findings or major public health news. Skip entirely if nothing clears the bar.
+7. 🤖 AI & Technology — 2 items max. Breakthroughs or major policy shifts get 2–3 sentences; routine news gets one line.
 
-8. 📰 Recent Releases — Articles and written content only — no podcasts, no videos. Only items published in the last 48 hours. For each item: one-line description + link + an "Add to Worth Your Time" button using the same ADD TO LIST BUTTON format and encoding rules defined in section 11. Use category "other" if unsure. Skip section if nothing new.
+8. 🔬 Science & Health — 1 story max. Only landmark findings or major public health news. Skip entirely if nothing clears the bar.
 
-9. 🗞️ Economist — Feature today's pre-selected article. Bold headline as <h3>, two sentences on why it's worth reading, then a link. Skip entirely if the block says no article selected.
+9. 🎙️ Recent Releases — Articles and written content only — no podcasts, no videos. Only items published in the last 48 hours. For each item: one-line description + link + an "Add to Worth Your Time" button using the same ADD TO LIST BUTTON format and encoding rules defined in section 11. Use category "other" if unsure. Skip section if nothing new.
 
-10. 💡 One Thing to Learn Today — One practical insight from the digest. Real estate PE / affordable housing finance or general intellectual growth. Two sentences max.
+10. 💡 One Thing to Learn Today — One practical insight. 3-5 sentences. See topic history in the data block — avoid sub-topics used recently. After the insight, include the HTML comment: <!-- LEARN_SUBTOPIC: [key] --> with the snake_case sub-topic key.
 
-11. 📚 Worth Your Time — Always populate this section with 1–2 items.
+11. 📚 Worth Your Time — Always populate this section with exactly 1 item.
    The CANDIDATE POOL is labeled with today's tier and under-quota topics.
    Select items that match today's tier first; under-quota topics second.
    The Evergreen Library always has something worthy — never leave this empty.
@@ -1691,6 +1834,12 @@ def main() -> None:
     content["_wyt_tier"]        = (wyt_today_tier, wyt_today_tier_name)
     content["_wyt_under_quota"] = wyt_under_quota
     content["_wyt_over_quota"]  = wyt_over_quota
+    # Source cap: which sources have appeared >= 2x in WYT in last 7 days
+    content["_wyt_source_cap_exceeded"] = compute_wyt_source_cap_exceeded(wyt_history)
+
+    # 5f. Load learn history and build context for One Thing to Learn Today
+    learn_history = load_learn_history()
+    content["_learn_context"] = compute_learn_context(learn_history)
 
     # 6. Create shared Claude client (reused for Economist selection + main digest)
     api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -1734,6 +1883,10 @@ def main() -> None:
     record_wyt_selections(digest_html, all_wyt_candidates, wyt_history, wyt_library_all)
     save_wyt_history(wyt_history)
     save_wyt_library(wyt_library_all)
+
+    # 10c. Record learn subtopic for topic rotation tracking
+    record_learn_subtopic(digest_html, learn_history)
+    save_learn_history(learn_history)
 
     if send_mode:
         send_email(digest_html, today)
