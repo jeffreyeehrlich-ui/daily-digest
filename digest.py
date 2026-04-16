@@ -149,7 +149,7 @@ Economist integration: The Economist content is provided as a pre-selected artic
 
 One Thing to Learn Today: Write one practical insight that expands Jeff's thinking — not something obvious to someone in his position. 3-5 sentences. Connect to today's digest when natural but do not force the connection. The topic history is provided in the data — avoid sub-topics used recently. After the insight text, include this HTML comment so the topic can be tracked: <!-- LEARN_SUBTOPIC: [subtopic_key] --> where subtopic_key is a snake_case string identifying the sub-topic (e.g. 'multifamily_market_dynamics', 'macroeconomics_concept', 'philosophy_decision_making', 'construction_finance', 'capital_markets_concept', 'science_health_insight', 'history_geopolitics', 'leadership_management').
 
-Worth Your Time is Jeff's curated reading shelf — not a news feed extension. Every item must make him meaningfully smarter, wiser, or better informed in a way that sticks. The section draws from three pools: LIVE (recent feed items), ARCHIVE (thinker blogs), and EVERGREEN LIBRARY (pre-vetted classics). Each day has a tier: EVERGREEN (Tier 1 — shelf life 50+ years), DURABLE (Tier 2 — 1-3 years), TOPICAL (Tier 3 — 1-4 weeks). Today's tier and under-quota topics are in the candidate pool header — prioritize accordingly. For topics outside Jeff's domain (science, philosophy, history, linguistics), prefer journalism over academia, narrative over jargon. Select exactly 1 item. The Evergreen Library always has something worthy — never leave Worth Your Time empty.
+Worth Your Time is Jeff's curated reading shelf — not a news feed extension. Every item must make him meaningfully smarter, wiser, or better informed in a way that sticks. The section draws from four pools: MANUAL QUEUE (user-curated, always prioritize first), LIVE (recent feed items), ARCHIVE (thinker blogs), and EVERGREEN LIBRARY (pre-vetted classics). If Pool D (MANUAL QUEUE) has items, always select from there first unless the item is clearly lower quality than alternatives. Each day has a tier: EVERGREEN (Tier 1 — shelf life 50+ years), DURABLE (Tier 2 — 1-3 years), TOPICAL (Tier 3 — 1-4 weeks). Today's tier and under-quota topics are in the candidate pool header — prioritize accordingly. For topics outside Jeff's domain (science, philosophy, history, linguistics), prefer journalism over academia, narrative over jargon. Select exactly 1 item. The Evergreen Library always has something worthy — never leave Worth Your Time empty.
 
 Newsletter content from GZero and The Promote will be labeled as EMAIL SOURCE. Treat these with the same weight as RSS feed content. GZero content belongs in the Macro & Geopolitics section. The Promote content belongs in the Real Estate & Affordable Housing section.
 
@@ -773,6 +773,7 @@ def scrape_page(source: dict) -> list[dict]:
 WYT_LIBRARY_FILE  = Path(__file__).parent / "wyt_library.yaml"
 WYT_HISTORY_FILE  = LOG_DIR / "wyt_history.json"
 WYT_RATINGS_FILE  = LOG_DIR / "wyt_ratings.json"
+WYT_MANUAL_FILE   = LOG_DIR / "wyt_manual.json"
 
 # Day-of-week → tier (Monday=0 … Sunday=6)
 _WYT_DAY_TIER: dict[int, int] = {
@@ -1251,6 +1252,49 @@ def collect_content(sources: dict) -> dict[str, list[dict]]:
     return result
 
 
+def load_wyt_manual() -> list[dict]:
+    """Load user-queued WYT items from wyt_manual.json. Returns [] on failure."""
+    if not WYT_MANUAL_FILE.exists():
+        return []
+    try:
+        with open(WYT_MANUAL_FILE, encoding="utf-8") as f:
+            data = json.load(f)
+        return [i for i in data.get("items", []) if not i.get("featured", False)]
+    except Exception as exc:
+        log.warning("Could not read wyt_manual.json: %s", exc)
+        return []
+
+
+def mark_wyt_manual_featured(digest_html: str) -> None:
+    """
+    After generation, scan the HTML for URLs that were in the manual queue
+    and mark them featured=True so they don't re-appear.
+    """
+    if not WYT_MANUAL_FILE.exists():
+        return
+    try:
+        with open(WYT_MANUAL_FILE, encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception:
+        return
+
+    items = data.get("items", [])
+    hrefs = set(re.findall(r'href="([^"]+)"', digest_html))
+    changed = False
+    for item in items:
+        if not item.get("featured") and item.get("url") in hrefs:
+            item["featured"] = True
+            changed = True
+            log.info("WYT manual: marked featured: %s", item.get("title", "")[:60])
+
+    if changed:
+        try:
+            with open(WYT_MANUAL_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
+        except Exception as exc:
+            log.warning("Could not save wyt_manual.json: %s", exc)
+
+
 def compute_wyt_source_cap_exceeded(history: dict) -> set:
     """Return set of source names that have appeared >= 2 times in WYT in last 7 days."""
     cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y-%m-%d")
@@ -1354,6 +1398,16 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
     wyt_over_quota:  list[str] = content.get("_wyt_over_quota", [])
     # Sources that have already appeared >= 2x in WYT in the last 7 days
     wyt_source_cap_exceeded: set[str] = content.get("_wyt_source_cap_exceeded", set())
+    # Pool D: user-manually-queued items (highest priority)
+    wyt_manual_raw: list[dict] = content.get("_wyt_manual", [])
+
+    # Pool D: Manual queue (user-curated, highest priority — bypass source cap)
+    pool_d: list[dict] = []
+    for item in wyt_manual_raw:
+        url = item.get("url", "")
+        if url and url not in wyt_seen and _is_free_for_wyt(url):
+            wyt_seen.add(url)
+            pool_d.append(item)
 
     # Pool A: Live feed items (free, from today's news feeds)
     pool_a: list[dict] = []
@@ -1394,7 +1448,7 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             pool_c.append(item)
 
     # Store all candidates for post-processing in main()
-    content["_wyt_all_candidates"] = pool_a + pool_b + pool_c
+    content["_wyt_all_candidates"] = pool_d + pool_a + pool_b + pool_c
 
     def _fmt_wyt_item(item: dict, pool_label: str = "") -> str:
         lines = [
@@ -1424,6 +1478,10 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
             lines.append(f"ACCESSIBILITY: {acc}")
         return "\n".join(lines)
 
+    pool_d_block = "\n\n".join(
+        _fmt_wyt_item(i, "MANUAL QUEUE — user-curated, HIGH PRIORITY" + (" [PRIORITY: HIGH]" if i.get("priority") == "high" else ""))
+        for i in pool_d
+    )
     pool_a_block = "\n\n".join(
         _fmt_wyt_item(i, "LIVE — recent from news feeds") for i in pool_a[:30]
     )
@@ -1448,6 +1506,8 @@ def build_user_prompt(content: dict[str, list[dict]], today: datetime) -> str:
         f"DAY: {today.strftime('%A')}\n"
         f"UNDER-QUOTA TOPICS (prioritize these): {under_quota_str}\n"
     )
+    if pool_d_block:
+        wyt_block += f"\n-- POOL D: MANUAL QUEUE (user-curated, prioritize these first) --\n{pool_d_block}\n"
     if pool_a_block:
         wyt_block += f"\n-- POOL A: LIVE (recent feed items, free only) --\n{pool_a_block}\n"
     if pool_b_block:
@@ -1837,6 +1897,11 @@ def main() -> None:
     # Source cap: which sources have appeared >= 2x in WYT in last 7 days
     content["_wyt_source_cap_exceeded"] = compute_wyt_source_cap_exceeded(wyt_history)
 
+    # 5g. Load manual WYT queue (items Jeff added via the web interface)
+    log.info("Loading WYT manual queue …")
+    content["_wyt_manual"] = load_wyt_manual()
+    log.info("WYT manual queue: %d pending item(s)", len(content["_wyt_manual"]))
+
     # 5f. Load learn history and build context for One Thing to Learn Today
     learn_history = load_learn_history()
     content["_learn_context"] = compute_learn_context(learn_history)
@@ -1872,6 +1937,9 @@ def main() -> None:
 
     # 9b. Fix any malformed ?add= URLs produced by Claude
     digest_html = _fix_wyt_add_links(digest_html)
+
+    # 9c. Mark any manual-queue items that appeared in the digest as featured
+    mark_wyt_manual_featured(digest_html)
 
     # 10. Record featured stories and persist dedup history
     new_entries = extract_featured_stories(digest_html, content)

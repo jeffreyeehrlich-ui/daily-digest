@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add to Worth Your Time</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f5f5f2;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 15px;
+    color: #1a1a1a;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: #1a3a6e;
+    color: #fff;
+    padding: 28px 24px 22px;
+    position: relative;
+  }
+  .site-header h1 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .site-header p {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+  }
+  .header-links {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+  }
+  .header-btn {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    line-height: 1.4;
+  }
+  .header-btn:hover { background: rgba(255,255,255,0.25); }
+
+  /* ── Main layout ── */
+  .page-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 20px 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  @media (max-width: 640px) {
+    .page-wrap { grid-template-columns: 1fr; gap: 20px; }
+    .site-header { padding: 22px 16px 18px; }
+    .site-header h1 { font-size: 18px; }
+    .header-links { top: 12px; right: 12px; }
+  }
+
+  /* ── Card ── */
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    padding: 22px 22px 20px;
+  }
+  .card h2 {
+    margin: 0 0 18px;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a1a;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  /* ── Form ── */
+  .form-group {
+    margin-bottom: 14px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #1a1a1a;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus { border-color: #1a3a6e; }
+  .form-group textarea { min-height: 80px; resize: vertical; }
+  .form-group input.has-value { background: #f9f9ff; border-color: #b0bde0; }
+
+  /* URL row with fetch button */
+  .url-row { display: flex; gap: 8px; }
+  .url-row input { flex: 1; }
+  .fetch-btn {
+    padding: 9px 14px;
+    background: #f0f4ff;
+    border: 1px solid #b0bde0;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a3a6e;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .fetch-btn:hover { background: #dde6ff; }
+  .fetch-btn:disabled { opacity: 0.5; cursor: default; }
+
+  /* ── Priority toggle ── */
+  .priority-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .priority-btn {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #d0d0d0;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    color: #555;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s;
+    line-height: 1.3;
+  }
+  .priority-btn.selected {
+    background: #1a3a6e;
+    color: #fff;
+    border-color: #1a3a6e;
+    font-weight: 600;
+  }
+  .priority-btn:hover:not(.selected) { background: #f0f4ff; border-color: #b0bde0; }
+
+  /* ── Submit ── */
+  .submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: #1a3a6e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 4px;
+  }
+  .submit-btn:hover { background: #142e58; }
+  .submit-btn:disabled { background: #888; cursor: default; }
+
+  .status-msg {
+    margin-top: 12px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    display: none;
+  }
+  .status-msg.ok  { background: #eafaf1; color: #1a6b3a; border: 1px solid #a9d9bc; }
+  .status-msg.err { background: #fdf0f0; color: #b0290a; border: 1px solid #f0bcbc; }
+
+  /* ── Pending queue ── */
+  .queue-empty {
+    text-align: center;
+    padding: 30px 10px;
+    color: #aaa;
+    font-size: 14px;
+  }
+  .queue-item {
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: #fafafa;
+    position: relative;
+  }
+  .queue-item.featured {
+    opacity: 0.55;
+    background: #f5f5f5;
+  }
+  .queue-item-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 4px;
+    padding-right: 28px;
+  }
+  .queue-item-title a {
+    color: #1a3a6e;
+    text-decoration: none;
+  }
+  .queue-item-title a:hover { text-decoration: underline; }
+  .queue-item-meta {
+    font-size: 12px;
+    color: #888;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+  .queue-badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 11px;
+    font-weight: 600;
+    background: #f0f0f0;
+    color: #555;
+  }
+  .queue-badge.featured-badge { background: #e8f5e9; color: #2e7d32; }
+  .queue-badge.high-badge { background: #fff3e0; color: #e65100; }
+  .queue-delete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #ccc;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px;
+  }
+  .queue-delete:hover { color: #c0392b; }
+  .queue-notes {
+    font-size: 13px;
+    color: #555;
+    margin: 5px 0 0;
+    font-style: italic;
+  }
+
+  /* ── Token bar ── */
+  .token-bar {
+    background: #fff8e1;
+    border-bottom: 1px solid #ffe082;
+    padding: 10px 20px;
+    font-size: 13px;
+    color: #795548;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .token-bar a {
+    color: #1a3a6e;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+  .token-bar.hidden { display: none; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1a1a2e;
+    color: #fff;
+    padding: 11px 22px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: transform 0.25s, opacity 0.25s;
+    pointer-events: none;
+    z-index: 1000;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.visible { transform: translateX(-50%) translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>📚 Add to Worth Your Time</h1>
+  <p>Queue links for the daily digest candidate pool</p>
+  <div class="header-links">
+    <a href="../" class="header-btn">← Reading List</a>
+    <button class="header-btn" id="tokenBtn">⚙ Token</button>
+  </div>
+</header>
+
+<div id="tokenBar" class="token-bar hidden">
+  ⚠ No GitHub token set — items won't save. <a id="tokenBarLink">Set token</a>
+</div>
+
+<div class="page-wrap">
+
+  <!-- Add form -->
+  <div class="card" id="addCard">
+    <h2>Add a link</h2>
+
+    <div class="form-group">
+      <label>URL *</label>
+      <div class="url-row">
+        <input type="url" id="f-url" placeholder="Paste any URL..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+        <button class="fetch-btn" id="fetchBtn" title="Auto-fill title from page">Fill</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Title *</label>
+      <input type="text" id="f-title" placeholder="Article title" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label>Source</label>
+      <input type="text" id="f-source" placeholder="e.g. Farnam Street" autocomplete="off">
+    </div>
+
+    <div class="form-group">
+      <label>Category</label>
+      <select id="f-category">
+        <option value="philosophy">Philosophy / Mental models</option>
+        <option value="investing_finance">Investing / Finance</option>
+        <option value="real_estate_adjacent">Real estate</option>
+        <option value="hard_science">Science</option>
+        <option value="applied_science_tech">Technology / AI</option>
+        <option value="human_performance">Health / Performance</option>
+        <option value="ideas_mental_models">Ideas / Big picture</option>
+        <option value="explainer">Explainer</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Priority</label>
+      <div class="priority-row">
+        <button class="priority-btn selected" data-priority="normal" id="p-normal">Normal<br><span style="font-size:11px;font-weight:400;opacity:0.8;">next available slot</span></button>
+        <button class="priority-btn" data-priority="high" id="p-high">High<br><span style="font-size:11px;font-weight:400;opacity:0.8;">next digest</span></button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Why worth reading <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional — helps Claude write a better blurb)</span></label>
+      <textarea id="f-notes" placeholder="What makes this interesting or useful..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn">Add to queue →</button>
+    <div class="status-msg" id="statusMsg"></div>
+  </div>
+
+  <!-- Pending queue -->
+  <div class="card" id="queueCard">
+    <h2>Queue <span id="queueCount" style="font-weight:400;color:#888;font-size:13px;"></span></h2>
+    <div id="queueList"><div class="queue-empty">Loading...</div></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+const TOKEN_KEY   = 'reading_list_gh_token';
+const GH_REPO     = 'jeffreyeehrlich-ui/daily-digest';
+const GH_BRANCH   = 'main';
+const WYT_FILE    = 'logs/wyt_manual.json';
+const GH_API_BASE = `https://api.github.com/repos/${GH_REPO}/contents/${WYT_FILE}`;
+const GH_RAW_BASE = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${WYT_FILE}`;
+
+// ─── Token ────────────────────────────────────────────────────────────────────
+function getToken() { return localStorage.getItem(TOKEN_KEY) || ''; }
+
+function authHeaders() {
+  return { Authorization: `token ${getToken()}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' };
+}
+
+function checkTokenBar() {
+  const bar = document.getElementById('tokenBar');
+  bar.classList.toggle('hidden', !!getToken());
+}
+
+document.getElementById('tokenBtn').addEventListener('click', promptToken);
+document.getElementById('tokenBarLink').addEventListener('click', promptToken);
+
+function promptToken() {
+  const current = getToken();
+  const val = prompt('Paste your GitHub Personal Access Token (stored locally only):', current || '');
+  if (val === null) return;
+  if (val.trim()) {
+    localStorage.setItem(TOKEN_KEY, val.trim());
+    showToast('Token saved', 'ok');
+    checkTokenBar();
+    loadQueue();
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+    showToast('Token cleared', 'warn');
+    checkTokenBar();
+  }
+}
+
+// ─── Toast ────────────────────────────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  if (toastTimer) clearTimeout(toastTimer);
+  el.textContent = msg;
+  el.classList.add('visible');
+  toastTimer = setTimeout(() => el.classList.remove('visible'), 3200);
+}
+
+// ─── GitHub API helpers ───────────────────────────────────────────────────────
+async function ghGet() {
+  // Try raw URL first (no auth needed for public repo reads)
+  try {
+    const res = await fetch(`${GH_RAW_BASE}?t=${Date.now()}`);
+    if (res.ok) {
+      const data = await res.json();
+      return { items: data.items || [], sha: null };
+    }
+  } catch (_) {}
+  // Fallback to API (gets SHA too)
+  const res = await fetch(GH_API_BASE, { headers: authHeaders() });
+  if (res.status === 404) return { items: [], sha: null };
+  if (!res.ok) throw new Error(`GitHub API error ${res.status}`);
+  const meta = await res.json();
+  const decoded = JSON.parse(atob(meta.content.replace(/\n/g,'').replace(/\r/g,'')));
+  return { items: decoded.items || [], sha: meta.sha };
+}
+
+async function ghGetWithSha() {
+  const res = await fetch(GH_API_BASE, { headers: authHeaders() });
+  if (res.status === 404) return { items: [], sha: null };
+  if (res.status === 401) throw new Error('Token expired or invalid.');
+  if (!res.ok) throw new Error(`GitHub API error ${res.status}`);
+  const meta = await res.json();
+  const decoded = JSON.parse(atob(meta.content.replace(/\n/g,'').replace(/\r/g,'')));
+  return { items: decoded.items || [], sha: meta.sha };
+}
+
+async function ghPut(items, sha) {
+  const body = { message: 'Update WYT manual queue [skip ci]', content: btoa(unescape(encodeURIComponent(JSON.stringify({ items }, null, 2)))) };
+  if (sha) body.sha = sha;
+  const res = await fetch(GH_API_BASE, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(body) });
+  if (res.status === 401) throw new Error('Token expired or invalid. Update via ⚙ Token.');
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`Save failed: ${res.status} ${err.message || ''}`);
+  }
+}
+
+// ─── Auto-fetch title via allorigins proxy ────────────────────────────────────
+async function fetchTitle(url) {
+  try {
+    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const html = data.contents || '';
+    const m = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+    if (!m) return null;
+    // Also try og:title for cleaner titles
+    const og = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)
+            || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i);
+    const raw = og ? og[1] : m[1];
+    return raw.replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim();
+  } catch (_) { return null; }
+}
+
+// Also try to extract source domain
+function domainFromUrl(url) {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    // Map known domains to nice names
+    const map = {
+      'fs.blog': 'Farnam Street', 'waitbutwhy.com': 'Wait But Why', 'paulgraham.com': 'Paul Graham',
+      'nav.al': 'Naval Ravikant', 'noahpinion.blog': 'Noahpinion', 'aeon.co': 'Aeon',
+      'nautil.us': 'Nautilus', 'quantamagazine.org': 'Quanta Magazine', 'dailystoic.com': 'Daily Stoic',
+      'ryanholiday.net': 'Ryan Holiday', 'hubermanlab.com': 'Huberman Lab', 'peterattiamd.com': 'Peter Attia',
+      'collaborativefund.com': 'Collaborative Fund', 'oaktreecapital.com': 'Oaktree Capital',
+      'themarginalian.org': 'The Marginalian', 'tim.blog': 'Tim Ferriss',
+      'medium.com': 'Medium', 'substack.com': 'Substack', 'a16z.com': 'a16z',
+      'economist.com': 'The Economist', 'theatlantic.com': 'The Atlantic',
+    };
+    return map[host] || host.split('.').slice(-2,-1)[0].charAt(0).toUpperCase() + host.split('.').slice(-2,-1)[0].slice(1);
+  } catch (_) { return ''; }
+}
+
+// ─── Priority state ───────────────────────────────────────────────────────────
+let selectedPriority = 'normal';
+document.querySelectorAll('.priority-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedPriority = btn.dataset.priority;
+  });
+});
+
+// ─── Fetch button ─────────────────────────────────────────────────────────────
+document.getElementById('fetchBtn').addEventListener('click', async () => {
+  const url = document.getElementById('f-url').value.trim();
+  if (!url) return;
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  btn.textContent = '…';
+  try {
+    const title = await fetchTitle(url);
+    if (title) {
+      const tf = document.getElementById('f-title');
+      tf.value = title;
+      tf.classList.add('has-value');
+    }
+    // Auto-fill source if empty
+    const sf = document.getElementById('f-source');
+    if (!sf.value) sf.value = domainFromUrl(url);
+    showToast(title ? 'Title auto-filled' : 'Could not fetch title — fill manually');
+  } catch (_) {
+    showToast('Could not fetch title');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Fill';
+});
+
+// Auto-fill source on URL blur
+document.getElementById('f-url').addEventListener('blur', () => {
+  const url = document.getElementById('f-url').value.trim();
+  const sf = document.getElementById('f-source');
+  if (url && !sf.value) sf.value = domainFromUrl(url);
+});
+
+// ─── Submit ───────────────────────────────────────────────────────────────────
+document.getElementById('submitBtn').addEventListener('click', submitItem);
+
+async function submitItem() {
+  const url      = document.getElementById('f-url').value.trim();
+  const title    = document.getElementById('f-title').value.trim();
+  const source   = document.getElementById('f-source').value.trim();
+  const category = document.getElementById('f-category').value;
+  const notes    = document.getElementById('f-notes').value.trim();
+
+  if (!url)   { showStatus('Please enter a URL.', 'err'); return; }
+  if (!title) { showStatus('Please enter a title.', 'err'); return; }
+  if (!getToken()) { showStatus('Set your GitHub token via the ⚙ Token button.', 'err'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  clearStatus();
+
+  try {
+    const { items, sha } = await ghGetWithSha();
+
+    // Prevent duplicate URL
+    if (items.some(i => i.url === url)) {
+      showStatus('This URL is already in your queue.', 'err');
+      btn.disabled = false;
+      btn.textContent = 'Add to queue →';
+      return;
+    }
+
+    const newItem = {
+      id:         Date.now().toString(),
+      url,
+      title,
+      source:     source || domainFromUrl(url),
+      category,
+      notes,
+      priority:   selectedPriority,
+      date_added: todayStr(),
+      featured:   false,
+    };
+
+    await ghPut([newItem, ...items], sha);
+
+    // Reset form
+    document.getElementById('f-url').value = '';
+    document.getElementById('f-title').value = '';
+    document.getElementById('f-source').value = '';
+    document.getElementById('f-notes').value = '';
+    document.getElementById('f-title').classList.remove('has-value');
+    selectedPriority = 'normal';
+    document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('p-normal').classList.add('selected');
+
+    showToast('Added to WYT queue ✓');
+    clearStatus();
+    await loadQueue();
+  } catch (e) {
+    showStatus(e.message, 'err');
+  }
+
+  btn.disabled = false;
+  btn.textContent = 'Add to queue →';
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('statusMsg');
+  el.textContent = msg;
+  el.className = `status-msg ${type}`;
+  el.style.display = '';
+}
+function clearStatus() {
+  const el = document.getElementById('statusMsg');
+  el.style.display = 'none';
+  el.textContent = '';
+}
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// ─── Queue rendering ──────────────────────────────────────────────────────────
+const CAT_LABELS = {
+  philosophy: 'Philosophy', investing_finance: 'Investing', real_estate_adjacent: 'Real estate',
+  hard_science: 'Science', applied_science_tech: 'Tech / AI', human_performance: 'Health',
+  ideas_mental_models: 'Ideas', explainer: 'Explainer', other: 'Other',
+};
+
+async function loadQueue() {
+  try {
+    const { items } = await ghGet();
+    renderQueue(items);
+  } catch (e) {
+    document.getElementById('queueList').innerHTML = `<div class="queue-empty" style="color:#c0392b;">${e.message}</div>`;
+  }
+}
+
+function renderQueue(items) {
+  const el = document.getElementById('queueList');
+  const count = document.getElementById('queueCount');
+  const pending = items.filter(i => !i.featured).length;
+  count.textContent = pending ? `${pending} pending` : '';
+
+  if (!items.length) {
+    el.innerHTML = '<div class="queue-empty">No items queued yet.</div>';
+    return;
+  }
+
+  // Sort: high priority first, then by date desc
+  const sorted = [...items].sort((a, b) => {
+    if (a.featured !== b.featured) return a.featured ? 1 : -1;
+    if (a.priority !== b.priority) return a.priority === 'high' ? -1 : 1;
+    return (b.date_added || '').localeCompare(a.date_added || '');
+  });
+
+  el.innerHTML = sorted.map(item => {
+    const catLabel = CAT_LABELS[item.category] || item.category || 'Other';
+    const titleHtml = item.url
+      ? `<a href="${esc(item.url)}" target="_blank" rel="noopener">${esc(item.title)}</a>`
+      : esc(item.title);
+    return `
+      <div class="queue-item${item.featured ? ' featured' : ''}">
+        <div class="queue-item-title">${titleHtml}</div>
+        <div class="queue-item-meta">
+          ${item.source ? `<span>${esc(item.source)}</span>` : ''}
+          <span class="queue-badge">${esc(catLabel)}</span>
+          ${item.priority === 'high' ? '<span class="queue-badge high-badge">HIGH PRIORITY</span>' : ''}
+          ${item.featured ? '<span class="queue-badge featured-badge">✓ Featured</span>' : ''}
+          ${item.date_added ? `<span>${item.date_added}</span>` : ''}
+        </div>
+        ${item.notes ? `<div class="queue-notes">"${esc(item.notes)}"</div>` : ''}
+        <button class="queue-delete" data-id="${esc(item.id)}" title="Remove">×</button>
+      </div>`;
+  }).join('');
+
+  el.querySelectorAll('.queue-delete').forEach(btn => {
+    btn.addEventListener('click', () => deleteQueueItem(btn.dataset.id, items));
+  });
+}
+
+async function deleteQueueItem(id, currentItems) {
+  if (!getToken()) { showToast('Set token first'); return; }
+  try {
+    const { items, sha } = await ghGetWithSha();
+    const updated = items.filter(i => i.id !== id);
+    await ghPut(updated, sha);
+    showToast('Removed');
+    loadQueue();
+  } catch (e) {
+    showToast('Error: ' + e.message);
+  }
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Pre-fill from URL params (e.g. opened as share target) ──────────────────
+function prefillFromParams() {
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('url')) {
+    document.getElementById('f-url').value = p.get('url');
+    if (p.get('title')) document.getElementById('f-title').value = p.get('title');
+    const sf = document.getElementById('f-source');
+    if (!sf.value) sf.value = domainFromUrl(p.get('url'));
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+checkTokenBar();
+prefillFromParams();
+loadQueue();
+</script>
+</body>
+</html>
