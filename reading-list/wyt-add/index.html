@@ -350,14 +350,14 @@
     <div class="form-group">
       <label>Category</label>
       <select id="f-category">
-        <option value="philosophy">Philosophy / Mental models</option>
-        <option value="investing_finance">Investing / Finance</option>
-        <option value="real_estate_adjacent">Real estate</option>
-        <option value="hard_science">Science</option>
-        <option value="applied_science_tech">Technology / AI</option>
-        <option value="human_performance">Health / Performance</option>
-        <option value="ideas_mental_models">Ideas / Big picture</option>
-        <option value="explainer">Explainer</option>
+        <option value="markets">Markets</option>
+        <option value="real-estate">Real estate</option>
+        <option value="macro">Macro</option>
+        <option value="ai-tech">AI &amp; tech</option>
+        <option value="science">Science</option>
+        <option value="health">Health</option>
+        <option value="philosophy">Philosophy</option>
+        <option value="policy">Policy</option>
         <option value="other">Other</option>
       </select>
     </div>
@@ -477,51 +477,32 @@ async function loadQueueItems() {
   return items.filter(i => i.wyt_candidate);
 }
 
-// ─── Auto-fetch title via CORS proxies ───────────────────────────────────────
-function extractTitle(html) {
-  if (!html) return null;
-  // Prefer og:title (cleaner, no " | Site Name" suffix)
-  const og = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)
-          || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i);
-  const fallback = html.match(/<title[^>]*>([^<]{3,})<\/title>/i);
-  const raw = og ? og[1] : (fallback ? fallback[1] : null);
-  if (!raw) return null;
-  return raw
-    .replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"')
-    .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#x27;/g,"'")
-    .trim();
-}
-
+// ─── Auto-fetch title via microlink.io metadata API ──────────────────────────
 async function fetchTitle(url) {
   const enc = encodeURIComponent(url);
 
-  // Proxy 1: corsproxy.io — fast, reliable
+  // Primary: microlink.io — returns clean JSON metadata, no HTML parsing needed
   try {
-    const res = await fetch(`https://corsproxy.io/?${enc}`, { signal: AbortSignal.timeout(6000) });
-    if (res.ok) {
-      const html = await res.text();
-      const t = extractTitle(html);
-      if (t) return t;
-    }
-  } catch (_) {}
-
-  // Proxy 2: allorigins (JSON wrapper)
-  try {
-    const res = await fetch(`https://api.allorigins.win/get?url=${enc}`, { signal: AbortSignal.timeout(6000) });
+    const res = await fetch(`https://api.microlink.io/?url=${enc}`, { signal: AbortSignal.timeout(8000) });
     if (res.ok) {
       const data = await res.json();
-      const t = extractTitle(data.contents || '');
-      if (t) return t;
+      if (data.status === 'success' && data.data && data.data.title) {
+        return data.data.title.trim();
+      }
     }
   } catch (_) {}
 
-  // Proxy 3: htmlpreview cors proxy
+  // Fallback: allorigins JSON wrapper + og:title regex
   try {
-    const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${enc}`, { signal: AbortSignal.timeout(6000) });
-    if (res.ok) {
-      const html = await res.text();
-      const t = extractTitle(html);
-      if (t) return t;
+    const res2 = await fetch(`https://api.allorigins.win/get?url=${enc}`, { signal: AbortSignal.timeout(6000) });
+    if (res2.ok) {
+      const d2 = await res2.json();
+      const html = d2.contents || '';
+      const og = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)
+              || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i);
+      const fb = html.match(/<title[^>]*>([^<]{3,})<\/title>/i);
+      const raw = og ? og[1] : (fb ? fb[1] : null);
+      if (raw) return raw.replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim();
     }
   } catch (_) {}
 
@@ -705,9 +686,9 @@ function todayStr() {
 
 // ─── Queue rendering ──────────────────────────────────────────────────────────
 const CAT_LABELS = {
-  philosophy: 'Philosophy', investing_finance: 'Investing', real_estate_adjacent: 'Real estate',
-  hard_science: 'Science', applied_science_tech: 'Tech / AI', human_performance: 'Health',
-  ideas_mental_models: 'Ideas', explainer: 'Explainer', other: 'Other',
+  markets: 'Markets', 'real-estate': 'Real estate', macro: 'Macro',
+  'ai-tech': 'AI & tech', science: 'Science', health: 'Health',
+  philosophy: 'Philosophy', policy: 'Policy', other: 'Other',
 };
 
 async function loadQueue() {

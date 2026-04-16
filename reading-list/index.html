@@ -102,7 +102,7 @@
   .main-content {
     max-width: 760px;
     margin: 0 auto;
-    padding: 24px 20px 100px;
+    padding: 16px 20px 100px;
   }
 
   .loading-state, .error-state, .empty-state {
@@ -115,41 +115,41 @@
 
   /* ── Date group ── */
   .date-group-heading {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.8px;
-    color: #888;
-    border-bottom: 1px solid #e8e8e8;
-    padding-bottom: 6px;
-    margin: 28px 0 14px;
+    color: #aaa;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 4px;
+    margin: 18px 0 8px;
   }
   .date-group-heading:first-child { margin-top: 0; }
 
   /* ── Item card ── */
   .item-card {
     border: 1px solid #e4e4e4;
-    border-radius: 8px;
-    padding: 16px 18px;
-    margin-bottom: 12px;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 6px;
     background: #fff;
     position: relative;
     transition: opacity 0.2s, border-color 0.15s;
   }
   .item-card:hover { border-color: #c0c0c0; }
-  .item-card.is-read { opacity: 0.5; }
+  .item-card.is-read { opacity: 0.45; }
 
   .item-header {
     display: flex;
-    align-items: flex-start;
+    align-items: baseline;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 6px;
+    gap: 8px;
+    margin-bottom: 3px;
   }
   .item-title {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
-    line-height: 1.4;
+    line-height: 1.35;
     flex: 1;
     min-width: 0;
     overflow-wrap: break-word;
@@ -165,21 +165,21 @@
   .item-actions {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0;
   }
   .delete-btn {
     background: none;
     border: none;
-    font-size: 18px;
+    font-size: 15px;
     cursor: pointer;
     color: #ccc;
-    padding: 4px 6px;
+    padding: 2px 4px;
     border-radius: 4px;
     transition: color 0.15s;
     line-height: 1;
-    min-width: 36px;
-    min-height: 36px;
+    min-width: 28px;
+    min-height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -195,9 +195,9 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 8px;
-    font-size: 13px;
+    gap: 5px;
+    margin-bottom: 5px;
+    font-size: 12px;
   }
 
   .badge {
@@ -220,28 +220,53 @@
   .subscription-note { color: #aaa; font-style: italic; font-size: 12px; }
 
   .item-description {
-    font-size: 14px;
-    line-height: 1.65;
-    color: #333;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #555;
     margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
+  .item-description.expanded {
+    display: block;
+    -webkit-line-clamp: unset;
+    overflow: visible;
+  }
+  .desc-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 11px;
+    color: #1a3a6e;
+    cursor: pointer;
+    margin-top: 2px;
+    display: inline-block;
+  }
+  .desc-toggle:hover { text-decoration: underline; }
 
+  .item-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
   .read-checkbox-label {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    color: #888;
+    gap: 6px;
+    font-size: 12px;
+    color: #999;
     cursor: pointer;
-    margin-top: 12px;
     user-select: none;
-    min-height: 28px;
+    min-height: 22px;
   }
   .read-checkbox-label input {
     cursor: pointer;
     accent-color: #1a3a6e;
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
   }
 
   /* ── Floating add button ── */
@@ -407,7 +432,7 @@
     .modal { padding: 20px 16px; }
     .modal-actions { flex-direction: column-reverse; gap: 8px; }
     .btn-primary, .btn-secondary { width: 100%; text-align: center; }
-    .item-card { padding: 14px 14px; }
+    .item-card { padding: 9px 12px; }
   }
 </style>
 </head>
@@ -764,6 +789,13 @@ function renderItems() {
   container.querySelectorAll('.delete-btn').forEach(btn => {
     btn.addEventListener('click', () => deleteItem(btn.dataset.id));
   });
+  container.querySelectorAll('.desc-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const desc = btn.previousElementSibling;
+      const expanded = desc.classList.toggle('expanded');
+      btn.textContent = expanded ? 'less' : 'more';
+    });
+  });
 }
 
 function renderCard(item) {
@@ -773,7 +805,11 @@ function renderCard(item) {
     : `<span>${escHtml(item.title)}</span>`;
 
   const subNote = paywalled
-    ? ` <span class="subscription-note">(subscription required)</span>`
+    ? ` <span class="subscription-note">(subscription)</span>`
+    : '';
+
+  const descHtml = item.description
+    ? `<p class="item-description">${escHtml(item.description)}</p><button class="desc-toggle">more</button>`
     : '';
 
   return `
@@ -781,21 +817,23 @@ function renderCard(item) {
       <div class="item-header">
         <div class="item-title">${titleHtml}</div>
         <div class="item-actions">
-          <button class="delete-btn" data-id="${escHtml(item.id)}" title="Delete" aria-label="Delete">🗑</button>
+          <button class="delete-btn" data-id="${escHtml(item.id)}" title="Delete" aria-label="Delete">✕</button>
         </div>
       </div>
       <div class="item-meta">
         <span class="badge ${typeBadgeClass(item.type)}">${typeLabel(item.type)}</span>
-        <span class="item-source">${escHtml(item.source || '')}${item.duration ? ' &middot; ' + escHtml(item.duration) : ''}</span>
+        ${item.source ? `<span class="item-source">${escHtml(item.source)}${item.duration ? ' · ' + escHtml(item.duration) : ''}</span>` : ''}
         ${subNote}
         ${item.category ? `<span class="badge badge-topic">${escHtml(categoryLabel(item.category))}</span>` : ''}
+      </div>
+      ${descHtml}
+      <div class="item-bottom">
+        <label class="read-checkbox-label">
+          <input type="checkbox" class="read-toggle" data-id="${escHtml(item.id)}" ${item.read ? 'checked' : ''}>
+          Mark as read
+        </label>
         ${item.dateAdded ? `<span class="item-date">${formatDate(item.dateAdded)}</span>` : ''}
       </div>
-      ${item.description ? `<p class="item-description">${escHtml(item.description)}</p>` : ''}
-      <label class="read-checkbox-label">
-        <input type="checkbox" class="read-toggle" data-id="${escHtml(item.id)}" ${item.read ? 'checked' : ''}>
-        Mark as read
-      </label>
     </div>
   `;
 }
