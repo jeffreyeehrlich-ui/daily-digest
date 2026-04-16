@@ -526,36 +526,50 @@ document.querySelectorAll('.priority-btn').forEach(btn => {
   });
 });
 
-// ─── Fetch button ─────────────────────────────────────────────────────────────
-document.getElementById('fetchBtn').addEventListener('click', async () => {
-  const url = document.getElementById('f-url').value.trim();
-  if (!url) return;
+// ─── Auto-fetch title ─────────────────────────────────────────────────────────
+let fetchDebounce = null;
+
+async function autoFillFromUrl(url) {
+  if (!url || !url.startsWith('http')) return;
   const btn = document.getElementById('fetchBtn');
   btn.disabled = true;
   btn.textContent = '…';
+  // Auto-fill source immediately
+  const sf = document.getElementById('f-source');
+  if (!sf.value) sf.value = domainFromUrl(url);
   try {
     const title = await fetchTitle(url);
     if (title) {
       const tf = document.getElementById('f-title');
-      tf.value = title;
-      tf.classList.add('has-value');
+      if (!tf.value) {          // don't overwrite if user already typed something
+        tf.value = title;
+        tf.classList.add('has-value');
+      }
     }
-    // Auto-fill source if empty
-    const sf = document.getElementById('f-source');
-    if (!sf.value) sf.value = domainFromUrl(url);
-    showToast(title ? 'Title auto-filled' : 'Could not fetch title — fill manually');
-  } catch (_) {
-    showToast('Could not fetch title');
-  }
+  } catch (_) {}
   btn.disabled = false;
   btn.textContent = 'Fill';
+}
+
+// Trigger on paste — wait one tick for the pasted value to land in the input
+document.getElementById('f-url').addEventListener('paste', (e) => {
+  clearTimeout(fetchDebounce);
+  fetchDebounce = setTimeout(() => {
+    const url = document.getElementById('f-url').value.trim();
+    autoFillFromUrl(url);
+  }, 50);
 });
 
-// Auto-fill source on URL blur
+// Trigger on blur for URLs typed manually
 document.getElementById('f-url').addEventListener('blur', () => {
   const url = document.getElementById('f-url').value.trim();
-  const sf = document.getElementById('f-source');
-  if (url && !sf.value) sf.value = domainFromUrl(url);
+  autoFillFromUrl(url);
+});
+
+// Manual click still works as a retry
+document.getElementById('fetchBtn').addEventListener('click', () => {
+  const url = document.getElementById('f-url').value.trim();
+  autoFillFromUrl(url);
 });
 
 // ─── Submit ───────────────────────────────────────────────────────────────────
