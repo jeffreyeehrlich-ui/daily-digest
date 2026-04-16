@@ -773,7 +773,7 @@ def scrape_page(source: dict) -> list[dict]:
 WYT_LIBRARY_FILE  = Path(__file__).parent / "wyt_library.yaml"
 WYT_HISTORY_FILE  = LOG_DIR / "wyt_history.json"
 WYT_RATINGS_FILE  = LOG_DIR / "wyt_ratings.json"
-WYT_MANUAL_FILE   = LOG_DIR / "wyt_manual.json"
+WYT_READING_LIST_FILE = Path(__file__).parent / "reading-list" / "reading-list.json"
 
 # Day-of-week → tier (Monday=0 … Sunday=6)
 _WYT_DAY_TIER: dict[int, int] = {
@@ -1253,27 +1253,40 @@ def collect_content(sources: dict) -> dict[str, list[dict]]:
 
 
 def load_wyt_manual() -> list[dict]:
-    """Load user-queued WYT items from wyt_manual.json. Returns [] on failure."""
-    if not WYT_MANUAL_FILE.exists():
+    """Load user-queued WYT candidates from reading-list.json (wyt_candidate=True, wyt_featured=False)."""
+    if not WYT_READING_LIST_FILE.exists():
         return []
     try:
-        with open(WYT_MANUAL_FILE, encoding="utf-8") as f:
+        with open(WYT_READING_LIST_FILE, encoding="utf-8") as f:
             data = json.load(f)
-        return [i for i in data.get("items", []) if not i.get("featured", False)]
+        candidates = [
+            i for i in data.get("items", [])
+            if i.get("wyt_candidate") and not i.get("wyt_featured")
+        ]
+        # Normalise field names: reading-list uses "dateAdded", pool expects "date_added"
+        for i in candidates:
+            i.setdefault("date_added", i.get("dateAdded", ""))
+            i.setdefault("priority", i.get("wyt_priority", "normal"))
+            i.setdefault("notes", i.get("description", ""))
+            # Pool D uses "link" for the URL (matches other pool items)
+            if not i.get("link"):
+                i["link"] = i.get("url", "")
+        log.info("WYT manual queue: %d pending candidate(s) from reading-list.json", len(candidates))
+        return candidates
     except Exception as exc:
-        log.warning("Could not read wyt_manual.json: %s", exc)
+        log.warning("Could not read reading-list.json for WYT manual: %s", exc)
         return []
 
 
 def mark_wyt_manual_featured(digest_html: str) -> None:
     """
-    After generation, scan the HTML for URLs that were in the manual queue
-    and mark them featured=True so they don't re-appear.
+    After generation, scan HTML for URLs that came from the manual WYT queue
+    and set wyt_featured=True in reading-list.json so they don't re-appear.
     """
-    if not WYT_MANUAL_FILE.exists():
+    if not WYT_READING_LIST_FILE.exists():
         return
     try:
-        with open(WYT_MANUAL_FILE, encoding="utf-8") as f:
+        with open(WYT_READING_LIST_FILE, encoding="utf-8") as f:
             data = json.load(f)
     except Exception:
         return
@@ -1282,17 +1295,17 @@ def mark_wyt_manual_featured(digest_html: str) -> None:
     hrefs = set(re.findall(r'href="([^"]+)"', digest_html))
     changed = False
     for item in items:
-        if not item.get("featured") and item.get("url") in hrefs:
-            item["featured"] = True
+        if item.get("wyt_candidate") and not item.get("wyt_featured") and item.get("url") in hrefs:
+            item["wyt_featured"] = True
             changed = True
             log.info("WYT manual: marked featured: %s", item.get("title", "")[:60])
 
     if changed:
         try:
-            with open(WYT_MANUAL_FILE, "w", encoding="utf-8") as f:
+            with open(WYT_READING_LIST_FILE, "w", encoding="utf-8") as f:
                 json.dump(data, f, indent=2, ensure_ascii=False)
         except Exception as exc:
-            log.warning("Could not save wyt_manual.json: %s", exc)
+            log.warning("Could not save reading-list.json: %s", exc)
 
 
 def compute_wyt_source_cap_exceeded(history: dict) -> set:
