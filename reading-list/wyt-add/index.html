@@ -479,22 +479,55 @@ async function ghPut(items, sha) {
   }
 }
 
-// ─── Auto-fetch title via allorigins proxy ────────────────────────────────────
+// ─── Auto-fetch title via CORS proxies ───────────────────────────────────────
+function extractTitle(html) {
+  if (!html) return null;
+  // Prefer og:title (cleaner, no " | Site Name" suffix)
+  const og = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)
+          || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i);
+  const fallback = html.match(/<title[^>]*>([^<]{3,})<\/title>/i);
+  const raw = og ? og[1] : (fallback ? fallback[1] : null);
+  if (!raw) return null;
+  return raw
+    .replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"')
+    .replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&#x27;/g,"'")
+    .trim();
+}
+
 async function fetchTitle(url) {
+  const enc = encodeURIComponent(url);
+
+  // Proxy 1: corsproxy.io — fast, reliable
   try {
-    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-    const res = await fetch(proxy, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) return null;
-    const data = await res.json();
-    const html = data.contents || '';
-    const m = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-    if (!m) return null;
-    // Also try og:title for cleaner titles
-    const og = html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']+)["']/i)
-            || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i);
-    const raw = og ? og[1] : m[1];
-    return raw.replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim();
-  } catch (_) { return null; }
+    const res = await fetch(`https://corsproxy.io/?${enc}`, { signal: AbortSignal.timeout(6000) });
+    if (res.ok) {
+      const html = await res.text();
+      const t = extractTitle(html);
+      if (t) return t;
+    }
+  } catch (_) {}
+
+  // Proxy 2: allorigins (JSON wrapper)
+  try {
+    const res = await fetch(`https://api.allorigins.win/get?url=${enc}`, { signal: AbortSignal.timeout(6000) });
+    if (res.ok) {
+      const data = await res.json();
+      const t = extractTitle(data.contents || '');
+      if (t) return t;
+    }
+  } catch (_) {}
+
+  // Proxy 3: htmlpreview cors proxy
+  try {
+    const res = await fetch(`https://api.codetabs.com/v1/proxy?quest=${enc}`, { signal: AbortSignal.timeout(6000) });
+    if (res.ok) {
+      const html = await res.text();
+      const t = extractTitle(html);
+      if (t) return t;
+    }
+  } catch (_) {}
+
+  return null;
 }
 
 // Also try to extract source domain
@@ -532,21 +565,34 @@ let fetchDebounce = null;
 async function autoFillFromUrl(url) {
   if (!url || !url.startsWith('http')) return;
   const btn = document.getElementById('fetchBtn');
+  const tf  = document.getElementById('f-title');
+  const sf  = document.getElementById('f-source');
+
   btn.disabled = true;
   btn.textContent = '…';
-  // Auto-fill source immediately
-  const sf = document.getElementById('f-source');
+
+  // Auto-fill source immediately from domain map
   if (!sf.value) sf.value = domainFromUrl(url);
+
+  // Show placeholder while fetching
+  const hadTitle = !!tf.value;
+  if (!hadTitle) {
+    tf.placeholder = 'Fetching title…';
+  }
+
   try {
     const title = await fetchTitle(url);
-    if (title) {
-      const tf = document.getElementById('f-title');
-      if (!tf.value) {          // don't overwrite if user already typed something
-        tf.value = title;
-        tf.classList.add('has-value');
-      }
+    if (title && !hadTitle) {
+      tf.value = title;
+      tf.classList.add('has-value');
+      tf.placeholder = 'Article title';
+    } else if (!title && !hadTitle) {
+      tf.placeholder = 'Could not fetch — enter title manually';
     }
-  } catch (_) {}
+  } catch (_) {
+    if (!hadTitle) tf.placeholder = 'Could not fetch — enter title manually';
+  }
+
   btn.disabled = false;
   btn.textContent = 'Fill';
 }
