@@ -343,8 +343,13 @@
     </div>
 
     <div class="form-group">
+      <label>Author</label>
+      <input type="text" id="f-author" placeholder="e.g. Howard Marks" autocomplete="off">
+    </div>
+
+    <div class="form-group">
       <label>Source</label>
-      <input type="text" id="f-source" placeholder="e.g. Farnam Street" autocomplete="off">
+      <input type="text" id="f-source" placeholder="e.g. Oaktree Capital" autocomplete="off">
     </div>
 
     <div class="form-group">
@@ -477,17 +482,21 @@ async function loadQueueItems() {
   return items.filter(i => i.wyt_candidate);
 }
 
-// ─── Auto-fetch title via microlink.io metadata API ──────────────────────────
-async function fetchTitle(url) {
+// ─── Auto-fetch metadata via microlink.io ─────────────────────────────────────
+// Returns { title, author } — both may be null
+async function fetchMeta(url) {
   const enc = encodeURIComponent(url);
 
-  // Primary: microlink.io — returns clean JSON metadata, no HTML parsing needed
+  // Primary: microlink.io — clean JSON, returns title + author
   try {
     const res = await fetch(`https://api.microlink.io/?url=${enc}`, { signal: AbortSignal.timeout(8000) });
     if (res.ok) {
       const data = await res.json();
-      if (data.status === 'success' && data.data && data.data.title) {
-        return data.data.title.trim();
+      if (data.status === 'success' && data.data) {
+        return {
+          title:  data.data.title  ? data.data.title.trim()  : null,
+          author: data.data.author ? data.data.author.trim() : null,
+        };
       }
     }
   } catch (_) {}
@@ -502,11 +511,12 @@ async function fetchTitle(url) {
               || html.match(/<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:title["']/i);
       const fb = html.match(/<title[^>]*>([^<]{3,})<\/title>/i);
       const raw = og ? og[1] : (fb ? fb[1] : null);
-      if (raw) return raw.replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim();
+      const title = raw ? raw.replace(/&amp;/g,'&').replace(/&#39;/g,"'").replace(/&quot;/g,'"').trim() : null;
+      return { title, author: null };
     }
   } catch (_) {}
 
-  return null;
+  return { title: null, author: null };
 }
 
 // Also try to extract source domain
@@ -545,6 +555,7 @@ async function autoFillFromUrl(url) {
   if (!url || !url.startsWith('http')) return;
   const btn = document.getElementById('fetchBtn');
   const tf  = document.getElementById('f-title');
+  const af  = document.getElementById('f-author');
   const sf  = document.getElementById('f-source');
 
   btn.disabled = true;
@@ -553,23 +564,24 @@ async function autoFillFromUrl(url) {
   // Auto-fill source immediately from domain map
   if (!sf.value) sf.value = domainFromUrl(url);
 
-  // Show placeholder while fetching
   const hadTitle = !!tf.value;
-  if (!hadTitle) {
-    tf.placeholder = 'Fetching title…';
-  }
+  if (!hadTitle) tf.placeholder = 'Fetching…';
 
   try {
-    const title = await fetchTitle(url);
+    const { title, author } = await fetchMeta(url);
     if (title && !hadTitle) {
       tf.value = title;
       tf.classList.add('has-value');
       tf.placeholder = 'Article title';
     } else if (!title && !hadTitle) {
-      tf.placeholder = 'Could not fetch — enter title manually';
+      tf.placeholder = 'Could not fetch — enter manually';
+    }
+    if (author && !af.value) {
+      af.value = author;
+      af.classList.add('has-value');
     }
   } catch (_) {
-    if (!hadTitle) tf.placeholder = 'Could not fetch — enter title manually';
+    if (!hadTitle) tf.placeholder = 'Could not fetch — enter manually';
   }
 
   btn.disabled = false;
@@ -603,6 +615,7 @@ document.getElementById('submitBtn').addEventListener('click', submitItem);
 async function submitItem() {
   const url      = document.getElementById('f-url').value.trim();
   const title    = document.getElementById('f-title').value.trim();
+  const author   = document.getElementById('f-author').value.trim();
   const source   = document.getElementById('f-source').value.trim();
   const category = document.getElementById('f-category').value;
   const notes    = document.getElementById('f-notes').value.trim();
@@ -631,6 +644,7 @@ async function submitItem() {
       id:            Date.now().toString(),
       title,
       url,
+      author:        author || undefined,
       source:        source || domainFromUrl(url),
       type:          'read',
       category,
@@ -643,15 +657,18 @@ async function submitItem() {
       wyt_priority:  selectedPriority,
       wyt_featured:  false,
     };
+    if (!newItem.author) delete newItem.author;
 
     await ghPut([newItem, ...items], sha, 'Add WYT candidate [skip ci]');
 
     // Reset form
     document.getElementById('f-url').value = '';
     document.getElementById('f-title').value = '';
+    document.getElementById('f-author').value = '';
     document.getElementById('f-source').value = '';
     document.getElementById('f-notes').value = '';
     document.getElementById('f-title').classList.remove('has-value');
+    document.getElementById('f-author').classList.remove('has-value');
     selectedPriority = 'normal';
     document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
     document.getElementById('p-normal').classList.add('selected');
@@ -727,6 +744,7 @@ function renderQueue(items) {
       <div class="queue-item${item.wyt_featured ? ' featured' : ''}">
         <div class="queue-item-title">${titleHtml}</div>
         <div class="queue-item-meta">
+          ${item.author ? `<span style="font-weight:600;color:#444;">${esc(item.author)}</span>` : ''}
           ${item.source ? `<span>${esc(item.source)}</span>` : ''}
           <span class="queue-badge">${esc(catLabel)}</span>
           ${item.wyt_priority === 'high' ? '<span class="queue-badge high-badge">HIGH PRIORITY</span>' : ''}

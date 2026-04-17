@@ -115,115 +115,59 @@
 
   /* ── Date group ── */
   .date-group-heading {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: #aaa;
+    letter-spacing: 1.2px;
+    color: #bbb;
+    margin: 28px 0 0;
+    padding-bottom: 10px;
     border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 4px;
-    margin: 18px 0 8px;
   }
   .date-group-heading:first-child { margin-top: 0; }
 
-  /* ── Item card ── */
+  /* ── Item row (Matter-style) ── */
   .item-card {
-    border: 1px solid #e4e4e4;
-    border-radius: 6px;
-    padding: 10px 14px;
-    margin-bottom: 6px;
-    background: #fff;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px 0;
+    border-bottom: 1px solid #f2f2f2;
     position: relative;
-    transition: opacity 0.2s, border-color 0.15s;
+    transition: opacity 0.18s;
   }
-  .item-card:hover { border-color: #c0c0c0; }
-  .item-card.is-read { opacity: 0.45; }
+  .item-card:last-child { border-bottom: none; }
+  .item-card.is-read { opacity: 0.38; }
 
-  .item-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 8px;
-    margin-bottom: 3px;
-  }
+  .item-body { flex: 1; min-width: 0; }
+
   .item-title {
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.35;
-    flex: 1;
-    min-width: 0;
-    overflow-wrap: break-word;
-    word-break: break-word;
-  }
-  .item-title a {
-    color: #1a3a6e;
-    text-decoration: none;
-  }
-  .item-title a:hover { text-decoration: underline; }
-  .item-title span { color: #1a1a1a; }
-
-  .item-actions {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-shrink: 0;
-  }
-  .delete-btn {
-    background: none;
-    border: none;
     font-size: 15px;
-    cursor: pointer;
-    color: #ccc;
-    padding: 2px 4px;
-    border-radius: 4px;
-    transition: color 0.15s;
-    line-height: 1;
-    min-width: 28px;
-    min-height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #111;
+    margin: 0 0 3px;
+    overflow-wrap: break-word;
   }
-  /* Always visible on touch devices, hover-only on pointer devices */
-  @media (hover: hover) {
-    .delete-btn { opacity: 0; }
-    .item-card:hover .delete-btn { opacity: 1; }
-  }
-  .delete-btn:hover { color: #e74c3c; }
+  .item-title a { color: #111; text-decoration: none; }
+  .item-title a:hover { color: #1a3a6e; }
+  .item-title span { color: #111; }
 
-  .item-meta {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 5px;
-    margin-bottom: 5px;
+  .item-byline {
     font-size: 12px;
+    color: #aaa;
+    margin: 0 0 7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-
-  .badge {
-    display: inline-block;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-  .badge-read    { background: #e8f0fe; color: #1a3a6e; }
-  .badge-listen  { background: #e6f4ea; color: #1e7e34; }
-  .badge-watch   { background: #fce8e6; color: #b71c1c; }
-  .badge-topic   { background: #f0f0f0; color: #555; }
-
-  .item-source { color: #666; }
-  .item-duration { color: #888; }
-  .item-date { color: #aaa; font-size: 12px; }
-  .subscription-note { color: #aaa; font-style: italic; font-size: 12px; }
+  .item-byline .byline-author { color: #666; font-weight: 500; }
 
   .item-description {
     font-size: 13px;
-    line-height: 1.5;
-    color: #555;
-    margin: 0;
+    line-height: 1.55;
+    color: #777;
+    margin: 0 0 7px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -231,37 +175,88 @@
   }
   .item-description.expanded {
     display: block;
-    -webkit-line-clamp: unset;
     overflow: visible;
+  }
+
+  .item-foot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .category-pill {
+    display: inline-block;
+    background: #eef1f8;
+    color: #4a6fa5;
+    border-radius: 3px;
+    padding: 2px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .type-pill {
+    display: inline-block;
+    background: #f2f2f2;
+    color: #999;
+    border-radius: 3px;
+    padding: 2px 7px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
   }
   .desc-toggle {
     background: none;
     border: none;
     padding: 0;
     font-size: 11px;
-    color: #1a3a6e;
+    color: #bbb;
     cursor: pointer;
-    margin-top: 2px;
-    display: inline-block;
   }
-  .desc-toggle:hover { text-decoration: underline; }
+  .desc-toggle:hover { color: #1a3a6e; }
 
-  .item-bottom {
+  /* ── Right-side controls ── */
+  .item-side {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    margin-top: 5px;
+    gap: 10px;
+    flex-shrink: 0;
+    padding-top: 2px;
   }
-  .read-checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #999;
+  .delete-btn {
+    background: none;
+    border: none;
+    font-size: 13px;
     cursor: pointer;
-    user-select: none;
-    min-height: 22px;
+    color: #ddd;
+    padding: 2px;
+    line-height: 1;
+    transition: color 0.15s;
+    display: block;
   }
+  @media (hover: hover) {
+    .delete-btn { opacity: 0; }
+    .item-card:hover .delete-btn { opacity: 1; }
+  }
+  .delete-btn:hover { color: #e74c3c; }
+  .read-toggle-wrap {
+    display: block;
+    cursor: pointer;
+  }
+  .read-toggle-wrap input {
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+    accent-color: #1a3a6e;
+    display: block;
+  }
+  /* legacy — keep so old code paths don't break */
+  .item-header, .item-actions, .item-meta, .item-bottom,
+  .badge, .badge-read, .badge-listen, .badge-watch, .badge-topic,
+  .item-source, .item-duration, .item-date, .subscription-note,
+  .read-checkbox-label { display: none !important; }
   .read-checkbox-label input {
     cursor: pointer;
     accent-color: #1a3a6e;
@@ -432,7 +427,7 @@
     .modal { padding: 20px 16px; }
     .modal-actions { flex-direction: column-reverse; gap: 8px; }
     .btn-primary, .btn-secondary { width: 100%; text-align: center; }
-    .item-card { padding: 9px 12px; }
+    .item-card { padding: 12px 0; gap: 10px; }
   }
 </style>
 </head>
@@ -791,11 +786,39 @@ function renderItems() {
   });
   container.querySelectorAll('.desc-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
-      const desc = btn.previousElementSibling;
+      const card = btn.closest('.item-card');
+      const desc = card.querySelector('.item-description');
       const expanded = desc.classList.toggle('expanded');
       btn.textContent = expanded ? 'less' : 'more';
     });
   });
+}
+
+const KNOWN_AUTHORS = {
+  'Noahpinion':          'Noah Smith',
+  'Oaktree Capital':     'Howard Marks',
+  'Farnam Street':       'Shane Parrish',
+  'Paul Graham':         'Paul Graham',
+  'Wait But Why':        'Tim Urban',
+  'Collaborative Fund':  'Morgan Housel',
+  'Daily Stoic':         'Ryan Holiday',
+  'Huberman Lab':        'Andrew Huberman',
+  'Peter Attia':         'Peter Attia',
+  'Tim Ferriss':         'Tim Ferriss',
+  'Naval Ravikant':      'Naval Ravikant',
+  'The Marginalian':     'Maria Popova',
+  'Morgan Housel':       'Morgan Housel',
+  'Ryan Holiday':        'Ryan Holiday',
+};
+
+function buildByline(item) {
+  const parts = [];
+  const author = item.author || KNOWN_AUTHORS[item.source] || null;
+  if (author) parts.push(`<span class="byline-author">${escHtml(author)}</span>`);
+  if (item.source && item.source !== author) parts.push(escHtml(item.source));
+  if (item.duration) parts.push(escHtml(item.duration));
+  if (item.dateAdded) parts.push(formatDate(item.dateAdded));
+  return parts.join(' · ');
 }
 
 function renderCard(item) {
@@ -804,35 +827,27 @@ function renderCard(item) {
     ? `<a href="${escHtml(item.url)}" target="_blank" rel="noopener">${escHtml(item.title)}</a>`
     : `<span>${escHtml(item.title)}</span>`;
 
-  const subNote = paywalled
-    ? ` <span class="subscription-note">(subscription)</span>`
-    : '';
-
-  const descHtml = item.description
-    ? `<p class="item-description">${escHtml(item.description)}</p><button class="desc-toggle">more</button>`
-    : '';
+  const byline = buildByline(item);
+  const hasDesc = !!item.description;
+  const typeStr = item.type === 'listen' ? 'LISTEN' : item.type === 'watch' ? 'WATCH' : '';
 
   return `
     <div class="item-card${item.read ? ' is-read' : ''}" data-id="${escHtml(item.id)}">
-      <div class="item-header">
+      <div class="item-body">
         <div class="item-title">${titleHtml}</div>
-        <div class="item-actions">
-          <button class="delete-btn" data-id="${escHtml(item.id)}" title="Delete" aria-label="Delete">✕</button>
+        ${byline ? `<div class="item-byline">${byline}</div>` : ''}
+        ${hasDesc ? `<p class="item-description">${escHtml(item.description)}</p>` : ''}
+        <div class="item-foot">
+          ${item.category ? `<span class="category-pill">${escHtml(categoryLabel(item.category))}</span>` : ''}
+          ${typeStr ? `<span class="type-pill">${typeStr}</span>` : ''}
+          ${hasDesc ? `<button class="desc-toggle">more</button>` : ''}
         </div>
       </div>
-      <div class="item-meta">
-        <span class="badge ${typeBadgeClass(item.type)}">${typeLabel(item.type)}</span>
-        ${item.source ? `<span class="item-source">${escHtml(item.source)}${item.duration ? ' · ' + escHtml(item.duration) : ''}</span>` : ''}
-        ${subNote}
-        ${item.category ? `<span class="badge badge-topic">${escHtml(categoryLabel(item.category))}</span>` : ''}
-      </div>
-      ${descHtml}
-      <div class="item-bottom">
-        <label class="read-checkbox-label">
+      <div class="item-side">
+        <button class="delete-btn" data-id="${escHtml(item.id)}" title="Remove" aria-label="Remove">&#10005;</button>
+        <label class="read-toggle-wrap" title="${item.read ? 'Mark unread' : 'Mark as read'}">
           <input type="checkbox" class="read-toggle" data-id="${escHtml(item.id)}" ${item.read ? 'checked' : ''}>
-          Mark as read
         </label>
-        ${item.dateAdded ? `<span class="item-date">${formatDate(item.dateAdded)}</span>` : ''}
       </div>
     </div>
   `;
