@@ -795,27 +795,36 @@ function renderItems() {
 }
 
 const KNOWN_AUTHORS = {
-  'Noahpinion':          'Noah Smith',
-  'Oaktree Capital':     'Howard Marks',
-  'Farnam Street':       'Shane Parrish',
-  'Paul Graham':         'Paul Graham',
-  'Wait But Why':        'Tim Urban',
-  'Collaborative Fund':  'Morgan Housel',
-  'Daily Stoic':         'Ryan Holiday',
-  'Huberman Lab':        'Andrew Huberman',
-  'Peter Attia':         'Peter Attia',
-  'Tim Ferriss':         'Tim Ferriss',
-  'Naval Ravikant':      'Naval Ravikant',
-  'The Marginalian':     'Maria Popova',
-  'Morgan Housel':       'Morgan Housel',
-  'Ryan Holiday':        'Ryan Holiday',
+  'Noahpinion':                  'Noah Smith',
+  'Oaktree Capital':             'Howard Marks',
+  'Farnam Street':               'Shane Parrish',
+  'Paul Graham':                 'Paul Graham',
+  'Wait But Why':                'Tim Urban',
+  'Collaborative Fund':          'Morgan Housel',
+  'Daily Stoic':                 'Ryan Holiday',
+  'Huberman Lab':                'Andrew Huberman',
+  'Peter Attia':                 'Peter Attia',
+  'Tim Ferriss':                 'Tim Ferriss',
+  'Naval Ravikant':              'Naval Ravikant',
+  'The Marginalian':             'Maria Popova',
+  'Morgan Housel':               'Morgan Housel',
+  'Ryan Holiday':                'Ryan Holiday',
+  'Principles by Ray Dalio':     'Ray Dalio',
+  'Stratechery':                 'Ben Thompson',
+  'Axios':                       null,
+  'Bloomberg':                   null,
+  'The Atlantic':                null,
+  'MIT Technology Review':       null,
+  'MIT Classics':                null,
 };
 
 function buildByline(item) {
   const parts = [];
-  const author = item.author || KNOWN_AUTHORS[item.source] || null;
+  // item.author takes priority; fall back to source map (null = known multi-author pub, skip)
+  const mappedAuthor = item.source in KNOWN_AUTHORS ? KNOWN_AUTHORS[item.source] : undefined;
+  const author = item.author || mappedAuthor || null;
   if (author) parts.push(`<span class="byline-author">${escHtml(author)}</span>`);
-  if (item.source && item.source !== author) parts.push(escHtml(item.source));
+  if (item.source) parts.push(escHtml(item.source));
   if (item.duration) parts.push(escHtml(item.duration));
   if (item.dateAdded) parts.push(formatDate(item.dateAdded));
   return parts.join(' · ');

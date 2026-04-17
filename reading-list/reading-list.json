@@ -2,9 +2,9 @@
   "items": [
     {
       "id": "1776333735684",
-      "title": "The Big Thing: We Are In A World War That Isnât Going To End Anytime Soon.",
+      "title": "The Big Thing: We Are In A World War That Isn’t Going To End Anytime Soon.",
       "url": "https://substack.com/home/post/p-193474352?source=queue",
-      "source": "Substack",
+      "source": "Principles by Ray Dalio",
       "type": "read",
       "category": "macro",
       "duration": "",
@@ -13,7 +13,8 @@
       "read": false,
       "wyt_candidate": true,
       "wyt_priority": "normal",
-      "wyt_featured": false
+      "wyt_featured": false,
+      "author": "Ray Dalio"
     },
     {
       "id": "44beaca8-9099-47a9-b43b-22097c1f5e1d",
