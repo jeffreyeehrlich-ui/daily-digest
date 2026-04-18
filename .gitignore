@@ -4,6 +4,8 @@
 # Runtime logs (history JSON files are persisted via GitHub Actions cache)
 logs/*.txt
 logs/*.json
+# story_tracker.json is committed — it holds pre-populated stale story baseline
+!logs/story_tracker.json
 
 # Claude Code local config
 .claude/

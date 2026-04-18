@@ -129,13 +129,13 @@ border-radius:4px;background:#fafafa;"
 
 Do NOT wrap the output in markdown code fences. Output raw HTML only.
 
-Cross-section deduplication — strict: Apply strict cross-section deduplication. Before writing any section check every story, bill, legislation, or development that has already appeared in a previous section. If a topic was covered in any previous section do not cover it again in any subsequent section — not even from a different angle, not even with different framing. Each piece of news appears exactly once in the entire digest in the single most relevant section. Specifically: if a housing bill or legislation appeared in US News do not mention it again in Real Estate; if a geopolitical event appeared in Markets do not cover it again in Macro; if an economic data point appeared in Markets do not reference it again in any other section; if you need to connect a later section to something covered earlier write only 'As noted above' with no additional detail. This rule has no exceptions.
+Cross-section deduplication — strict: Apply strict cross-section deduplication. Before writing any section check every story, bill, legislation, or development that has already appeared in a previous section. If a topic was covered in any previous section do not cover it again in any subsequent section — not even from a different angle, not even with different framing. Each piece of news appears exactly once in the entire digest in the single most relevant section. Specifically: if a housing bill or legislation appeared in US News do not mention it again in Real Estate; if a geopolitical event appeared in Markets do not cover it again in Macro; if an economic data point appeared in Markets do not reference it again in any other section; if you need to connect a later section to something covered earlier write only 'As noted above' with no additional detail. This rule has no exceptions. Critical News stories are complete and standalone. A story in Critical News must never appear again in any lower section — not as a tease, not as a brief mention, not as 'full treatment below.' If a story needs full treatment in Real Estate, Macro, or any other section it does not belong in Critical News. Choose one location only — the single most relevant section — and cover it fully there. This applies to all section pairs. No story appears in more than one section in any form.
 
-Science section quality: In the Science & Health section, each story must be written as a single clean paragraph with no repeated language, no repeated phrases, and no restating of the same point. Read each science item back before including it and remove any sentence that repeats information already stated in the same item.
+Science & Health has no minimum frequency. Skip on any day where nothing clears the bar. Most days it should be skipped. Never note that it was skipped. The bar: Would a doctor, scientist, or economist consider this a landmark development? Would it appear on the front page of a major newspaper? QUALIFIES: FDA approval of a genuinely novel treatment class; scientific finding that overturns established consensus in a major field; technology breakthrough with clear near-term real-world application; major public health development affecting large populations globally. DOES NOT QUALIFY: small or preliminary studies (the liver transplant immune tolerance study is the example of what does not qualify — small study, early stage, no near-term application at scale); incremental progress in ongoing research; health tips or lifestyle recommendations; promising early results without clinical validation. When in doubt — skip entirely.
 
 LIHTC connections: Only connect macro developments to LIHTC equity pricing or affordable housing finance when the connection is direct, near-term, and high probability — for example new legislation that explicitly changes LIHTC allocation, Fed rate decisions that will directly affect debt pricing on affordable housing deals, or housing policy that will foreseeably affect Section 8 or HAP contracts. Do not make speculative or distant connections. Do not end every macro item with a LIHTC implication. If the connection is not obvious and concrete, leave it unstated entirely.
 
-Critical News: Include this section only when something genuinely urgent, consequential, and time-sensitive has occurred — something a real estate PE professional would need to know before a morning call with an investor or lender. Maximum 3 items, minimum 0. What clears the bar: major geopolitical event with immediate market impact; central bank emergency action or surprise decision; significant legislation passing that directly affects real estate, housing finance, or capital markets; major economic data miss that moves markets significantly; black swan events — natural disasters, political crises, military escalation with global implications. What does NOT belong: routine economic data releases, political news without direct economic impact, company earnings unless market-moving, real estate deal announcements, technology news, fund flows, bank earnings. Stories appearing in Critical News should not be repeated below — reference with 'as noted above' only when essential. Include market context inline when a critical story has direct market implications — do not duplicate that context in the Markets section.
+Critical News is the 2-3 most important stories of the day — the stories that would appear on the front page of Bloomberg, the FT, the WSJ, or the NYT that morning. The standard is: front page quality from a major trusted news source AND relevant to a senior business or finance professional starting their day. This section should be populated on most days. There is almost always something important happening in the world. If you cannot find 2-3 front-page quality stories something has gone wrong with source fetching — not with the news. WHAT BELONGS HERE: The most consequential stories of the day across geopolitics, economics, markets, policy, and major world events. Use editorial judgment the way a Bloomberg or FT editor would. Ask: what are the 2-3 things a serious business professional absolutely needs to know before their first meeting today? Examples of what qualifies: major geopolitical developments with economic impact; central bank decisions or significant policy shifts; major legislation passing or being signed; significant market moves with clear causes; major economic data releases that surprise materially; political developments with direct economic consequence; corporate or financial system events of systemic scale; natural disasters or crises with economic implications. WHAT DOES NOT BELONG HERE: analysis, commentary, or synthesis of ongoing trends even if framed urgently — Critical News requires a discrete new event that occurred in the last 24 hours; ongoing conditions without a new triggering event (example: 'LIHTC equity pricing crisis' is an ongoing condition, not a Critical News event); real estate deal announcements of any size; stories that will be covered in depth in lower sections — if a story belongs in Real Estate cover it there, not here. Critical News stories are not teasers. SELF-CHECK before writing each story: (1) Did something specific and new happen in the last 24 hours — or am I describing an ongoing condition? If ongoing condition — do not include. (2) Would a Bloomberg or FT editor put this on their front page today? If no — do not include. (3) Is this story already covered in a lower section? If yes — cover it fully there, not here. Critical News stories are complete and standalone. They are never teasers for content below. A story that appears in Critical News must not appear again anywhere else in the digest.
 
 Macro & Geopolitics: Cap at 3 stories with discrete bold sub-headers. Weave Economist analysis into this section when relevant — attribute inline as '(The Economist)' after the relevant sentence or paragraph. Include market context inline when a macro story has direct market implications — note rates, spreads, or commodity impacts in 1 sentence within the story rather than saving it for the Markets section. Stories that appeared in Critical News above should not be repeated here — skip or use 'as noted above'. Focus on developments that affect global business conditions, trade, geopolitical stability, and capital flows — not political drama for its own sake.
 
@@ -161,7 +161,7 @@ Inline sources: At the end of each section (Critical News, Markets, Macro & Geop
 <p style="margin:8px 0 0;font-size:11px;color:#aaa;border-top:1px solid #f0f0f0;padding-top:6px;">Sources: [Outlet 1] · [Outlet 2] · [Outlet 3]</p>
 Use short outlet names (e.g. FT, Bloomberg, NPR, NYT, Reuters). Only list outlets that contributed at least one story to that section. Do not add a sources line to the One Thing to Learn Today, Worth Your Time, or Recent Releases sections. Do not output a separate Sources & References section at the bottom.
 
-Never note, mention, or explain when content has been excluded, filtered, or is unavailable. Do not write phrases like 'No deal news met the threshold today', 'Nothing in this category cleared the bar', 'The Economist had no relevant content', 'No critical news today', 'This section is intentionally brief', or any similar language. If a section has no content simply omit it entirely with no explanation. If a sub-category within a section has nothing skip it silently. The reader should never know what was considered and rejected.\
+Global length target — 1000 words maximum (5 minutes at 200 wpm). Never cut: Worth Your Time, One Thing to Learn Today, Critical News if it has qualifying content. Before writing each story assign it a score 1-10: score 8-10 (always keep) means direct impact on Jeff's business today, active developing situation with new facts, affects cost of capital or deal flow, major economic data or central bank action, legislation just passed or signed; score 5-7 (keep if space allows) means relevant context, industry trend with data, background on important ongoing situation; score 1-4 (cut first) means interesting but not directly relevant, ongoing condition without new development, adjacent industry not core to work. If total content would exceed 1000 words: rank all stories across all sections by score and cut lowest-scoring stories until under 1000 words. Cut entire stories not partial stories. Do not note that content was cut. Never note, mention, or explain when content has been excluded, filtered, or is unavailable. Do not write phrases like 'No deal news met the threshold today', 'Nothing in this category cleared the bar', 'The Economist had no relevant content', 'No critical news today', 'This section is intentionally brief', or any similar language. If a section has no content simply omit it entirely with no explanation. If a sub-category within a section has nothing skip it silently. The reader should never know what was considered and rejected.\
 """
 
 # ── Email wrapper ─────────────────────────────────────────────────────────────
@@ -252,6 +252,140 @@ def save_story_history(history: dict) -> None:
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, indent=2, ensure_ascii=False)
     log.info("Saved %d entries to story_history.json", len(history))
+
+
+
+# ── Story staleness tracker (prevents recycled stories from appearing) ─────────
+
+STORY_TRACKER_FILE = LOG_DIR / "story_tracker.json"
+
+# Keyword sets for semantic matching — if any keyword matches an item title,
+# the item is considered to be "about" that tracked story.
+_STORY_TRACKER_KEYWORDS: dict[str, list[str]] = {
+    "housing-act-senate":    ["21st century", "road to housing", "housing act", "senate housing"],
+    "realpage-settlement":   ["realpage", "antitrust", "rent algorithm", "rent software"],
+    "cbre-office-sentiment": ["cbre", "office sentiment", "office survey", "cbre survey"],
+    "btr-legislation-freeze":["build-to-rent", "btr legislation", "btr freeze", "btr market frozen"],
+    "data-center-delays":    ["data center delay", "data centre delay", "hyperscaler delay",
+                              "data center buildout"],
+}
+
+
+def load_story_tracker() -> dict:
+    """Return story_tracker.json contents, or default if missing/corrupt."""
+    if not STORY_TRACKER_FILE.exists():
+        return {"stories": {}}
+    try:
+        with open(STORY_TRACKER_FILE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as exc:
+        log.warning("Could not read story_tracker.json: %s — starting fresh", exc)
+        return {"stories": {}}
+
+
+def save_story_tracker(tracker: dict) -> None:
+    STORY_TRACKER_FILE.parent.mkdir(exist_ok=True)
+    with open(STORY_TRACKER_FILE, "w", encoding="utf-8") as f:
+        json.dump(tracker, f, indent=2, ensure_ascii=False)
+    log.info("Saved story_tracker.json (%d tracked stories)", len(tracker.get("stories", {})))
+
+
+def _story_slug_for_item(title: str) -> str | None:
+    """Return tracker slug if title semantically matches a known stale story."""
+    title_lower = title.lower()
+    for slug, keywords in _STORY_TRACKER_KEYWORDS.items():
+        if any(kw in title_lower for kw in keywords):
+            return slug
+    return None
+
+
+def filter_stale_stories(
+    content: dict[str, list[dict]],
+    tracker: dict,
+    today_str: str,
+) -> dict[str, list[dict]]:
+    """
+    Remove feed items that match a tracked story whose last_substantive_update
+    is more than 48 hours ago. Updates tracker with any new stories seen.
+    """
+    stories = tracker.get("stories", {})
+    cutoff_48h = (
+        datetime.now(timezone.utc) - timedelta(hours=48)
+    ).strftime("%Y-%m-%d")
+
+    filtered: dict[str, list[dict]] = {}
+    for section, items in content.items():
+        if section.startswith("_") or not isinstance(items, list):
+            filtered[section] = items
+            continue
+        kept, dropped = [], 0
+        for item in items:
+            title = item.get("title", "")
+            slug = _story_slug_for_item(title)
+            if slug and slug in stories:
+                last_update = stories[slug].get("last_substantive_update", "")
+                if last_update and last_update <= cutoff_48h:
+                    log.info(
+                        "  [stale] dropping '%s' (matched slug=%s, last_update=%s)",
+                        title[:70], slug, last_update,
+                    )
+                    dropped += 1
+                    continue
+            kept.append(item)
+        if dropped:
+            log.info("Staleness filter: section %-25s  dropped %d item(s)", section, dropped)
+        filtered[section] = kept
+    return filtered
+
+
+def update_story_tracker(
+    digest_html: str,
+    content: dict[str, list[dict]],
+    tracker: dict,
+    today_str: str,
+) -> None:
+    """
+    After digest generation:
+    - Add new stories appearing for the first time
+    - Update last_featured for any story that ran
+    - Increment feature_count
+    """
+    stories = tracker.setdefault("stories", {})
+
+    # Collect all titles from all feed items
+    all_items: list[dict] = []
+    for section, items in content.items():
+        if section.startswith("_") or not isinstance(items, list):
+            continue
+        for item in items:
+            if isinstance(item, dict) and item.get("title"):
+                all_items.append(item)
+
+    # Find titles whose URLs appear in the generated HTML
+    href_set = set(re.findall(r'href="([^"]+)"', digest_html))
+    featured_titles: list[str] = [
+        item["title"] for item in all_items
+        if (item.get("link") or item.get("url", "")) in href_set
+    ]
+
+    for title in featured_titles:
+        slug = _story_slug_for_item(title)
+        if slug:
+            if slug in stories:
+                stories[slug]["last_featured"] = today_str
+                stories[slug]["feature_count"] = stories[slug].get("feature_count", 0) + 1
+                log.info("story_tracker: updated last_featured for slug=%s", slug)
+            else:
+                # New story — add it
+                stories[slug] = {
+                    "headline": title[:120],
+                    "first_seen": today_str,
+                    "last_featured": today_str,
+                    "last_substantive_update": today_str,
+                    "feature_count": 1,
+                    "notes": "Auto-added on first appearance",
+                }
+                log.info("story_tracker: added new story slug=%s", slug)
 
 
 def filter_seen_content(
@@ -1024,6 +1158,22 @@ def record_wyt_selections(
         log.info("WYT record: no candidate URLs found in WYT section")
         return
 
+    # Post-generation verification: warn if any selected URL is within cooldown
+    today_dt = datetime.now(timezone.utc)
+    for url in found_urls:
+        candidate = url_to_candidate.get(url, {})
+        cooldown = candidate.get("cooldown_days", 365)
+        cutoff = (today_dt - timedelta(days=cooldown)).strftime("%Y-%m-%d")
+        repeat = any(
+            f.get("url") == url and f.get("date", "") >= cutoff
+            for f in history.get("featured", [])
+        )
+        if repeat:
+            log.warning(
+                "WYT REPEAT WARNING: '%s' was featured within its %d-day cooldown",
+                candidate.get('title', url)[:80], cooldown,
+            )
+
     log.info("WYT record: recording %d selection(s)", len(found_urls))
     library_url_to_idx = {item.get("url", ""): i for i, item in enumerate(library)}
 
@@ -1045,8 +1195,8 @@ def record_wyt_selections(
         if lib_idx is not None:
             library[lib_idx]["times_featured"] = library[lib_idx].get("times_featured", 0) + 1
 
-    # Prune history older than 28 days
-    cutoff_str = (datetime.now(timezone.utc) - timedelta(days=28)).strftime("%Y-%m-%d")
+    # Prune history older than 365 days (max cooldown window)
+    cutoff_str = (datetime.now(timezone.utc) - timedelta(days=365)).strftime("%Y-%m-%d")
     history["featured"] = [
         f for f in history.get("featured", [])
         if f.get("date", "") >= cutoff_str
@@ -1871,6 +2021,12 @@ def main() -> None:
     content = filter_seen_content(content, history)
     log.info("Total items after dedup: %d", sum(len(v) for v in content.values()))
 
+    # 5a. Load story tracker and filter stale recurring stories
+    story_tracker = load_story_tracker()
+    content = filter_stale_stories(content, story_tracker, today.strftime("%Y-%m-%d"))
+    log.info("Total items after staleness filter: %d", sum(
+        len(v) for k, v in content.items() if not k.startswith("_") and isinstance(v, list)))
+
     # 5b. Fetch Gmail newsletter emails (GZero, The Promote, etc.)
     log.info("Fetching Gmail newsletter emails …")
     gmail_items = fetch_newsletter_emails()
@@ -1951,8 +2107,18 @@ def main() -> None:
     # 9b. Fix any malformed ?add= URLs produced by Claude
     digest_html = _fix_wyt_add_links(digest_html)
 
+    # 9b2. Word count enforcement log
+    _word_count = len(re.sub(r'<[^>]+>', ' ', digest_html).split())
+    log.info("Digest word count: %d (target ≤1000)", _word_count)
+    if _word_count > 1000:
+        log.warning("Word count %d exceeds 1000-word target — consider tightening", _word_count)
+
     # 9c. Mark any manual-queue items that appeared in the digest as featured
     mark_wyt_manual_featured(digest_html)
+
+    # 9d. Update story staleness tracker
+    update_story_tracker(digest_html, content, story_tracker, today.strftime("%Y-%m-%d"))
+    save_story_tracker(story_tracker)
 
     # 10. Record featured stories and persist dedup history
     new_entries = extract_featured_stories(digest_html, content)

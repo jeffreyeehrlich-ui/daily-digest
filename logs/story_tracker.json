@@ -1,0 +1,44 @@
+{
+  "stories": {
+    "housing-act-senate": {
+      "headline": "21st Century Road to Housing Act",
+      "first_seen": "2026-03-12",
+      "last_featured": "2026-04-17",
+      "last_substantive_update": "2026-03-12",
+      "feature_count": 8,
+      "notes": "Stalled in House — no action since Senate passage March 12"
+    },
+    "realpage-settlement": {
+      "headline": "RealPage antitrust settlement",
+      "first_seen": "2026-03-01",
+      "last_featured": "2026-04-17",
+      "last_substantive_update": "2026-03-01",
+      "feature_count": 5,
+      "notes": "Pending — no new named party action recently"
+    },
+    "cbre-office-sentiment": {
+      "headline": "CBRE office sentiment survey",
+      "first_seen": "2026-04-01",
+      "last_featured": "2026-04-17",
+      "last_substantive_update": "2026-04-01",
+      "feature_count": 3,
+      "notes": "Ongoing trend — requires new data release to re-feature"
+    },
+    "btr-legislation-freeze": {
+      "headline": "Build-to-rent market frozen by pending legislation",
+      "first_seen": "2026-03-15",
+      "last_featured": "2026-04-17",
+      "last_substantive_update": "2026-03-15",
+      "feature_count": 6,
+      "notes": "Ongoing condition — not a discrete event"
+    },
+    "data-center-delays": {
+      "headline": "Data center buildout delays",
+      "first_seen": "2026-04-01",
+      "last_featured": "2026-04-17",
+      "last_substantive_update": "2026-04-01",
+      "feature_count": 3,
+      "notes": "Ongoing trend — requires new data to re-feature"
+    }
+  }
+}

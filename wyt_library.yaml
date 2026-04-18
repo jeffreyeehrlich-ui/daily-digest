@@ -3,7 +3,7 @@ items:
   accessibility: general
   author: Marcus Aurelius
   category: philosophy_stoicism
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: MIT Classics
@@ -22,7 +22,7 @@ items:
   accessibility: general
   author: Seneca
   category: philosophy_stoicism
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 5
   source: Wikisource
@@ -41,7 +41,7 @@ items:
   accessibility: general
   author: Epictetus
   category: philosophy_stoicism
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: MIT Classics
@@ -60,7 +60,7 @@ items:
   accessibility: general
   author: Ryan Holiday
   category: philosophy_stoicism
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: Ryan Holiday
@@ -79,7 +79,7 @@ items:
   accessibility: general
   author: Ryan Holiday
   category: philosophy_stoicism
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 6
   source: Daily Stoic
@@ -98,7 +98,7 @@ items:
   accessibility: general
   author: Ryan Holiday
   category: philosophy_stoicism
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 5
   source: Daily Stoic
@@ -117,7 +117,7 @@ items:
   accessibility: general
   author: Ryan Holiday
   category: philosophy_stoicism
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: Daily Stoic
@@ -136,7 +136,7 @@ items:
   accessibility: general
   author: Ryan Holiday
   category: philosophy_stoicism
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: Ryan Holiday
@@ -155,7 +155,7 @@ items:
   accessibility: general
   author: Tim Urban
   category: philosophy_other
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Wait But Why
@@ -174,7 +174,7 @@ items:
   accessibility: general
   author: Paul Graham
   category: philosophy_other
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 14
   source: Paul Graham
@@ -193,7 +193,7 @@ items:
   accessibility: general
   author: Paul Graham
   category: philosophy_other
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 12
   source: Paul Graham
@@ -212,7 +212,7 @@ items:
   accessibility: general
   author: Antonia Macaro
   category: philosophy_other
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: Aeon
@@ -231,12 +231,12 @@ items:
   accessibility: general
   author: Howard Marks
   category: investing_finance
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Oaktree Capital
   tier: 1
-  times_featured: 0
+  times_featured: 1
   title: The Most Important Thing — Howard Marks Memo
   url: https://www.oaktreecapital.com/docs/default-source/memos/2003-07-01-the-most-important-thing.pdf
   why_worth_reading: 'Marks argues that second-level thinking — asking not just what
@@ -250,7 +250,7 @@ items:
   accessibility: general
   author: Warren Buffett
   category: investing_finance
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 12
   source: Berkshire Hathaway
@@ -269,7 +269,7 @@ items:
   accessibility: general
   author: Morgan Housel
   category: investing_finance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: Collaborative Fund
@@ -288,7 +288,7 @@ items:
   accessibility: general
   author: Morgan Housel
   category: investing_finance
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 15
   source: Collaborative Fund
@@ -308,7 +308,7 @@ items:
   accessibility: general
   author: Howard Marks
   category: investing_finance
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 12
   source: Oaktree Capital
@@ -327,7 +327,7 @@ items:
   accessibility: flagged-dense
   author: Aswath Damodaran
   category: investing_finance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 13
   source: NYU Stern
@@ -346,7 +346,7 @@ items:
   accessibility: general
   author: Howard Marks
   category: investing_finance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Oaktree Capital
@@ -364,7 +364,7 @@ items:
   accessibility: general
   author: Ben Hunt
   category: investing_finance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: Epsilon Theory
@@ -383,7 +383,7 @@ items:
   accessibility: general
   author: Natalie Wolchover
   category: hard_science
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Quanta Magazine
@@ -402,7 +402,7 @@ items:
   accessibility: general
   author: Joshua Sokol
   category: hard_science
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: Quanta Magazine
@@ -421,7 +421,7 @@ items:
   accessibility: general
   author: Charlie Wood
   category: hard_science
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: Quanta Magazine
@@ -441,7 +441,7 @@ items:
   accessibility: general
   author: Ed Yong
   category: hard_science
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Aeon
@@ -460,7 +460,7 @@ items:
   accessibility: general
   author: Philip Ball
   category: hard_science
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 11
   source: Quanta Magazine
@@ -479,7 +479,7 @@ items:
   accessibility: general
   author: Lisa Feldman Barrett
   category: hard_science
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: Aeon
@@ -498,7 +498,7 @@ items:
   accessibility: general
   author: Stephen Wolfram
   category: applied_science_tech
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 14
   source: Stephen Wolfram
@@ -517,7 +517,7 @@ items:
   accessibility: general
   author: Mustafa Suleyman
   category: applied_science_tech
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: MIT Technology Review
@@ -536,7 +536,7 @@ items:
   accessibility: general
   author: Eugene Wei
   category: applied_science_tech
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 12
   source: Eugene Wei
@@ -556,7 +556,7 @@ items:
   accessibility: general
   author: Rich Sutton
   category: applied_science_tech
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 6
   source: Rich Sutton
@@ -575,7 +575,7 @@ items:
   accessibility: general
   author: Marc Andreessen
   category: applied_science_tech
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: Andreessen Horowitz
@@ -594,7 +594,7 @@ items:
   accessibility: general
   author: David Beer
   category: applied_science_tech
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Aeon
@@ -613,7 +613,7 @@ items:
   accessibility: general
   author: Scott Wolla
   category: explainer
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: St. Louis Fed
@@ -632,7 +632,7 @@ items:
   accessibility: general
   author: HUD Office of Policy Development
   category: explainer
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: HUD User
@@ -651,7 +651,7 @@ items:
   accessibility: general
   author: Stephanie Yee and Tony Chu
   category: explainer
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: r2d3
@@ -670,7 +670,7 @@ items:
   accessibility: general
   author: James Clear
   category: explainer
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: James Clear
@@ -689,7 +689,7 @@ items:
   accessibility: general
   author: Planet Money Staff
   category: explainer
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: NPR Planet Money
@@ -708,7 +708,7 @@ items:
   accessibility: flagged-dense
   author: Bob Zider
   category: explainer
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: HBR
@@ -728,7 +728,7 @@ items:
   accessibility: general
   author: Packy McCormick
   category: explainer
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 12
   source: Not Boring
@@ -748,7 +748,7 @@ items:
   accessibility: general
   author: Investopedia Staff
   category: explainer
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: Investopedia
@@ -767,7 +767,7 @@ items:
   accessibility: general
   author: Andrew Huberman
   category: human_performance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Huberman Lab
@@ -787,7 +787,7 @@ items:
   accessibility: general
   author: Andrew Huberman
   category: human_performance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: Huberman Lab
@@ -806,7 +806,7 @@ items:
   accessibility: general
   author: Peter Attia
   category: human_performance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Peter Attia MD
@@ -826,7 +826,7 @@ items:
   accessibility: general
   author: Alex Hutchinson
   category: human_performance
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Outside Online
@@ -845,7 +845,7 @@ items:
   accessibility: general
   author: Shane Parrish
   category: ideas_mental_models
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: Farnam Street
@@ -864,7 +864,7 @@ items:
   accessibility: general
   author: Shane Parrish
   category: ideas_mental_models
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: Farnam Street
@@ -883,7 +883,7 @@ items:
   accessibility: general
   author: James Clear
   category: ideas_mental_models
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: James Clear
@@ -903,7 +903,7 @@ items:
   accessibility: general
   author: Charlie Munger
   category: ideas_mental_models
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 15
   source: Farnam Street
@@ -922,7 +922,7 @@ items:
   accessibility: general
   author: Nassim Taleb
   category: ideas_mental_models
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: Medium (Nassim Taleb)
@@ -942,7 +942,7 @@ items:
   accessibility: general
   author: Shane Parrish
   category: ideas_mental_models
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 6
   source: Farnam Street
@@ -961,7 +961,7 @@ items:
   accessibility: general
   author: Jerusalem Demsas
   category: real_estate_adjacent
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 9
   source: Vox
@@ -980,7 +980,7 @@ items:
   accessibility: general
   author: Daniel Herriges
   category: real_estate_adjacent
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 8
   source: Strong Towns
@@ -1000,7 +1000,7 @@ items:
   accessibility: general
   author: Jerusalem Demsas
   category: real_estate_adjacent
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: The Atlantic
@@ -1020,7 +1020,7 @@ items:
   accessibility: general
   author: Douglas Preston
   category: surprise
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 14
   source: The New Yorker
@@ -1040,7 +1040,7 @@ items:
   accessibility: general
   author: Vyvyan Evans
   category: surprise
-  cooldown_days: 60
+  cooldown_days: 365
   cumulative_rating: 0
   estimated_read_minutes: 10
   source: Aeon
@@ -1059,7 +1059,7 @@ items:
   accessibility: general
   author: Nautilus Staff
   category: surprise
-  cooldown_days: 21
+  cooldown_days: 180
   cumulative_rating: 0
   estimated_read_minutes: 7
   source: Nautilus
