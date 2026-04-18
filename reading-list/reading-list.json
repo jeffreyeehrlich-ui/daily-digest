@@ -1,8 +1,20 @@
 {
   "items": [
     {
+      "id": "ed29c42b-9ecd-4385-9b4e-5bff3292b9ec",
+      "title": "Warren Buffett 1977 Shareholder Letter",
+      "url": "https://www.berkshirehathaway.com/letters/1977.html",
+      "source": "Berkshire Hathaway",
+      "type": "read",
+      "category": "other",
+      "duration": "8 min read",
+      "description": "Buffett 1977 letter on inflation and capital allocation",
+      "dateAdded": "2026-04-18",
+      "read": false
+    },
+    {
       "id": "1776333735684",
-      "title": "The Big Thing: We Are In A World War That Isn’t Going To End Anytime Soon.",
+      "title": "The Big Thing: We Are In A World War That Isnât Going To End Anytime Soon.",
       "url": "https://substack.com/home/post/p-193474352?source=queue",
       "source": "Principles by Ray Dalio",
       "type": "read",
@@ -18,7 +30,7 @@
     },
     {
       "id": "44beaca8-9099-47a9-b43b-22097c1f5e1d",
-      "title": "Meditations — Book II",
+      "title": "Meditations â Book II",
       "url": "https://classics.mit.edu/Antorinus/meditations.2.two.html",
       "source": "MIT Classics",
       "type": "read",
@@ -78,7 +90,7 @@
     },
     {
       "id": "78851c2b-674b-4a82-aebc-811dd810822b",
-      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soon — here's why",
+      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soon â here's why",
       "url": "https://technologyreview.com/2026/04/08/1135398/mustafa-suleyman-ai-future/",
       "source": "MIT Technology Review",
       "type": "read",
