@@ -10,7 +10,7 @@
       "duration": "",
       "description": "",
       "dateAdded": "2026-04-16",
-      "read": false,
+      "read": true,
       "wyt_candidate": true,
       "wyt_priority": "normal",
       "wyt_featured": false,
