@@ -588,13 +588,21 @@ async function autoFillFromUrl(url) {
   btn.textContent = 'Fill';
 }
 
-// Trigger on paste — wait one tick for the pasted value to land in the input
+// Trigger on paste — read from clipboardData immediately (value not yet set at paste time)
 document.getElementById('f-url').addEventListener('paste', (e) => {
   clearTimeout(fetchDebounce);
-  fetchDebounce = setTimeout(() => {
-    const url = document.getElementById('f-url').value.trim();
-    autoFillFromUrl(url);
-  }, 50);
+  // clipboardData gives us the pasted text before the browser writes it to the input
+  const pasted = (e.clipboardData || window.clipboardData).getData('text').trim();
+  if (pasted && pasted.startsWith('http')) {
+    // Let the browser finish updating the input value, then trigger
+    fetchDebounce = setTimeout(() => autoFillFromUrl(pasted), 0);
+  } else {
+    // Fallback: wait for value to land
+    fetchDebounce = setTimeout(() => {
+      const url = document.getElementById('f-url').value.trim();
+      autoFillFromUrl(url);
+    }, 200);
+  }
 });
 
 // Trigger on blur for URLs typed manually
