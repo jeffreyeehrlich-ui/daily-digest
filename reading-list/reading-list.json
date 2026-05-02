@@ -1,6 +1,18 @@
 {
   "items": [
     {
+      "id": "f1e8ab2d-535d-4799-b5a3-56aad6c3cc69",
+      "title": "Amor Fati: The Formula for Human Greatness",
+      "url": "https://dailystoic.com/amor-fati/",
+      "source": "Daily Stoic",
+      "type": "read",
+      "category": "philosophy",
+      "duration": "6 min read",
+      "description": "Amor fati — loving what happens rather than merely tolerating it — is the Stoic posture most directly applicable to operating in volatile environments. Holiday traces the concept from Nietzsche back to Marcus Aurelius, making the case that acceptance of circumstance is not passivity but the precondition for clear action.",
+      "dateAdded": "2026-05-01",
+      "read": false
+    },
+    {
       "id": "84d6ed5c-7a92-462a-91c9-2bad015171dd",
       "title": "No, America is not in a 'stealth manufacturing boom'",
       "url": "https://www.noahpinion.blog/p/no-america-is-not-in-a-stealth-manufacturing",
@@ -26,7 +38,7 @@
     },
     {
       "id": "1776333735684",
-      "title": "The Big Thing: We Are In A World War That IsnÃ¢ÂÂt Going To End Anytime Soon.",
+      "title": "The Big Thing: We Are In A World War That IsnÃÂ¢ÃÂÃÂt Going To End Anytime Soon.",
       "url": "https://substack.com/home/post/p-193474352?source=queue",
       "source": "Principles by Ray Dalio",
       "type": "read",
@@ -42,7 +54,7 @@
     },
     {
       "id": "44beaca8-9099-47a9-b43b-22097c1f5e1d",
-      "title": "Meditations Ã¢ÂÂ Book II",
+      "title": "Meditations ÃÂ¢ÃÂÃÂ Book II",
       "url": "https://classics.mit.edu/Antorinus/meditations.2.two.html",
       "source": "MIT Classics",
       "type": "read",
@@ -102,7 +114,7 @@
     },
     {
       "id": "78851c2b-674b-4a82-aebc-811dd810822b",
-      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soon Ã¢ÂÂ here's why",
+      "title": "Mustafa Suleyman: AI development won't hit a wall anytime soon ÃÂ¢ÃÂÃÂ here's why",
       "url": "https://technologyreview.com/2026/04/08/1135398/mustafa-suleyman-ai-future/",
       "source": "MIT Technology Review",
       "type": "read",
